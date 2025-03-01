@@ -33,7 +33,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export class MockAuthService {
   // Current authenticated user
-  private currentUser: User | null = null;
+  private currentUser: User | null = users[0];
 
   // Register a new user
   async register(email: string, password: string): Promise<User> {

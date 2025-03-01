@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Typography from './Typography';
+import { ThemedView } from './ThemedView';
 
 type TextComplexity = 'easy' | 'medium' | 'hard';
 
@@ -40,29 +42,33 @@ export default function TextComplexityModal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
+      <ThemedView style={styles.modalOverlay}>
+        <ThemedView style={styles.modalContent}>
           <TouchableOpacity
             style={styles.wordListButton}
             onPress={handleMyWordsList}
           >
-            <Text style={styles.wordListButtonText}>Мой список слов</Text>
+            <Typography style={styles.wordListButtonText}>
+              Мой список слов
+            </Typography>
           </TouchableOpacity>
 
-          <View style={styles.infoCard}>
+          <ThemedView style={styles.infoCard}>
             <Ionicons
               name="information-circle-outline"
               size={24}
               color="#666"
               style={styles.infoIcon}
             />
-            <Text style={styles.infoText}>
+            <Typography color="#666" style={styles.infoText}>
               Если текст вам кажется слишком легким или слишком трудным, то
               можете изменить его сложность
-            </Text>
-          </View>
+            </Typography>
+          </ThemedView>
 
-          <Text style={styles.complexityTitle}>Выберите сложность текста:</Text>
+          <Typography weight="medium" size="lg" style={styles.complexityTitle}>
+            Выберите сложность текста:
+          </Typography>
 
           <TouchableOpacity
             style={[
@@ -71,7 +77,7 @@ export default function TextComplexityModal({
             ]}
             onPress={() => handleComplexitySelect('easy')}
           >
-            <Text style={styles.complexityButtonText}>Легче</Text>
+            <Typography style={styles.complexityButtonText}>Легче</Typography>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -82,7 +88,7 @@ export default function TextComplexityModal({
             ]}
             onPress={() => handleComplexitySelect('medium')}
           >
-            <Text style={styles.complexityButtonText}>Средняя</Text>
+            <Typography style={styles.complexityButtonText}>Средняя</Typography>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -92,14 +98,14 @@ export default function TextComplexityModal({
             ]}
             onPress={() => handleComplexitySelect('hard')}
           >
-            <Text style={styles.complexityButtonText}>Сложнее</Text>
+            <Typography style={styles.complexityButtonText}>Сложнее</Typography>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <Ionicons name="close-circle-outline" size={32} color="#333" />
           </TouchableOpacity>
-        </View>
-      </View>
+        </ThemedView>
+      </ThemedView>
     </Modal>
   );
 }
@@ -112,64 +118,73 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    width: '90%',
+    width: '80%',
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 20,
     padding: 20,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   wordListButton: {
-    backgroundColor: '#0099FF',
+    backgroundColor: '#F2F2F2',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 10,
-    padding: 12,
-    alignItems: 'center',
-    width: '100%',
     marginBottom: 20,
+    width: '100%',
+    alignItems: 'center',
   },
   wordListButtonText: {
-    color: 'white',
+    color: '#333',
     fontSize: 16,
-    fontWeight: 'bold',
   },
   infoCard: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
     width: '100%',
+    backgroundColor: '#F9F9F9',
+    borderRadius: 10,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 24,
   },
   infoIcon: {
-    marginRight: 12,
+    marginRight: 10,
+    marginTop: 2,
   },
   infoText: {
     flex: 1,
-    fontSize: 16,
-    color: '#666',
+    fontSize: 14,
+    lineHeight: 20,
   },
   complexityTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    alignSelf: 'flex-start',
+    marginBottom: 16,
+    textAlign: 'center',
   },
   complexityButton: {
-    backgroundColor: '#F0F0F0',
-    borderRadius: 10,
-    padding: 16,
-    alignItems: 'center',
     width: '100%',
+    padding: 14,
+    borderRadius: 10,
     marginBottom: 10,
+    backgroundColor: '#F2F2F2',
+    alignItems: 'center',
   },
   selectedComplexityButton: {
-    backgroundColor: '#0099FF',
+    backgroundColor: '#E1F5FE',
+    borderWidth: 1,
+    borderColor: '#0099FF',
   },
   complexityButtonText: {
     fontSize: 16,
-    fontWeight: '500',
+    color: '#333',
   },
   closeButton: {
-    marginTop: 10,
+    marginTop: 16,
   },
 });

@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { StatusBar } from 'expo-status-bar';
+import Logo from '../components/Logo';
+import Button from '../components/Button';
+import Typography from '../components/Typography';
+import { ThemedView } from '../components/ThemedView';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { signIn, loading } = useAuth();
+  const { signIn, isLoading } = useAuth();
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -32,24 +29,26 @@ export default function LoginScreen() {
     }
   };
 
-  const handleRegister = () => {
-    router.push('/register');
-  };
-
   return (
-    <View style={styles.container}>
+    <ThemedView
+      style={styles.container}
+      darkColor="#1E1E1E"
+      lightColor="#F8F8F8"
+    >
       <StatusBar style="auto" />
 
-      <View style={styles.formContainer}>
-        <View style={styles.logoContainer}>
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoText}>ActiveLexicon</Text>
-          </View>
-        </View>
+      <ThemedView
+        style={styles.formContainer}
+        lightColor="white"
+        darkColor="#2A2A2A"
+      >
+        <ThemedView style={styles.logoContainer}>
+          <Logo size={150} color="#0099FF" />
+        </ThemedView>
 
-        <Text style={styles.descriptionText}>
+        <Typography size="md" style={styles.descriptionText}>
           Приложение для развития активного словарного запаса
-        </Text>
+        </Typography>
 
         <TextInput
           style={styles.input}
@@ -68,21 +67,22 @@ export default function LoginScreen() {
           secureTextEntry
         />
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error ? (
+          <Typography color="red" style={styles.errorText}>
+            {error}
+          </Typography>
+        ) : null}
 
-        <TouchableOpacity
-          style={styles.loginButton}
+        <Button
+          title="Войти"
           onPress={handleLogin}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.buttonText}>Войти</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </View>
+          disabled={isLoading}
+          isLoading={isLoading}
+          style={styles.loginButton}
+          textStyle={styles.buttonText}
+        />
+      </ThemedView>
+    </ThemedView>
   );
 }
 
@@ -101,25 +101,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   logoContainer: {
     marginVertical: 30,
     alignItems: 'center',
-  },
-  logoCircle: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 2,
-    borderColor: '#0099FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    color: '#0099FF',
-    fontSize: 20,
-    fontWeight: 'bold',
-    transform: [{ rotate: '-30deg' }],
   },
   descriptionText: {
     fontSize: 16,
@@ -129,6 +115,7 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   input: {
+    fontFamily: 'Inter-Regular',
     backgroundColor: 'white',
     width: '100%',
     padding: 15,

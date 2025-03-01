@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -13,6 +7,8 @@ import {
   WordDetails,
 } from '@/services/mockTranslationService';
 import WordDetailsModal from '@/components/WordDetailsModal';
+import Typography from './Typography';
+import { ThemedView } from './ThemedView';
 
 interface TextSelectionScreenProps {
   generatedText: string;
@@ -87,7 +83,7 @@ export default function TextSelectionScreen({
   const renderTextParts = () => {
     return processedText.map((part, index) => {
       if (!part.isWord) {
-        return <Text key={index}>{part.text}</Text>;
+        return <Typography key={index}>{part.text}</Typography>;
       }
 
       const isSelected = selectedWords.includes(part.text);
@@ -98,54 +94,76 @@ export default function TextSelectionScreen({
           onPress={() => handleWordPress(part.text)}
           style={[styles.wordTouchable, isSelected && styles.selectedWord]}
         >
-          <Text
-            style={[styles.wordText, isSelected && styles.selectedWordText]}
-          >
-            {part.text}
-          </Text>
+          <Typography>{part.text}</Typography>
         </TouchableOpacity>
       );
     });
   };
 
+  const selectedWordsCount = selectedWords.length;
+
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <StatusBar style="auto" />
 
-      <TouchableOpacity
-        style={styles.regenerateButton}
-        onPress={onRegenerateText}
-      >
-        <Text style={styles.regenerateButtonText}>Сгенерировать снова</Text>
-      </TouchableOpacity>
-
-      <View style={styles.infoCard}>
+      <ThemedView style={styles.generatedTextInfoCard}>
         <Ionicons
           name="information-circle-outline"
           size={24}
           color="#666"
           style={styles.infoIcon}
         />
-        <Text style={styles.infoText}>
-          Прочитайте этот текст и нажмите на все слова, которые вы не понимаете
-        </Text>
-      </View>
+        <Typography color="#666" style={styles.infoText}>
+          Нажмите на слово, чтобы увидеть его перевод и добавить в словарь
+        </Typography>
+      </ThemedView>
 
-      <ScrollView style={styles.textScrollView}>
-        <Text style={styles.textContainer}>{renderTextParts()}</Text>
+      <ScrollView style={styles.generatedTextScrollView}>
+        <ThemedView style={styles.generatedText}>
+          {renderTextParts()}
+        </ThemedView>
       </ScrollView>
 
-      <TouchableOpacity style={styles.doneButton} onPress={onDone}>
-        <Text style={styles.doneButtonText}>Готово</Text>
-      </TouchableOpacity>
+      <ThemedView style={styles.selectedWordsContainer}>
+        <Typography weight="medium" style={styles.selectedWordsText}>
+          Выбрано слов: {selectedWordsCount}
+        </Typography>
+      </ThemedView>
 
-      <WordDetailsModal
-        visible={isModalVisible}
-        wordDetails={currentWordDetails}
-        onClose={() => setIsModalVisible(false)}
-        onAddWord={handleAddWordToVocabulary}
-      />
-    </View>
+      <ThemedView style={styles.buttonsContainer}>
+        <TouchableOpacity
+          style={styles.regenerateButton}
+          onPress={onRegenerateText}
+        >
+          <Typography color="white" weight="medium" style={styles.buttonText}>
+            Сгенерировать заново
+          </Typography>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.doneButton} onPress={onDone}>
+          <Typography weight="medium" style={styles.doneButtonText}>
+            Готово
+          </Typography>
+        </TouchableOpacity>
+      </ThemedView>
+
+      {currentWordDetails && (
+        <WordDetailsModal
+          visible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          word={currentWordDetails}
+          onAdd={() =>
+            currentWordDetails &&
+            handleAddWordToVocabulary(currentWordDetails.word)
+          }
+          isAlreadyAdded={
+            currentWordDetails
+              ? selectedWords.includes(currentWordDetails.word)
+              : false
+          }
+        />
+      )}
+    </ThemedView>
   );
 }
 
@@ -155,23 +173,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     padding: 16,
   },
-  regenerateButton: {
-    backgroundColor: '#0099FF',
-    borderRadius: 10,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 40,
-  },
-  regenerateButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  infoCard: {
+  generatedTextInfoCard: {
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 16,
-    marginVertical: 16,
+    marginBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -183,44 +189,52 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
-  textScrollView: {
+  generatedTextScrollView: {
     flex: 1,
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 16,
     marginBottom: 16,
   },
-  textContainer: {
-    fontSize: 16,
-    lineHeight: 24,
+  generatedText: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   wordTouchable: {
-    marginHorizontal: 1,
+    borderRadius: 4,
+    marginVertical: 2,
   },
   selectedWord: {
-    backgroundColor: '#FFE082',
-    borderRadius: 3,
+    backgroundColor: '#E3F2FD',
   },
-  wordText: {
+  selectedWordsContainer: {
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  selectedWordsText: {
     fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
   },
-  selectedWordText: {
-    color: '#333',
+  buttonsContainer: {
+    marginBottom: 20,
+  },
+  regenerateButton: {
+    backgroundColor: '#0099FF',
+    borderRadius: 10,
+    padding: 16,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  buttonText: {
+    fontSize: 16,
   },
   doneButton: {
     backgroundColor: '#F0F0F0',
     borderRadius: 10,
     padding: 16,
     alignItems: 'center',
-    marginBottom: 20,
   },
   doneButtonText: {
     color: '#333',
     fontSize: 16,
-    fontWeight: '500',
   },
 });

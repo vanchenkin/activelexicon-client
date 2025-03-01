@@ -1,37 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  SafeAreaView,
-} from 'react-native';
+import React from 'react';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { mockExerciseService } from '@/services/mockExerciseService';
+import Button from '../components/Button';
+import Typography from '../components/Typography';
+import { ThemedView } from '../components/ThemedView';
+import Logo from '../components/Logo';
+import { useExerciseProgress } from '@/hooks/useApi';
+import { useAuth } from '../context/AuthContext';
 
 export default function ExerciseCompleteScreen() {
   const router = useRouter();
-  const [userLevel, setUserLevel] = useState({ current: 26, max: 27 });
-  const [streak, setStreak] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const loadUserProgress = async () => {
-      try {
-        // In a real app, you would fetch the user's actual progress
-        const progress = await mockExerciseService.getUserProgress();
-        setStreak(progress.streak);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading progress:', error);
-        setIsLoading(false);
-      }
-    };
+  // Use React Query to fetch the user's exercise progress
+  const { data: progress, isLoading: progressLoading } = useExerciseProgress();
 
-    loadUserProgress();
-  }, []);
+  // Use React Query to fetch the current user's data
+  const { data: user } = useAuth();
 
   const handleContinue = () => {
     // Navigate back to the home screen
@@ -42,84 +28,95 @@ export default function ExerciseCompleteScreen() {
   const renderStreakIndicators = () => {
     // Generate 15 triangles (3 rows of 5)
     const indicators = [];
+    const streak = progress?.streak || 0;
     const filledTriangles = Math.min(streak, 15);
 
     for (let i = 0; i < 15; i++) {
       indicators.push(
-        <Text
+        <Typography
           key={i}
           style={[
             styles.triangleIndicator,
-            i < filledTriangles ? styles.filledTriangle : {},
+            i < filledTriangles
+              ? styles.filledIndicator
+              : styles.emptyIndicator,
           ]}
         >
           ▲
-        </Text>
+        </Typography>
       );
     }
 
-    // Split into rows of 5
-    const rows = [];
-    for (let i = 0; i < 3; i++) {
-      rows.push(
-        <View key={i} style={styles.triangleRow}>
-          {indicators.slice(i * 5, (i + 1) * 5)}
-        </View>
-      );
-    }
-
-    return rows;
+    return indicators;
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
 
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Получение опыта</Text>
-      </View>
+      <ThemedView style={styles.card} lightColor="#FFFFFF" darkColor="#1E1E1E">
+        <Logo size={80} />
 
-      <View style={styles.content}>
-        <Text style={styles.congratsText}>Вы молодец!</Text>
-        <Text style={styles.completedText}>Серия упражнений выполнена!</Text>
+        <ThemedView style={styles.congratsIconContainer}>
+          <Ionicons name="star" size={80} color="#FFD700" />
+        </ThemedView>
 
-        <View style={styles.checkmarkContainer}>
-          <Ionicons name="checkmark" size={120} color="#000" />
-        </View>
+        <Typography weight="bold" size="2xl" style={styles.title}>
+          Отлично!
+        </Typography>
 
-        <View style={styles.statsContainer}>
-          <View style={styles.levelContainer}>
-            <Text style={styles.statsLabel}>Ваш уровень:</Text>
-            <View style={styles.progressBarContainer}>
-              <View
-                style={[
-                  styles.progressBarFill,
-                  { width: `${(userLevel.current / userLevel.max) * 100}%` },
-                ]}
-              />
-            </View>
-            <View style={styles.levelLabels}>
-              <Text style={styles.levelValue}>{userLevel.current}</Text>
-              <Text style={styles.levelValue}>{userLevel.max}</Text>
-            </View>
-          </View>
+        <Typography size="md" style={styles.subtitle}>
+          Вы успешно выполнили упражнение и получили опыт
+        </Typography>
 
-          <View style={styles.streakContainer}>
-            <View style={styles.streakHeader}>
-              <Text style={styles.statsLabel}>Дней подряд: {streak}</Text>
-            </View>
-            <View style={styles.streakIndicators}>
-              {renderStreakIndicators()}
-            </View>
-          </View>
-        </View>
-      </View>
+        <ThemedView style={styles.rewardContainer}>
+          <Typography weight="bold" size="lg" style={styles.rewardTitle}>
+            +100 XP
+          </Typography>
+          <Typography size="sm" style={styles.rewardSubtitle}>
+            Ваш уровень: {user?.profile.level || 0}/
+            {user?.profile.maxLevel || 0}
+          </Typography>
+          <ThemedView style={styles.progressBar}>
+            <ThemedView
+              style={[
+                styles.progressFill,
+                {
+                  width: `${
+                    ((user?.profile.experiencePoints || 0) % 1000) / 10
+                  }%`,
+                },
+              ]}
+            />
+          </ThemedView>
+        </ThemedView>
 
-      <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-        <Text style={styles.buttonText}>Продолжить</Text>
-      </TouchableOpacity>
+        <ThemedView style={styles.streakContainer}>
+          <Typography weight="bold" size="md" style={styles.streakTitle}>
+            Серия: {progress?.streak || 0}{' '}
+            {getStreakText(progress?.streak || 0)}
+          </Typography>
+          <ThemedView style={styles.streakIndicators}>
+            {renderStreakIndicators()}
+          </ThemedView>
+        </ThemedView>
+
+        <Button
+          title="Продолжить"
+          onPress={handleContinue}
+          size="large"
+          style={styles.continueButton}
+        />
+      </ThemedView>
     </SafeAreaView>
   );
+}
+
+// Helper function to get the correct streak text form in Russian
+function getStreakText(streak: number) {
+  if (streak === 1) return 'день';
+  if (streak >= 2 && streak <= 4) return 'дня';
+  return 'дней';
 }
 
 const styles = StyleSheet.create({
@@ -127,40 +124,58 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8F8F8',
   },
-  header: {
-    paddingTop: 50,
-    paddingBottom: 16,
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  content: {
+  card: {
     flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 40,
+    padding: 24,
   },
-  congratsText: {
+  congratsIconContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  title: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  completedText: {
+  subtitle: {
     fontSize: 18,
     color: '#555',
     marginBottom: 40,
   },
-  checkmarkContainer: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 40,
+  rewardContainer: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+    marginBottom: 24,
   },
-  statsContainer: {
+  rewardTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  rewardSubtitle: {
+    fontSize: 16,
+    color: '#666',
+  },
+  progressBar: {
+    height: 10,
+    backgroundColor: '#EEE',
+    borderRadius: 5,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#4096FE',
+    borderRadius: 5,
+  },
+  streakContainer: {
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 12,
@@ -171,54 +186,25 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
   },
-  levelContainer: {
-    marginBottom: 20,
-  },
-  statsLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 10,
-  },
-  progressBarContainer: {
-    height: 10,
-    backgroundColor: '#EEE',
-    borderRadius: 5,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#4096FE',
-    borderRadius: 5,
-  },
-  levelLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 5,
-  },
-  levelValue: {
-    fontSize: 14,
-    color: '#666',
-  },
-  streakContainer: {
-    paddingTop: 10,
-  },
-  streakHeader: {
+  streakTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   streakIndicators: {
-    alignItems: 'center',
-  },
-  triangleRow: {
     flexDirection: 'row',
-    marginBottom: 5,
+    alignItems: 'center',
   },
   triangleIndicator: {
     fontSize: 16,
     color: '#DDD',
     marginHorizontal: 5,
   },
-  filledTriangle: {
+  filledIndicator: {
     color: '#4096FE',
+  },
+  emptyIndicator: {
+    color: '#DDD',
   },
   continueButton: {
     backgroundColor: '#4096FE',
@@ -227,10 +213,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     marginBottom: 24,
     alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });

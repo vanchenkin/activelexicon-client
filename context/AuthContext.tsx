@@ -1,15 +1,39 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { mockAuthService } from '@/services/mockAuth';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { mockAuthService, User } from '@/services/mockAuth';
 
-// Define the User type
-type User = {
-  id: string;
-  email: string;
+// API functions that work directly with the mockAuthService
+const authAPI = {
+  // Get current user from mockAuthService
+  getCurrentUser: async (): Promise<User | null> => {
+    return mockAuthService.getCurrentUser();
+  },
+
+  // Login using mock service
+  login: async (email: string, password: string): Promise<User> => {
+    return mockAuthService.login(email, password);
+  },
+
+  // Register using mock service
+  register: async (email: string, password: string): Promise<User> => {
+    return mockAuthService.register(email, password);
+  },
+
+  // Logout using mock service
+  logout: async (): Promise<void> => {
+    return mockAuthService.logout();
+  },
+
+  // Update profile
+  updateProfile: async (updates: Partial<User['profile']>): Promise<User> => {
+    return mockAuthService.updateUserProfile(updates);
+  },
 };
 
 type AuthContextType = {
   user: User | null;
-  loading: boolean;
+  isLoading: boolean;
+  isError: boolean;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   logOut: () => Promise<void>;
@@ -17,7 +41,8 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: true,
+  isLoading: false,
+  isError: false,
   signUp: async () => {},
   signIn: async () => {},
   logOut: async () => {},
@@ -25,61 +50,94 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+// The provider component that uses the existing QueryClient
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false);
+  // Use the queryClient
+  const queryClient = useQueryClient();
 
-  // Check if user is already logged in (could use AsyncStorage in a real app)
+  // Query for getting the current user
+  const {
+    data: user,
+    isLoading: isLoadingUser,
+    isError: isErrorUser,
+    refetch,
+  } = useQuery({
+    queryKey: ['user'],
+    queryFn: authAPI.getCurrentUser,
+    staleTime: 1000 * 60 * 60, // 1 hour
+    retry: 1,
+  });
+
+  // Run on mount to ensure we have the most up-to-date user data
   useEffect(() => {
-    const currentUser = mockAuthService.getCurrentUser();
-    if (currentUser) {
-      setUser({
-        id: currentUser.id,
-        email: currentUser.email,
-      });
-    }
-    setLoading(false);
-  }, []);
+    refetch();
+  }, [refetch]);
 
-  const signUp = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const newUser = await mockAuthService.register(email, password);
-      setUser({
-        id: newUser.id,
-        email: newUser.email,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Mutation for login
+  const loginMutation = useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      authAPI.login(email, password),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['user'], data);
+      // Also invalidate other user-related queries that might depend on auth status
+      queryClient.invalidateQueries({ queryKey: ['userWords'] });
+      queryClient.invalidateQueries({ queryKey: ['exercises'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+    },
+  });
 
+  // Mutation for registration
+  const registerMutation = useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      authAPI.register(email, password),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['user'], data);
+    },
+  });
+
+  // Mutation for logout
+  const logoutMutation = useMutation({
+    mutationFn: authAPI.logout,
+    onSuccess: () => {
+      queryClient.setQueryData(['user'], null);
+      // Clear other cached data when logging out
+      queryClient.invalidateQueries();
+    },
+  });
+
+  // Sign in function
   const signIn = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const loggedInUser = await mockAuthService.login(email, password);
-      setUser({
-        id: loggedInUser.id,
-        email: loggedInUser.email,
-      });
-    } finally {
-      setLoading(false);
-    }
+    await loginMutation.mutateAsync({ email, password });
   };
 
-  const logOut = async () => {
-    setLoading(true);
-    try {
-      await mockAuthService.logout();
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
+  // Sign up function
+  const signUp = async (email: string, password: string) => {
+    await registerMutation.mutateAsync({ email, password });
   };
+
+  // Log out function
+  const logOut = async () => {
+    await logoutMutation.mutateAsync();
+  };
+
+  // Combine loading states
+  const isLoading =
+    isLoadingUser ||
+    loginMutation.isPending ||
+    registerMutation.isPending ||
+    logoutMutation.isPending;
+
+  // Combine error states
+  const isError =
+    isErrorUser ||
+    loginMutation.isError ||
+    registerMutation.isError ||
+    logoutMutation.isError;
 
   const value = {
-    user,
-    loading,
+    user: user || null,
+    isLoading,
+    isError,
     signUp,
     signIn,
     logOut,

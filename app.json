@@ -43,6 +43,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3cd53754-eebb-4971-a758-922b880e3696"
+      }
+    },
+    "owner": "vanchenkin"
   }
 }

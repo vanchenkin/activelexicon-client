@@ -1,43 +1,51 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import Button from '../components/Button';
+import Logo from '../components/Logo';
+import Typography from '../components/Typography';
+import { ThemedView } from '../components/ThemedView';
 
 export default function EnterScreen() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
+    <ThemedView
+      style={styles.container}
+      lightColor="#F8F8F8"
+      darkColor="#1E1E1E"
+    >
       <StatusBar style="auto" />
 
-      <Text style={styles.welcomeText}>Добро пожаловать!</Text>
+      <Typography weight="bold" size="2xl" style={styles.welcomeText}>
+        Добро пожаловать!
+      </Typography>
 
-      <View style={styles.logoContainer}>
-        <View style={styles.logoCircle}>
-          <Text style={styles.logoText}>ActiveLexicon</Text>
-        </View>
-      </View>
+      <ThemedView style={styles.logoContainer}>
+        <Logo size={150} color="#0099FF" />
+      </ThemedView>
 
-      <Text style={styles.descriptionText}>
+      <Typography size="md" style={styles.descriptionText}>
         Приложение для развития активного словарного запаса
-      </Text>
+      </Typography>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
+      <ThemedView style={styles.buttonContainer}>
+        <Button
+          title="Регистрация"
           onPress={() => router.push('/register')}
-        >
-          <Text style={styles.buttonText}>Регистрация</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
           style={styles.button}
+          textStyle={styles.buttonText}
+        />
+
+        <Button
+          title="Войти по логину и паролю"
           onPress={() => router.push('/login')}
-        >
-          <Text style={styles.buttonText}>Войти по логину и паролю</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          style={styles.button}
+          textStyle={styles.buttonText}
+        />
+      </ThemedView>
+    </ThemedView>
   );
 }
 
@@ -50,31 +58,13 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   welcomeText: {
-    fontSize: 24,
-    fontWeight: '500',
     marginBottom: 30,
     color: '#333',
   },
   logoContainer: {
     marginBottom: 20,
   },
-  logoCircle: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 2,
-    borderColor: '#0099FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    color: '#0099FF',
-    fontSize: 20,
-    fontWeight: 'bold',
-    transform: [{ rotate: '-30deg' }],
-  },
   descriptionText: {
-    fontSize: 16,
     textAlign: 'center',
     marginBottom: 40,
     color: '#666',

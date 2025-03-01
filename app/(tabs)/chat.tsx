@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  View,
-  Text,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -12,9 +10,13 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
 import { mockChatService, ChatMessage } from '@/services/mockChatService';
+import Typography from '@/components/Typography';
+import { ThemedView } from '@/components/ThemedView';
 
 export default function ChatScreen() {
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +62,10 @@ export default function ChatScreen() {
     }
   };
 
+  const handleOpenSettings = () => {
+    router.push('/settings');
+  };
+
   const renderMessageItem = ({ item }: { item: ChatMessage }) => {
     // Format timestamp
     const formattedTime = new Date(item.timestamp).toLocaleTimeString([], {
@@ -68,33 +74,38 @@ export default function ChatScreen() {
     });
 
     return (
-      <View
+      <ThemedView
         style={[
           styles.messageBubble,
           item.isUser ? styles.userMessage : styles.aiMessage,
         ]}
       >
-        <Text style={styles.messageText}>{item.text}</Text>
-        <Text style={styles.messageTime}>{formattedTime}</Text>
-      </View>
+        <Typography style={styles.messageText}>{item.text}</Typography>
+        <Typography style={styles.messageTime}>{formattedTime}</Typography>
+      </ThemedView>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <StatusBar style="auto" />
 
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Чат</Text>
-        <TouchableOpacity style={styles.settingsButton}>
+      <ThemedView style={styles.header}>
+        <Typography weight="bold" style={styles.headerTitle}>
+          Чат
+        </Typography>
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={handleOpenSettings}
+        >
           <Ionicons name="settings-outline" size={24} color="#000" />
         </TouchableOpacity>
-      </View>
+      </ThemedView>
 
       {isLoading ? (
-        <View style={styles.loadingContainer}>
+        <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
-        </View>
+        </ThemedView>
       ) : (
         <FlatList
           ref={flatListRef}
@@ -131,7 +142,7 @@ export default function ChatScreen() {
           )}
         </TouchableOpacity>
       </KeyboardAvoidingView>
-    </View>
+    </ThemedView>
   );
 }
 
@@ -153,7 +164,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
   },
   settingsButton: {
     padding: 8,

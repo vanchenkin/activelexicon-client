@@ -1,49 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
-  View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import { useUserStats, useExerciseProgress } from '@/hooks/useApi';
-import { mockExerciseService } from '@/services/mockExerciseService';
+import Typography from '@/components/Typography';
+import { ThemedView } from '@/components/ThemedView';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, logOut } = useAuth();
+
+  // Use React Query hooks to fetch data from backend
   const { data: userStats, isLoading: isLoadingStats } = useUserStats();
-  const [userLevel, setUserLevel] = useState({ current: 26, max: 27 });
-  const [streak, setStreak] = useState(1);
-
-  useEffect(() => {
-    const loadUserProgress = async () => {
-      try {
-        // In a real app, you would fetch the user's actual progress
-        const progress = await mockExerciseService.getUserProgress();
-        setStreak(progress.streak);
-      } catch (error) {
-        console.error('Error loading progress:', error);
-      }
-    };
-
-    loadUserProgress();
-  }, []);
+  const { data: exerciseProgress, isLoading: isLoadingProgress } =
+    useExerciseProgress();
+  const { user: currentUser, isLoading: isLoadingUser } = useAuth();
 
   // Function to render streak triangles
   const renderStreakIndicators = () => {
+    // Get streak from exercise progress
+    const currentStreak = exerciseProgress?.streak || 0;
+
     // Generate 15 triangles (3 rows of 5)
     const indicators = [];
-    const filledTriangles = Math.min(streak, 15);
+    const filledTriangles = Math.min(currentStreak, 15);
 
     for (let i = 0; i < 15; i++) {
       indicators.push(
-        <Text
+        <Typography
           key={i}
           style={[
             styles.triangleIndicator,
@@ -51,7 +43,7 @@ export default function ProfileScreen() {
           ]}
         >
           ▲
-        </Text>
+        </Typography>
       );
     }
 
@@ -59,9 +51,9 @@ export default function ProfileScreen() {
     const rows = [];
     for (let i = 0; i < 3; i++) {
       rows.push(
-        <View key={i} style={styles.triangleRow}>
+        <ThemedView key={i} style={styles.triangleRow}>
           {indicators.slice(i * 5, (i + 1) * 5)}
-        </View>
+        </ThemedView>
       );
     }
 
@@ -72,84 +64,174 @@ export default function ProfileScreen() {
     router.push('/(tabs)/words');
   };
 
+  const handleOpenSettings = () => {
+    router.push('/settings');
+  };
+
   const handleLogout = async () => {
     try {
-      await signOut();
+      await logOut();
       router.replace('/login');
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
 
+  const isLoading = isLoadingStats || isLoadingProgress || isLoadingUser;
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Профиль</Text>
-        </View>
+        <ThemedView style={styles.header}>
+          <Typography weight="bold" size="lg" style={styles.headerTitle}>
+            Профиль
+          </Typography>
+          <TouchableOpacity
+            onPress={handleOpenSettings}
+            style={styles.settingsButton}
+          >
+            <Ionicons name="settings-outline" size={24} color="#333" />
+          </TouchableOpacity>
+        </ThemedView>
 
         {/* User Info Card */}
-        <View style={styles.card}>
-          <View style={styles.userInfoContainer}>
-            <View style={styles.avatarPlaceholder}>
+        <ThemedView style={styles.card}>
+          <ThemedView style={styles.userInfoContainer}>
+            <ThemedView style={styles.avatarPlaceholder}>
               <Ionicons name="person-outline" size={40} color="#888" />
-            </View>
-            <Text style={styles.emailText}>{user?.email || 'E-mail'}</Text>
-          </View>
-        </View>
+            </ThemedView>
+            <Typography style={styles.emailText}>
+              {user?.email || 'E-mail'}
+            </Typography>
+          </ThemedView>
+        </ThemedView>
 
         {/* Statistics Card */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Статистика</Text>
+        <ThemedView style={styles.card}>
+          <Typography weight="medium" size="lg" style={styles.cardTitle}>
+            Статистика
+          </Typography>
           {isLoadingStats ? (
-            <Text style={styles.statValue}>Загрузка...</Text>
+            <ActivityIndicator size="small" color="#4096FE" />
           ) : (
-            <View style={styles.statsContainer}>
-              {/* Add more statistics here when available */}
-            </View>
+            <ThemedView style={styles.statsContainer}>
+              {userStats && (
+                <>
+                  <ThemedView style={styles.statRow}>
+                    <Typography color="#666" size="sm" style={styles.statLabel}>
+                      Изучено слов:
+                    </Typography>
+                    <Typography
+                      weight="medium"
+                      size="sm"
+                      style={styles.statValue}
+                    >
+                      {userStats.wordsLearned}
+                    </Typography>
+                  </ThemedView>
+
+                  <ThemedView style={styles.statRow}>
+                    <Typography color="#666" size="sm" style={styles.statLabel}>
+                      Всего слов:
+                    </Typography>
+                    <Typography
+                      weight="medium"
+                      size="sm"
+                      style={styles.statValue}
+                    >
+                      {userStats.totalWords}
+                    </Typography>
+                  </ThemedView>
+
+                  <ThemedView style={styles.statRow}>
+                    <Typography color="#666" size="sm" style={styles.statLabel}>
+                      Последняя активность:
+                    </Typography>
+                    <Typography
+                      weight="medium"
+                      size="sm"
+                      style={styles.statValue}
+                    >
+                      {new Date(userStats.lastActive).toLocaleDateString()}
+                    </Typography>
+                  </ThemedView>
+                </>
+              )}
+            </ThemedView>
           )}
-        </View>
+        </ThemedView>
 
         {/* Level Card */}
-        <View style={styles.card}>
-          <Text style={styles.levelLabel}>Ваш уровень:</Text>
-          <View style={styles.progressBarContainer}>
-            <View
-              style={[
-                styles.progressBarFill,
-                { width: `${(userLevel.current / userLevel.max) * 100}%` },
-              ]}
-            />
-          </View>
-          <View style={styles.levelLabels}>
-            <Text style={styles.levelValue}>{userLevel.current}</Text>
-            <Text style={styles.levelValue}>{userLevel.max}</Text>
-          </View>
-        </View>
+        <ThemedView style={styles.card}>
+          <Typography weight="medium" size="md" style={styles.levelLabel}>
+            Ваш уровень:
+          </Typography>
+          {isLoadingUser ? (
+            <ActivityIndicator size="small" color="#4096FE" />
+          ) : (
+            <>
+              <ThemedView style={styles.progressBarContainer}>
+                <ThemedView
+                  style={[
+                    styles.progressBarFill,
+                    {
+                      width: `${((currentUser?.profile.level || 1) / (currentUser?.profile.maxLevel || 1)) * 100}%`,
+                    },
+                  ]}
+                />
+              </ThemedView>
+              <ThemedView style={styles.levelLabels}>
+                <Typography color="#666" size="sm" style={styles.levelValue}>
+                  {currentUser?.profile.level || 1}
+                </Typography>
+                <Typography color="#666" size="sm" style={styles.levelValue}>
+                  {currentUser?.profile.maxLevel || 1}
+                </Typography>
+              </ThemedView>
+            </>
+          )}
+        </ThemedView>
 
         {/* Streak Card */}
-        <View style={styles.card}>
-          <View style={styles.streakHeader}>
-            <Text style={styles.streakLabel}>Дней подряд: {streak}</Text>
-            <View style={styles.streakIndicators}>
+        <ThemedView style={styles.card}>
+          <ThemedView style={styles.streakHeader}>
+            <Typography weight="medium" size="md" style={styles.streakLabel}>
+              Дней подряд:{' '}
+              {isLoadingProgress ? '...' : exerciseProgress?.streak || 0}
+            </Typography>
+            <ThemedView style={styles.streakIndicators}>
               {renderStreakIndicators()}
-            </View>
-          </View>
-        </View>
+            </ThemedView>
+          </ThemedView>
+        </ThemedView>
 
         {/* Vocabulary Button */}
         <TouchableOpacity
           style={styles.vocabularyButton}
           onPress={handleOpenVocabulary}
         >
-          <Text style={styles.buttonText}>Мой словарь используемых слов</Text>
+          <Typography
+            color="white"
+            weight="medium"
+            size="md"
+            style={styles.buttonText}
+          >
+            Мой словарь используемых слов
+          </Typography>
         </TouchableOpacity>
 
         {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Выйти из аккаунта</Text>
+          <Typography
+            color="#FF3B30"
+            weight="medium"
+            size="md"
+            style={styles.logoutButtonText}
+          >
+            Выйти из аккаунта
+          </Typography>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -167,11 +249,16 @@ const styles = StyleSheet.create({
   header: {
     paddingTop: 50,
     paddingBottom: 16,
+    paddingHorizontal: 16,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+  },
+  settingsButton: {
+    padding: 8,
   },
   card: {
     backgroundColor: 'white',
@@ -202,12 +289,9 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
   },
   emailText: {
-    fontSize: 16,
     color: '#333',
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: '500',
     marginBottom: 12,
   },
   statsContainer: {
@@ -218,17 +302,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 8,
   },
-  statLabel: {
-    fontSize: 14,
-    color: '#666',
-  },
-  statValue: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
+  statLabel: {},
+  statValue: {},
   levelLabel: {
-    fontSize: 16,
-    fontWeight: '500',
     marginBottom: 10,
   },
   progressBarContainer: {
@@ -247,16 +323,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 5,
   },
-  levelValue: {
-    fontSize: 14,
-    color: '#666',
-  },
+  levelValue: {},
   streakHeader: {
     marginBottom: 5,
   },
   streakLabel: {
-    fontSize: 16,
-    fontWeight: '500',
     marginBottom: 10,
   },
   streakIndicators: {
@@ -282,19 +353,11 @@ const styles = StyleSheet.create({
     marginTop: 8,
     alignItems: 'center',
   },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-  },
+  buttonText: {},
   logoutButton: {
     marginTop: 16,
     padding: 16,
     alignItems: 'center',
   },
-  logoutButtonText: {
-    color: '#FF3B30',
-    fontSize: 16,
-    fontWeight: '500',
-  },
+  logoutButtonText: {},
 });

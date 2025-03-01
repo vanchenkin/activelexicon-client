@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
-  View,
-  Text,
   TextInput,
   TouchableOpacity,
   FlatList,
@@ -12,165 +10,134 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { mockWordsService, UserWord } from '@/services/mockWordsService';
+import { UserWord } from '@/services/mockWordsService';
+import { useUserWords, useSearchWords, useDeleteWord } from '@/hooks/useApi';
+import Typography from '@/components/Typography';
+import { ThemedView } from '@/components/ThemedView';
 
 export default function WordsScreen() {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [words, setWords] = useState<UserWord[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
 
-  useEffect(() => {
-    loadWords();
-  }, []);
+  // Always call hooks unconditionally
+  const {
+    data: userWords = [],
+    isLoading: isUserWordsLoading,
+    isError: isUserWordsError,
+  } = useUserWords();
 
-  const loadWords = async () => {
-    try {
-      setIsLoading(true);
-      const userWords = await mockWordsService.getUserWords();
-      setWords(userWords);
-    } catch (error) {
-      console.error('Failed to load words:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    data: searchResults = [],
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+  } = useSearchWords(searchQuery);
 
-  const handleSearch = async (query: string) => {
+  // Determine which data to use based on search query
+  const words = searchQuery.trim() ? searchResults : userWords;
+  const isLoading = searchQuery.trim() ? isSearchLoading : isUserWordsLoading;
+  const isError = searchQuery.trim() ? isSearchError : isUserWordsError;
+
+  // Use React Query mutation for deleting words
+  const deleteWordMutation = useDeleteWord();
+
+  const handleSearch = (query: string) => {
     setSearchQuery(query);
-
-    if (!query.trim()) {
-      loadWords();
-      return;
-    }
-
-    try {
-      setIsSearching(true);
-      const results = await mockWordsService.searchUserWords(query);
-      setWords(results);
-    } catch (error) {
-      console.error('Search failed:', error);
-    } finally {
-      setIsSearching(false);
-    }
   };
 
   const handleAddWord = () => {
     // Navigate to add word screen or show a modal
-    console.log('Add word');
+    router.push('/add-word');
   };
 
-  const handleDeleteWord = async (wordId: string) => {
-    try {
-      const success = await mockWordsService.deleteWord(wordId);
-      if (success) {
-        setWords(words.filter((word) => word.id !== wordId));
-      }
-    } catch (error) {
-      console.error('Failed to delete word:', error);
-    }
-  };
-
-  const handleBack = () => {
-    router.back();
+  const handleDeleteWord = (wordId: string) => {
+    deleteWordMutation.mutate(wordId);
   };
 
   const renderWordItem = ({ item }: { item: UserWord }) => (
-    <View style={styles.wordItem}>
-      <View style={styles.wordInfo}>
-        <Text style={styles.wordText}>{item.word}</Text>
-        <View style={styles.wordDivider} />
-      </View>
+    <ThemedView style={styles.wordItem}>
+      <ThemedView style={styles.wordInfo}>
+        <Typography style={styles.wordText}>{item.word}</Typography>
+        <Typography color="#666" style={styles.translationText}>
+          {item.translation}
+        </Typography>
+      </ThemedView>
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => handleDeleteWord(item.id)}
       >
-        <Ionicons name="trash-outline" size={20} color="#666" />
+        <Ionicons name="trash-outline" size={20} color="#FF3B30" />
       </TouchableOpacity>
-    </View>
+    </ThemedView>
   );
 
   const EmptyListComponent = () => (
-    <View style={styles.emptyContainer}>
-      <Ionicons
-        name="information-circle-outline"
-        size={48}
-        color="#999"
-        style={styles.emptyIcon}
-      />
-      <Text style={styles.emptyText}>
+    <ThemedView style={styles.emptyContainer}>
+      <Ionicons name="book-outline" size={50} color="#CCC" />
+      <Typography color="#666" style={styles.emptyText}>
         {searchQuery
-          ? 'Не найдено слов по вашему запросу'
-          : 'У вас еще нет слов. Добавьте их!'}
-      </Text>
-    </View>
+          ? 'По вашему запросу ничего не найдено'
+          : 'У вас пока нет добавленных слов'}
+      </Typography>
+    </ThemedView>
   );
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <StatusBar style="auto" />
 
-      <Text
-        style={[
-          styles.screenTitle,
-          {
-            position: 'absolute',
-            top: 8,
-            left: 0,
-            right: 0,
-            textAlign: 'center',
-          },
-        ]}
-      >
-        СПИСОК МОИХ СЛОВ
-      </Text>
+      <ThemedView style={styles.header}>
+        <Typography weight="bold" size="lg" style={styles.headerTitle}>
+          Мои слова
+        </Typography>
+      </ThemedView>
 
-      <View style={styles.header}>
-        <TouchableOpacity onPress={handleBack}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Изучаемые слова</Text>
-        <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>
-          <Text style={styles.addButtonText}>Добавить</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.searchContainer}>
-        <Ionicons
-          name="search"
-          size={20}
-          color="#999"
-          style={styles.searchIcon}
-        />
+      <ThemedView style={styles.searchContainer}>
+        <Ionicons name="search-outline" size={20} color="#999" />
         <TextInput
           style={styles.searchInput}
-          placeholder="Введите слово..."
+          placeholder="Поиск слов..."
           value={searchQuery}
           onChangeText={handleSearch}
         />
-        <TouchableOpacity style={styles.plusButton}>
-          <Ionicons name="add" size={24} color="#000" />
-        </TouchableOpacity>
-      </View>
+        {searchQuery.length > 0 && (
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={() => handleSearch('')}
+          >
+            <Ionicons name="close-circle" size={20} color="#999" />
+          </TouchableOpacity>
+        )}
+      </ThemedView>
 
       {isLoading ? (
-        <View style={styles.loadingContainer}>
+        <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
-        </View>
+        </ThemedView>
+      ) : isError ? (
+        <ThemedView style={styles.errorContainer}>
+          <Typography color="#FF3B30" size="md" style={styles.errorText}>
+            Не удалось загрузить слова
+          </Typography>
+          <TouchableOpacity style={styles.retryButton}>
+            <Typography color="white" weight="medium" style={styles.retryText}>
+              Повторить
+            </Typography>
+          </TouchableOpacity>
+        </ThemedView>
       ) : (
         <FlatList
           data={words}
           renderItem={renderWordItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={[
-            styles.wordsList,
-            words.length === 0 && styles.emptyListContent,
-          ]}
+          contentContainerStyle={styles.wordsList}
           ListEmptyComponent={EmptyListComponent}
         />
       )}
-    </View>
+
+      <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>
+        <Ionicons name="add" size={24} color="white" />
+      </TouchableOpacity>
+    </ThemedView>
   );
 }
 
@@ -188,20 +155,8 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     backgroundColor: '#FFF',
   },
-  title: {
+  headerTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-  },
-  addButton: {
-    backgroundColor: '#0099FF',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  addButtonText: {
-    color: 'white',
-    fontWeight: '500',
-    fontSize: 14,
   },
   searchContainer: {
     backgroundColor: 'white',
@@ -248,10 +203,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
   },
-  wordDivider: {
-    height: 1,
-    backgroundColor: '#E0E0E0',
-    width: '100%',
+  translationText: {
+    fontSize: 14,
   },
   deleteButton: {
     padding: 8,
@@ -273,14 +226,43 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
     textAlign: 'center',
   },
   emptyListContent: {
     flexGrow: 1,
     justifyContent: 'center',
   },
-  plusButton: {
-    padding: 8,
+  addButton: {
+    backgroundColor: '#0099FF',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+  },
+  addButtonText: {
+    color: 'white',
+    fontWeight: '500',
+    fontSize: 14,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+  },
+  errorText: {
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#0099FF',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  retryText: {
+    color: 'white',
+    fontSize: 14,
   },
 });

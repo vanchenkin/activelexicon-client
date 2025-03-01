@@ -1,33 +1,32 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Modal } from 'react-native';
+import { StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { WordDetails } from '@/services/mockTranslationService';
+import Typography from './Typography';
+import { ThemedView } from './ThemedView';
 
 interface WordDetailsModalProps {
   visible: boolean;
-  wordDetails: WordDetails | null;
+  word: WordDetails | null;
   onClose: () => void;
-  onAddWord: (word: string) => void;
+  onAdd: () => void;
+  isAlreadyAdded?: boolean;
 }
 
 export default function WordDetailsModal({
   visible,
-  wordDetails,
+  word,
   onClose,
-  onAddWord,
+  onAdd,
+  isAlreadyAdded = false,
 }: WordDetailsModalProps) {
-  if (!wordDetails) return null;
-
-  const handleAddWord = () => {
-    onAddWord(wordDetails.word);
-    onClose();
-  };
+  if (!word) return null;
 
   const formatPartOfSpeech = () => {
-    if (wordDetails.gender) {
-      return `${wordDetails.partOfSpeech}, ${wordDetails.gender}`;
+    if (word.gender) {
+      return `${word.partOfSpeech}, ${word.gender}`;
     }
-    return wordDetails.partOfSpeech;
+    return word.partOfSpeech;
   };
 
   return (
@@ -42,16 +41,34 @@ export default function WordDetailsModal({
         onPress={onClose}
         activeOpacity={1}
       >
-        <View style={styles.container} onStartShouldSetResponder={() => true}>
-          <Text style={styles.word}>{wordDetails.word}</Text>
-          <Text style={styles.translation}>{wordDetails.translation}</Text>
-          <Text style={styles.partOfSpeech}>{formatPartOfSpeech()}</Text>
-          <Text style={styles.example}>{wordDetails.example}</Text>
+        <ThemedView
+          style={styles.container}
+          onStartShouldSetResponder={() => true}
+        >
+          <Typography weight="bold" size="lg" style={styles.word}>
+            {word.word}
+          </Typography>
+          <Typography size="lg" style={styles.translation}>
+            {word.translation}
+          </Typography>
+          <Typography color="#666" style={styles.partOfSpeech}>
+            {formatPartOfSpeech()}
+          </Typography>
+          <Typography style={styles.example}>{word.example}</Typography>
 
-          <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>
-            <Ionicons name="add-circle" size={32} color="#0099FF" />
-          </TouchableOpacity>
-        </View>
+          {!isAlreadyAdded ? (
+            <TouchableOpacity style={styles.addButton} onPress={onAdd}>
+              <Ionicons name="add-circle" size={32} color="#0099FF" />
+            </TouchableOpacity>
+          ) : (
+            <ThemedView style={styles.addedIndicator}>
+              <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+              <Typography color="#4CAF50" style={styles.addedText}>
+                Добавлено
+              </Typography>
+            </ThemedView>
+          )}
+        </ThemedView>
       </TouchableOpacity>
     </Modal>
   );
@@ -73,7 +90,6 @@ const styles = StyleSheet.create({
   },
   word: {
     fontSize: 18,
-    fontWeight: 'bold',
     marginBottom: 8,
   },
   translation: {
@@ -82,7 +98,6 @@ const styles = StyleSheet.create({
   },
   partOfSpeech: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 12,
     fontStyle: 'italic',
   },
@@ -95,5 +110,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     right: 10,
+  },
+  addedIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  addedText: {
+    marginLeft: 4,
+    fontSize: 14,
   },
 });

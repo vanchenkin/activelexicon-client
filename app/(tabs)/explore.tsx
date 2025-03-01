@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
-  View,
-  Text,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
@@ -14,12 +12,12 @@ import { useTopics, useSearchTopics, useGenerateText } from '@/hooks/useApi';
 import { Topic } from '@/services/mockTopicsApi';
 import TextComplexityModal from '@/components/TextComplexityModal';
 import TextSelectionScreen from '@/components/TextSelectionScreen';
-import { useRouter } from 'expo-router';
+import Typography from '@/components/Typography';
+import { ThemedView } from '@/components/ThemedView';
 
 type TextComplexity = 'easy' | 'medium' | 'hard';
 
 export default function ExploreScreen() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -117,7 +115,7 @@ export default function ExploreScreen() {
           color="#0066CC"
           style={styles.topicIcon}
         />
-        <Text style={styles.topicText}>{topic.name}</Text>
+        <Typography style={styles.topicText}>{topic.name}</Typography>
       </TouchableOpacity>
     );
   };
@@ -134,24 +132,26 @@ export default function ExploreScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <StatusBar style="auto" />
 
-      <Text style={styles.title}>Генерация текста</Text>
+      <Typography weight="bold" size="2xl" style={styles.title}>
+        Генерация текста
+      </Typography>
 
-      <View style={styles.infoCard}>
+      <ThemedView style={styles.infoCard}>
         <Ionicons
           name="information-circle-outline"
           size={24}
           color="#666"
           style={styles.infoIcon}
         />
-        <Text style={styles.infoText}>
+        <Typography color="#666" size="md" style={styles.infoText}>
           Для добавления новых слов нужно сгенерировать текст
-        </Text>
-      </View>
+        </Typography>
+      </ThemedView>
 
-      <View style={styles.searchContainer}>
+      <ThemedView style={styles.searchContainer}>
         <Ionicons
           name="search"
           size={20}
@@ -164,23 +164,23 @@ export default function ExploreScreen() {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
-      </View>
+      </ThemedView>
 
       {isLoadingTopics || isSearching ? (
-        <View style={styles.loadingContainer}>
+        <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
-        </View>
+        </ThemedView>
       ) : (
         <ScrollView style={styles.topicsContainer}>
-          <View style={styles.topicsGrid}>
+          <ThemedView style={styles.topicsGrid}>
             {displayedTopics.map((topic, index) =>
               renderTopicItem(topic, index)
             )}
-          </View>
+          </ThemedView>
         </ScrollView>
       )}
 
-      <View style={styles.bottomContainer}>
+      <ThemedView style={styles.bottomContainer}>
         <TouchableOpacity
           style={[
             styles.generateButton,
@@ -192,7 +192,14 @@ export default function ExploreScreen() {
           {generateTextMutation.isPending ? (
             <ActivityIndicator color="white" size="small" />
           ) : (
-            <Text style={styles.generateButtonText}>Сгенерировать</Text>
+            <Typography
+              color="white"
+              weight="bold"
+              size="md"
+              style={styles.generateButtonText}
+            >
+              Сгенерировать
+            </Typography>
           )}
         </TouchableOpacity>
 
@@ -202,7 +209,7 @@ export default function ExploreScreen() {
         >
           <Ionicons name="options-outline" size={24} color="#000" />
         </TouchableOpacity>
-      </View>
+      </ThemedView>
 
       <TextComplexityModal
         visible={isSettingsModalVisible}
@@ -210,7 +217,7 @@ export default function ExploreScreen() {
         initialComplexity={textComplexity}
         onComplexityChange={handleComplexityChange}
       />
-    </View>
+    </ThemedView>
   );
 }
 
@@ -221,8 +228,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
     marginTop: 40,
     marginBottom: 20,
     textAlign: 'center',
@@ -248,8 +253,6 @@ const styles = StyleSheet.create({
   },
   infoText: {
     flex: 1,
-    fontSize: 16,
-    color: '#666',
   },
   searchContainer: {
     backgroundColor: 'white',
@@ -316,11 +319,7 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#99CCFF',
   },
-  generateButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+  generateButtonText: {},
   sortButton: {
     backgroundColor: 'white',
     borderRadius: 10,
@@ -346,22 +345,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 16,
     marginBottom: 16,
-  },
-  generatedText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
-  },
-  doneButton: {
-    backgroundColor: '#F0F0F0',
-    borderRadius: 10,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  doneButtonText: {
-    color: '#333',
-    fontSize: 16,
-    fontWeight: '500',
   },
 });

@@ -44,7 +44,7 @@ function RootLayoutNav() {
       // Redirect to the home page if logged in and trying to access login/register
       router.replace('/(tabs)');
     }
-  }, [user, loading, segments]);
+  }, [user, loading, segments, router]);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -62,9 +62,13 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'Inter-Regular': require('../assets/fonts/Inter-Regular.ttf'),
+    'Inter-Medium': require('../assets/fonts/Inter-Medium.ttf'),
+    'Inter-SemiBold': require('../assets/fonts/Inter-SemiBold.ttf'),
+    'Inter-Bold': require('../assets/fonts/Inter-Bold.ttf'),
   });
 
+  // Use effect to hide splash screen once fonts are loaded
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();

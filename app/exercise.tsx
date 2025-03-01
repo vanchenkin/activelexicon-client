@@ -14,97 +14,68 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
-// Dummy exercise data - would come from a real API in production
-interface Exercise {
-  id: string;
-  type: 'fill-blank';
-  text: string;
-  blankIndex: number; // The word index that should be blank
-  correctAnswer: string;
-  contextBeforeBlank: string;
-  contextAfterBlank: string;
-}
-
-// Mock exercise data
-const mockExercises: Exercise[] = [
-  {
-    id: '1',
-    type: 'fill-blank',
-    text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not _____ five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    blankIndex: 8,
-    correctAnswer: 'only',
-    contextBeforeBlank: 'It has survived not ',
-    contextAfterBlank:
-      ' five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.',
-  },
-  {
-    id: '2',
-    type: 'fill-blank',
-    text: 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the _____ source.',
-    blankIndex: 12,
-    correctAnswer: 'undoubtable',
-    contextBeforeBlank: 'discovered the ',
-    contextAfterBlank: ' source.',
-  },
-];
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  useExercises,
+  useSubmitAnswer,
+  useAddExperience,
+} from '@/hooks/useApi';
 
 export default function ExerciseScreen() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [isChecking, setIsChecking] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [exercises, setExercises] = useState<Exercise[]>([]);
 
-  // Simulate loading exercises
-  useEffect(() => {
-    const loadExercises = async () => {
-      try {
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setExercises(mockExercises);
-      } catch (error) {
-        console.error('Failed to load exercises:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Use React Query to fetch exercises
+  const { data: exercises = [], isLoading, isError } = useExercises();
 
-    loadExercises();
-  }, []);
+  // Use React Query mutation to submit answers
+  const submitAnswerMutation = useSubmitAnswer();
+
+  // Use React Query mutation to add experience points on completion
+  const addExperienceMutation = useAddExperience();
 
   const currentExercise = exercises[currentExerciseIndex];
 
   const handleCheckAnswer = () => {
-    if (!userAnswer.trim() || isChecking) return;
+    if (!userAnswer.trim() || isChecking || !currentExercise) return;
 
     setIsChecking(true);
 
-    // Simulate checking answer with a delay
-    setTimeout(() => {
-      const isAnswerCorrect =
-        userAnswer.trim().toLowerCase() ===
-        currentExercise.correctAnswer.toLowerCase();
+    submitAnswerMutation.mutate(
+      {
+        exerciseId: currentExercise.id,
+        answer: userAnswer.trim(),
+      },
+      {
+        onSuccess: (isAnswerCorrect) => {
+          setIsCorrect(isAnswerCorrect);
 
-      setIsCorrect(isAnswerCorrect);
-      setIsChecking(false);
-
-      // If correct, move to next exercise after a delay
-      if (isAnswerCorrect) {
-        setTimeout(() => {
-          if (currentExerciseIndex < exercises.length - 1) {
-            setCurrentExerciseIndex(currentExerciseIndex + 1);
-            setUserAnswer('');
-            setIsCorrect(null);
-          } else {
-            // All exercises completed - navigate to completion screen
-            router.push('/exercise-complete');
+          if (isAnswerCorrect) {
+            // If correct, wait a moment and then move to next exercise
+            setTimeout(() => {
+              if (currentExerciseIndex < exercises.length - 1) {
+                setCurrentExerciseIndex(currentExerciseIndex + 1);
+                setUserAnswer('');
+                setIsCorrect(null);
+              } else {
+                // All exercises completed - add experience and navigate to completion screen
+                addExperienceMutation.mutate(100); // Award 100 XP for completion
+                router.push('/exercise-complete');
+              }
+            }, 1500);
           }
-        }, 1500);
+
+          setIsChecking(false);
+        },
+        onError: () => {
+          setIsChecking(false);
+        },
       }
-    }, 800);
+    );
   };
 
   const handleBack = () => {
@@ -116,6 +87,38 @@ export default function ExerciseScreen() {
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0099FF" />
         <Text style={styles.loadingText}>Загрузка упражнений...</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Ionicons name="alert-circle-outline" size={48} color="#FF3B30" />
+        <Text style={styles.errorText}>Ошибка загрузки упражнений</Text>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={() =>
+            queryClient.invalidateQueries({ queryKey: ['exercises'] })
+          }
+        >
+          <Text style={styles.retryButtonText}>Попробовать снова</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (!exercises || exercises.length === 0) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Ionicons name="book-outline" size={48} color="#999" />
+        <Text style={styles.loadingText}>Нет доступных упражнений</Text>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.retryButtonText}>Вернуться назад</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -151,16 +154,29 @@ export default function ExerciseScreen() {
 
       <ScrollView style={styles.exerciseContainer}>
         <Text style={styles.instructionText}>
-          Вставьте слово, которое лучше всего подходит:
+          {currentExercise.type === 'fill-blank'
+            ? 'Вставьте слово, которое лучше всего подходит:'
+            : 'Переведите предложение:'}
         </Text>
 
         {currentExercise && (
           <View style={styles.textContainer}>
             <Text style={styles.exerciseText}>
-              {currentExercise.text.split('_____')[0]}
-              <Text style={styles.blankLine}>______</Text>
-              {currentExercise.text.split('_____')[1]}
+              {currentExercise.text.includes('_____')
+                ? currentExercise.text.split('_____')[0]
+                : currentExercise.text}
+              {currentExercise.text.includes('_____') && (
+                <>
+                  <Text style={styles.blankLine}></Text>
+                  {currentExercise.text.split('_____')[1]}
+                </>
+              )}
             </Text>
+            {currentExercise.hint && isCorrect === false && (
+              <Text style={styles.hintText}>
+                Подсказка: {currentExercise.hint}
+              </Text>
+            )}
           </View>
         )}
       </ScrollView>
@@ -216,6 +232,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
   },
+  errorText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#FF3B30',
+  },
+  retryButton: {
+    marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#0099FF',
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '500',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -270,6 +303,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#EEE',
   },
   exerciseText: {
     fontSize: 16,
@@ -280,6 +315,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#333',
     paddingHorizontal: 8,
+  },
+  hintText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#0099FF',
+    fontStyle: 'italic',
   },
   inputContainer: {
     padding: 16,

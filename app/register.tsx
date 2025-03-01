@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { StatusBar } from 'expo-status-bar';
+import Logo from '../components/Logo';
+import Button from '../components/Button';
+import Typography from '../components/Typography';
+import { ThemedView } from '../components/ThemedView';
+import LanguageLevelSelect from '../components/LanguageLevelSelect';
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState('');
@@ -17,14 +15,12 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [languageLevel, setLanguageLevel] = useState('');
   const [error, setError] = useState('');
-  const { signUp, loading } = useAuth();
+  const { signUp, isLoading } = useAuth();
   const router = useRouter();
 
   const handleRegister = async () => {
-    // Reset error
     setError('');
 
-    // Validate inputs
     if (!email || !password || !confirmPassword || !languageLevel) {
       setError('Пожалуйста, заполните все поля');
       return;
@@ -45,21 +41,31 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ThemedView
+      style={styles.container}
+      darkColor="#1E1E1E"
+      lightColor="#F8F8F8"
+    >
       <StatusBar style="auto" />
 
-      <View style={styles.formContainer}>
-        <View style={styles.logoContainer}>
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoText}>ActiveLexicon</Text>
-          </View>
-        </View>
+      <ThemedView
+        style={styles.formContainer}
+        lightColor="white"
+        darkColor="#2A2A2A"
+      >
+        <ThemedView style={styles.logoContainer}>
+          <Logo size={150} color="#0099FF" />
+        </ThemedView>
 
-        <Text style={styles.descriptionText}>
+        <Typography style={styles.descriptionText}>
           Приложение для развития активного словарного запаса
-        </Text>
+        </Typography>
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+        {error ? (
+          <Typography color="red" style={styles.errorText}>
+            {error}
+          </Typography>
+        ) : null}
 
         <TextInput
           style={styles.input}
@@ -86,26 +92,23 @@ export default function RegisterScreen() {
           secureTextEntry
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Уровень языка"
+        <LanguageLevelSelect
           value={languageLevel}
-          onChangeText={setLanguageLevel}
+          onChange={setLanguageLevel}
+          placeholder="Выберите уровень языка"
+          style={styles.input}
         />
 
-        <TouchableOpacity
-          style={styles.button}
+        <Button
+          title="Зарегистрироваться"
           onPress={handleRegister}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text style={styles.buttonText}>Зарегистрироваться</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </View>
+          disabled={isLoading}
+          isLoading={isLoading}
+          style={styles.button}
+          textStyle={styles.buttonText}
+        />
+      </ThemedView>
+    </ThemedView>
   );
 }
 
@@ -124,25 +127,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 20,
     alignItems: 'center',
+    justifyContent: 'center', // Center content vertically
   },
   logoContainer: {
     marginVertical: 30,
     alignItems: 'center',
-  },
-  logoCircle: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    borderWidth: 2,
-    borderColor: '#0099FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoText: {
-    color: '#0099FF',
-    fontSize: 20,
-    fontWeight: 'bold',
-    transform: [{ rotate: '-30deg' }],
   },
   descriptionText: {
     fontSize: 16,

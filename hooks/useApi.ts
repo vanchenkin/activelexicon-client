@@ -3,7 +3,8 @@ import { mockApi, Word, UserStats } from '@/services/mockApi';
 import { mockTopicsApi, Topic } from '@/services/mockTopicsApi';
 import { mockChatService, ChatMessage } from '@/services/mockChatService';
 import { mockExerciseService, Exercise } from '@/services/mockExerciseService';
-import { mockAuthService } from '@/services/mockAuth';
+import { mockWordsService, UserWord } from '@/services/mockWordsService';
+import { mockAuthService, User } from '@/services/mockAuth';
 
 // Hook for fetching words
 export function useWords() {
@@ -148,20 +149,6 @@ export function useExerciseProgress() {
   });
 }
 
-// Hook for fetching current user data (profile)
-export function useCurrentUser() {
-  return useQuery({
-    queryKey: ['currentUser'],
-    queryFn: () => {
-      const user = mockAuthService.getCurrentUser();
-      if (!user) throw new Error('Not authenticated');
-      return user;
-    },
-    // Avoid refetching too often
-    staleTime: 60 * 1000, // 1 minute
-  });
-}
-
 // Hook for updating user profile
 export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
@@ -170,8 +157,9 @@ export function useUpdateUserProfile() {
     mutationFn: (updates: Partial<User['profile']>) =>
       mockAuthService.updateUserProfile(updates),
     onSuccess: (updatedUser) => {
-      // Update the user data in the cache
       queryClient.setQueryData(['currentUser'], updatedUser);
+      // Also update user stats which might depend on profile data
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
   });
 }
@@ -183,8 +171,58 @@ export function useAddExperience() {
   return useMutation({
     mutationFn: (points: number) => mockAuthService.addExperience(points),
     onSuccess: (updatedUser) => {
-      // Update the user data in the cache
       queryClient.setQueryData(['currentUser'], updatedUser);
+      queryClient.invalidateQueries({ queryKey: ['exerciseProgress'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+    },
+  });
+}
+
+// Hook for fetching user words
+export function useUserWords() {
+  return useQuery({
+    queryKey: ['userWords'],
+    queryFn: () => mockWordsService.getUserWords(),
+  });
+}
+
+// Hook for searching user words
+export function useSearchWords(query: string) {
+  return useQuery({
+    queryKey: ['searchWords', query],
+    queryFn: () => mockWordsService.searchUserWords(query),
+    enabled: query.length > 0,
+  });
+}
+
+// Hook for adding a new word
+export function useAddWord() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      word,
+      translation,
+    }: {
+      word: string;
+      translation: string;
+    }) => mockWordsService.addWord(word, translation),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userWords'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+    },
+  });
+}
+
+// Hook for deleting a word
+export function useDeleteWord() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (wordId: string) => mockWordsService.deleteWord(wordId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userWords'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
   });
 }
