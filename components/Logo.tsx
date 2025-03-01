@@ -1,21 +1,21 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle, Image } from 'react-native';
+import { StyleSheet, ViewStyle, Image } from 'react-native';
+import { ThemedView } from './ThemedView';
 
 interface LogoProps {
   size?: number;
   style?: ViewStyle;
-  color?: string;
 }
 
-const Logo = ({ size = 100, style, color }: LogoProps) => {
+const Logo = ({ size = 100, style }: LogoProps) => {
   return (
-    <View style={[styles.container, style]}>
+    <ThemedView style={[styles.container, style]}>
       <Image
         source={require('../assets/images/logo.png')}
         style={{ width: size, height: size }}
         resizeMode="contain"
       />
-    </View>
+    </ThemedView>
   );
 };
 

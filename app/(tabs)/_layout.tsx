@@ -13,24 +13,21 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#8E8E93',
         headerShown: false,
         tabBarLabelStyle: {
-          fontSize: 8,
-          marginTop: 5,
-          marginBottom: 2,
+          fontSize: 12,
         },
-        tabBarIconStyle: {
-          marginTop: 2,
-        },
+        tabBarIconStyle: {},
         tabBarItemStyle: {
-          paddingVertical: 5,
+          paddingVertical: 8,
         },
+        tabBarLabelPosition: 'below-icon',
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Учить!',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="school-outline" size={20} color={color} />
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <Ionicons name="school-outline" size={24} color={color} />
           ),
         }}
       />
@@ -38,8 +35,8 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: 'Найти',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="search-outline" size={20} color={color} />
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <Ionicons name="search-outline" size={24} color={color} />
           ),
         }}
       />
@@ -47,8 +44,8 @@ export default function TabLayout() {
         name="words"
         options={{
           title: 'Слова',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="book-outline" size={20} color={color} />
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <Ionicons name="book-outline" size={24} color={color} />
           ),
         }}
       />
@@ -56,8 +53,8 @@ export default function TabLayout() {
         name="chat"
         options={{
           title: 'Чат',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-outline" size={20} color={color} />
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <Ionicons name="chatbubble-outline" size={24} color={color} />
           ),
         }}
       />
@@ -65,8 +62,8 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Профиль',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={20} color={color} />
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+            <Ionicons name="person-outline" size={24} color={color} />
           ),
         }}
       />

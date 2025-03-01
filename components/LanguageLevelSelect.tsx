@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   TouchableOpacity,
   Modal,
   Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Typography from './Typography';
+import { ThemedView } from './ThemedView';
 
 export type LanguageLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 
@@ -93,7 +93,7 @@ export default function LanguageLevelSelect({
           style={styles.modalOverlay}
           onPress={() => setModalVisible(false)}
         >
-          <View
+          <ThemedView
             style={styles.modalContent}
             onStartShouldSetResponder={() => true}
             onTouchEnd={(e) => e.stopPropagation()}
@@ -108,14 +108,14 @@ export default function LanguageLevelSelect({
                 style={styles.levelOption}
                 onPress={() => handleSelect(level.value)}
               >
-                <View style={styles.levelHeader}>
+                <ThemedView style={styles.levelHeader}>
                   <Typography style={styles.levelLabel}>
                     {level.label}
                   </Typography>
                   {value === level.value && (
                     <Ionicons name="checkmark" size={20} color="#0099FF" />
                   )}
-                </View>
+                </ThemedView>
                 <Typography style={styles.levelDescription}>
                   {level.description}
                 </Typography>
@@ -128,7 +128,7 @@ export default function LanguageLevelSelect({
             >
               <Typography style={styles.closeButtonText}>Закрыть</Typography>
             </TouchableOpacity>
-          </View>
+          </ThemedView>
         </Pressable>
       </Modal>
     </>

@@ -8,6 +8,7 @@ import Button from '../components/Button';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import LanguageLevelSelect from '../components/LanguageLevelSelect';
+import BackButton from '../components/BackButton';
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState('');
@@ -41,20 +42,14 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ThemedView
-      style={styles.container}
-      darkColor="#1E1E1E"
-      lightColor="#F8F8F8"
-    >
-      <StatusBar style="auto" />
+    <ThemedView style={styles.container}>
+      <ThemedView style={styles.formContainer}>
+        <ThemedView style={styles.backButtonContainer}>
+          <BackButton onPress={() => router.back()} />
+        </ThemedView>
 
-      <ThemedView
-        style={styles.formContainer}
-        lightColor="white"
-        darkColor="#2A2A2A"
-      >
         <ThemedView style={styles.logoContainer}>
-          <Logo size={150} color="#0099FF" />
+          <Logo size={150} />
         </ThemedView>
 
         <Typography style={styles.descriptionText}>
@@ -115,7 +110,12 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E1E1E',
+    backgroundColor: 'white',
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
   },
   headerText: {
     color: 'white',

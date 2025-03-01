@@ -1,21 +1,15 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Button from '../components/Button';
 import Logo from '../components/Logo';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
+import { router } from 'expo-router';
 
 export default function EnterScreen() {
-  const router = useRouter();
-
   return (
-    <ThemedView
-      style={styles.container}
-      lightColor="#F8F8F8"
-      darkColor="#1E1E1E"
-    >
+    <ThemedView style={styles.container}>
       <StatusBar style="auto" />
 
       <Typography weight="bold" size="2xl" style={styles.welcomeText}>
@@ -23,7 +17,7 @@ export default function EnterScreen() {
       </Typography>
 
       <ThemedView style={styles.logoContainer}>
-        <Logo size={150} color="#0099FF" />
+        <Logo size={150} />
       </ThemedView>
 
       <Typography size="md" style={styles.descriptionText}>

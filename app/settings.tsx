@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -12,12 +13,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
+import BackButton from '@/components/BackButton';
 
 type LanguageLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, logOut } = useAuth();
 
   // Sample settings state
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -37,7 +39,7 @@ export default function SettingsScreen() {
 
   const handleLogout = async () => {
     try {
-      // Implementation would depend on your auth context
+      await logOut();
       router.replace('/login');
     } catch (error) {
       console.error('Logout error:', error);
@@ -52,13 +54,11 @@ export default function SettingsScreen() {
 
       {/* Header */}
       <ThemedView style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color="#333" />
-        </TouchableOpacity>
+        <BackButton onPress={handleBackPress} />
         <Typography weight="bold" size="lg" style={styles.headerTitle}>
           Настройки
         </Typography>
-        <ThemedView style={styles.placeholderView} />
+        <ThemedView style={{ width: 40 }} />
       </ThemedView>
 
       <ScrollView style={styles.scrollView}>
@@ -333,14 +333,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#EFEFEF',
   },
-  backButton: {
-    padding: 8,
-  },
   headerTitle: {
     fontSize: 18,
-  },
-  placeholderView: {
-    width: 40,
   },
   scrollView: {
     flex: 1,
@@ -352,10 +346,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
     elevation: 2,
   },
   sectionTitle: {
@@ -431,10 +421,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     backgroundColor: 'white',
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+
     elevation: 2,
   },
   bottomSpacing: {

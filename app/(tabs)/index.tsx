@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@/context/AuthContext';
 import { useWords } from '@/hooks/useApi';
+import { ThemedView } from '../../components/ThemedView';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { user } = useAuth();
   const { data: words, isLoading } = useWords();
   const [hasWords, setHasWords] = useState(false);
 
@@ -39,31 +31,31 @@ export default function HomeScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         <Text>Загрузка...</Text>
-      </View>
+      </ThemedView>
     );
   }
 
   if (!hasWords) {
     return (
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         <StatusBar style="auto" />
 
-        <View style={styles.emptyContainer}>
-          <View style={styles.emptyIconContainer}>
+        <ThemedView style={styles.emptyContainer}>
+          <ThemedView style={styles.emptyIconContainer}>
             <Ionicons
               name="chatbubble-ellipses-outline"
               size={40}
               color="#666"
             />
-          </View>
+          </ThemedView>
 
           <Text style={styles.emptyText}>
             У вас еще нет слов для изучения.{'\n'}
             Добавьте их!
           </Text>
-        </View>
+        </ThemedView>
 
         <TouchableOpacity
           style={styles.addWordsButton}
@@ -71,12 +63,12 @@ export default function HomeScreen() {
         >
           <Text style={styles.buttonText}>Добавить слова</Text>
         </TouchableOpacity>
-      </View>
+      </ThemedView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <StatusBar style="auto" />
 
       <Text style={styles.title}>Лента заданий</Text>
@@ -89,33 +81,33 @@ export default function HomeScreen() {
       <Text style={styles.sectionTitle}>Типы заданий:</Text>
 
       <ScrollView style={styles.exerciseList}>
-        <View style={styles.exerciseCard}>
-          <View style={styles.iconContainer}>
+        <ThemedView style={styles.exerciseCard}>
+          <ThemedView style={styles.iconContainer}>
             <Ionicons
               name="chatbubble-ellipses-outline"
               size={32}
               color="#666"
             />
-          </View>
-          <View style={styles.exerciseContent}>
+          </ThemedView>
+          <ThemedView style={styles.exerciseContent}>
             <Text style={styles.exerciseTitle}>Составить предложение</Text>
             <Text style={styles.exerciseDescription}>
               Составьте предложение с данным словом
             </Text>
-          </View>
-        </View>
+          </ThemedView>
+        </ThemedView>
 
-        <View style={styles.exerciseCard}>
-          <View style={styles.iconContainer}>
+        <ThemedView style={styles.exerciseCard}>
+          <ThemedView style={styles.iconContainer}>
             <Ionicons name="text-outline" size={32} color="#666" />
-          </View>
-          <View style={styles.exerciseContent}>
+          </ThemedView>
+          <ThemedView style={styles.exerciseContent}>
             <Text style={styles.exerciseTitle}>Вставить слово</Text>
             <Text style={styles.exerciseDescription}>
               Вставьте наиболее подходящее слово в предложение
             </Text>
-          </View>
-        </View>
+          </ThemedView>
+        </ThemedView>
       </ScrollView>
 
       <TouchableOpacity
@@ -124,7 +116,7 @@ export default function HomeScreen() {
       >
         <Text style={styles.buttonText}>Начать упражнения</Text>
       </TouchableOpacity>
-    </View>
+    </ThemedView>
   );
 }
 

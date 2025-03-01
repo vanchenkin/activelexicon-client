@@ -69,7 +69,6 @@ export default function ExploreScreen() {
   };
 
   const handleWordSelected = (word: string) => {
-    console.log('Selected word:', word);
     // Here you would implement logic to save the word or show a definition
     if (!selectedWords.includes(word)) {
       setSelectedWords([...selectedWords, word]);
@@ -85,9 +84,6 @@ export default function ExploreScreen() {
   };
 
   const handleDone = () => {
-    // Here you would typically save selected words
-    console.log('Final selected words:', selectedWords);
-
     // Close the generated text view
     generateTextMutation.reset();
     setSelectedWords([]);

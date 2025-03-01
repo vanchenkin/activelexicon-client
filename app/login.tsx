@@ -7,6 +7,7 @@ import Logo from '../components/Logo';
 import Button from '../components/Button';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
+import BackButton from '../components/BackButton';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -30,26 +31,16 @@ export default function LoginScreen() {
   };
 
   return (
-    <ThemedView
-      style={styles.container}
-      darkColor="#1E1E1E"
-      lightColor="#F8F8F8"
-    >
-      <StatusBar style="auto" />
+    <ThemedView style={styles.container}>
+      <BackButton onPress={() => router.back()} />
 
-      <ThemedView
-        style={styles.formContainer}
-        lightColor="white"
-        darkColor="#2A2A2A"
-      >
+      <ThemedView style={styles.formContainer}>
         <ThemedView style={styles.logoContainer}>
-          <Logo size={150} color="#0099FF" />
+          <Logo size={150} />
         </ThemedView>
-
         <Typography size="md" style={styles.descriptionText}>
           Приложение для развития активного словарного запаса
         </Typography>
-
         <TextInput
           style={styles.input}
           placeholder="E-mail"
@@ -58,7 +49,6 @@ export default function LoginScreen() {
           autoCapitalize="none"
           keyboardType="email-address"
         />
-
         <TextInput
           style={styles.input}
           placeholder="Пароль"
@@ -66,13 +56,11 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-
         {error ? (
           <Typography color="red" style={styles.errorText}>
             {error}
           </Typography>
         ) : null}
-
         <Button
           title="Войти"
           onPress={handleLogin}
@@ -89,7 +77,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E1E1E',
+    backgroundColor: 'white',
   },
   headerText: {
     color: 'white',
