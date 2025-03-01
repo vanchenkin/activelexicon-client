@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TextInput, 
-  TouchableOpacity, 
-  FlatList, 
-  KeyboardAvoidingView, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  KeyboardAvoidingView,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
@@ -40,15 +40,15 @@ export default function ChatScreen() {
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || isSending) return;
-    
+
     const userInput = inputText.trim();
     setInputText('');
-    
+
     try {
       setIsSending(true);
       const updatedHistory = await mockChatService.sendMessage(userInput);
       setMessages(updatedHistory);
-      
+
       // Scroll to bottom after sending
       setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
@@ -64,14 +64,16 @@ export default function ChatScreen() {
     // Format timestamp
     const formattedTime = new Date(item.timestamp).toLocaleTimeString([], {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
-    
+
     return (
-      <View style={[
-        styles.messageBubble,
-        item.isUser ? styles.userMessage : styles.aiMessage
-      ]}>
+      <View
+        style={[
+          styles.messageBubble,
+          item.isUser ? styles.userMessage : styles.aiMessage,
+        ]}
+      >
         <Text style={styles.messageText}>{item.text}</Text>
         <Text style={styles.messageTime}>{formattedTime}</Text>
       </View>
@@ -81,14 +83,14 @@ export default function ChatScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Чат</Text>
         <TouchableOpacity style={styles.settingsButton}>
           <Ionicons name="settings-outline" size={24} color="#000" />
         </TouchableOpacity>
       </View>
-      
+
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
@@ -104,7 +106,7 @@ export default function ChatScreen() {
           onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
         />
       )}
-      
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
@@ -223,4 +225,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 8,
   },
-}); 
+});

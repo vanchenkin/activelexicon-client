@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  SafeAreaView 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -16,7 +16,7 @@ export default function ExerciseCompleteScreen() {
   const [userLevel, setUserLevel] = useState({ current: 26, max: 27 });
   const [streak, setStreak] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     const loadUserProgress = async () => {
       try {
@@ -29,35 +29,35 @@ export default function ExerciseCompleteScreen() {
         setIsLoading(false);
       }
     };
-    
+
     loadUserProgress();
   }, []);
-  
+
   const handleContinue = () => {
     // Navigate back to the home screen
     router.replace('/(tabs)');
   };
-  
+
   // Function to render streak triangles
   const renderStreakIndicators = () => {
     // Generate 15 triangles (3 rows of 5)
     const indicators = [];
     const filledTriangles = Math.min(streak, 15);
-    
+
     for (let i = 0; i < 15; i++) {
       indicators.push(
-        <Text 
-          key={i} 
+        <Text
+          key={i}
           style={[
             styles.triangleIndicator,
-            i < filledTriangles ? styles.filledTriangle : {}
+            i < filledTriangles ? styles.filledTriangle : {},
           ]}
         >
           ▲
         </Text>
       );
     }
-    
+
     // Split into rows of 5
     const rows = [];
     for (let i = 0; i < 3; i++) {
@@ -67,35 +67,35 @@ export default function ExerciseCompleteScreen() {
         </View>
       );
     }
-    
+
     return rows;
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      
+
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Получение опыта</Text>
       </View>
-      
+
       <View style={styles.content}>
         <Text style={styles.congratsText}>Вы молодец!</Text>
         <Text style={styles.completedText}>Серия упражнений выполнена!</Text>
-        
+
         <View style={styles.checkmarkContainer}>
           <Ionicons name="checkmark" size={120} color="#000" />
         </View>
-        
+
         <View style={styles.statsContainer}>
           <View style={styles.levelContainer}>
             <Text style={styles.statsLabel}>Ваш уровень:</Text>
             <View style={styles.progressBarContainer}>
-              <View 
+              <View
                 style={[
-                  styles.progressBarFill, 
-                  { width: `${(userLevel.current / userLevel.max) * 100}%` }
-                ]} 
+                  styles.progressBarFill,
+                  { width: `${(userLevel.current / userLevel.max) * 100}%` },
+                ]}
               />
             </View>
             <View style={styles.levelLabels}>
@@ -103,7 +103,7 @@ export default function ExerciseCompleteScreen() {
               <Text style={styles.levelValue}>{userLevel.max}</Text>
             </View>
           </View>
-          
+
           <View style={styles.streakContainer}>
             <View style={styles.streakHeader}>
               <Text style={styles.statsLabel}>Дней подряд: {streak}</Text>
@@ -114,11 +114,8 @@ export default function ExerciseCompleteScreen() {
           </View>
         </View>
       </View>
-      
-      <TouchableOpacity 
-        style={styles.continueButton}
-        onPress={handleContinue}
-      >
+
+      <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
         <Text style={styles.buttonText}>Продолжить</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -236,4 +233,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-}); 
+});

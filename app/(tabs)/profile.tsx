@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   SafeAreaView,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -20,7 +20,7 @@ export default function ProfileScreen() {
   const { data: userStats, isLoading: isLoadingStats } = useUserStats();
   const [userLevel, setUserLevel] = useState({ current: 26, max: 27 });
   const [streak, setStreak] = useState(1);
-  
+
   useEffect(() => {
     const loadUserProgress = async () => {
       try {
@@ -31,30 +31,30 @@ export default function ProfileScreen() {
         console.error('Error loading progress:', error);
       }
     };
-    
+
     loadUserProgress();
   }, []);
-  
+
   // Function to render streak triangles
   const renderStreakIndicators = () => {
     // Generate 15 triangles (3 rows of 5)
     const indicators = [];
     const filledTriangles = Math.min(streak, 15);
-    
+
     for (let i = 0; i < 15; i++) {
       indicators.push(
-        <Text 
-          key={i} 
+        <Text
+          key={i}
           style={[
             styles.triangleIndicator,
-            i < filledTriangles ? styles.filledTriangle : {}
+            i < filledTriangles ? styles.filledTriangle : {},
           ]}
         >
           ▲
         </Text>
       );
     }
-    
+
     // Split into rows of 5
     const rows = [];
     for (let i = 0; i < 3; i++) {
@@ -64,14 +64,14 @@ export default function ProfileScreen() {
         </View>
       );
     }
-    
+
     return rows;
   };
-  
+
   const handleOpenVocabulary = () => {
     router.push('/(tabs)/words');
   };
-  
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -80,16 +80,16 @@ export default function ProfileScreen() {
       console.error('Logout error:', error);
     }
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      
+
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Профиль</Text>
         </View>
-        
+
         {/* User Info Card */}
         <View style={styles.card}>
           <View style={styles.userInfoContainer}>
@@ -99,7 +99,7 @@ export default function ProfileScreen() {
             <Text style={styles.emailText}>{user?.email || 'E-mail'}</Text>
           </View>
         </View>
-        
+
         {/* Statistics Card */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Статистика</Text>
@@ -111,16 +111,16 @@ export default function ProfileScreen() {
             </View>
           )}
         </View>
-        
+
         {/* Level Card */}
         <View style={styles.card}>
           <Text style={styles.levelLabel}>Ваш уровень:</Text>
           <View style={styles.progressBarContainer}>
-            <View 
+            <View
               style={[
-                styles.progressBarFill, 
-                { width: `${(userLevel.current / userLevel.max) * 100}%` }
-              ]} 
+                styles.progressBarFill,
+                { width: `${(userLevel.current / userLevel.max) * 100}%` },
+              ]}
             />
           </View>
           <View style={styles.levelLabels}>
@@ -128,7 +128,7 @@ export default function ProfileScreen() {
             <Text style={styles.levelValue}>{userLevel.max}</Text>
           </View>
         </View>
-        
+
         {/* Streak Card */}
         <View style={styles.card}>
           <View style={styles.streakHeader}>
@@ -138,20 +138,17 @@ export default function ProfileScreen() {
             </View>
           </View>
         </View>
-        
+
         {/* Vocabulary Button */}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.vocabularyButton}
           onPress={handleOpenVocabulary}
         >
           <Text style={styles.buttonText}>Мой словарь используемых слов</Text>
         </TouchableOpacity>
-        
+
         {/* Logout Button */}
-        <TouchableOpacity 
-          style={styles.logoutButton}
-          onPress={handleLogout}
-        >
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutButtonText}>Выйти из аккаунта</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -300,4 +297,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-}); 
+});

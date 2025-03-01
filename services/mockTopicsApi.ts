@@ -2,7 +2,7 @@
 import { mockAuthService } from './mockAuth';
 
 // Simulate network delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Types
 export interface Topic {
@@ -40,35 +40,35 @@ export const mockTopicsApi = {
     await delay(400);
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
-    
+
     if (!query) return mockTopics;
-    
-    return mockTopics.filter(topic => 
+
+    return mockTopics.filter((topic) =>
       topic.name.toLowerCase().includes(query.toLowerCase())
     );
   },
 
   // Generate text based on topic
   async generateText(
-    topicId: string | null, 
+    topicId: string | null,
     customTopic: string | null,
     complexity: 'easy' | 'medium' | 'hard' = 'medium'
   ): Promise<string> {
     await delay(1500);
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
-    
-    let topic = "general";
-    
+
+    let topic = 'general';
+
     if (topicId) {
-      const selectedTopic = mockTopics.find(t => t.id === topicId);
+      const selectedTopic = mockTopics.find((t) => t.id === topicId);
       if (selectedTopic) {
         topic = selectedTopic.name;
       }
     } else if (customTopic) {
       topic = customTopic;
     }
-    
+
     let complexityText = '';
     switch (complexity) {
       case 'easy':
@@ -81,7 +81,7 @@ export const mockTopicsApi = {
         complexityText = 'advanced vocabulary and complex grammar';
         break;
     }
-    
+
     return `This is a generated text about ${topic} with ${complexityText}. It contains several paragraphs of content that would be useful for learning new vocabulary. The text would typically be much longer and contain various words and phrases related to the selected topic.`;
-  }
-}; 
+  },
+};

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useTopics, useSearchTopics, useGenerateText } from '@/hooks/useApi';
@@ -16,16 +24,18 @@ export default function ExploreScreen() {
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [displayedTopics, setDisplayedTopics] = useState<Topic[]>([]);
-  const [textComplexity, setTextComplexity] = useState<TextComplexity>('medium');
+  const [textComplexity, setTextComplexity] =
+    useState<TextComplexity>('medium');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
 
   // Fetch all topics
   const { data: allTopics, isLoading: isLoadingTopics } = useTopics();
-  
+
   // Search topics when query changes
-  const { data: searchResults, isLoading: isSearching } = useSearchTopics(debouncedQuery);
-  
+  const { data: searchResults, isLoading: isSearching } =
+    useSearchTopics(debouncedQuery);
+
   // Text generation mutation
   const generateTextMutation = useGenerateText();
 
@@ -34,7 +44,7 @@ export default function ExploreScreen() {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
@@ -53,10 +63,10 @@ export default function ExploreScreen() {
 
   const handleGenerate = () => {
     setSelectedWords([]);
-    generateTextMutation.mutate({ 
-      topicId: selectedTopic, 
+    generateTextMutation.mutate({
+      topicId: selectedTopic,
       customTopic: searchQuery && !selectedTopic ? searchQuery : null,
-      complexity: textComplexity
+      complexity: textComplexity,
     });
   };
 
@@ -79,7 +89,7 @@ export default function ExploreScreen() {
   const handleDone = () => {
     // Here you would typically save selected words
     console.log('Final selected words:', selectedWords);
-    
+
     // Close the generated text view
     generateTextMutation.reset();
     setSelectedWords([]);
@@ -97,11 +107,16 @@ export default function ExploreScreen() {
           styles.topicButton,
           isSelected && styles.selectedTopicButton,
           isLastInRow && { marginRight: 0 },
-          isLastRow && { marginBottom: 0 }
+          isLastRow && { marginBottom: 0 },
         ]}
         onPress={() => handleTopicSelect(topic.id)}
       >
-        <Ionicons name={topic.icon as any} size={16} color="#0066CC" style={styles.topicIcon} />
+        <Ionicons
+          name={topic.icon as any}
+          size={16}
+          color="#0066CC"
+          style={styles.topicIcon}
+        />
         <Text style={styles.topicText}>{topic.name}</Text>
       </TouchableOpacity>
     );
@@ -121,18 +136,28 @@ export default function ExploreScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      
+
       <Text style={styles.title}>Генерация текста</Text>
-      
+
       <View style={styles.infoCard}>
-        <Ionicons name="information-circle-outline" size={24} color="#666" style={styles.infoIcon} />
+        <Ionicons
+          name="information-circle-outline"
+          size={24}
+          color="#666"
+          style={styles.infoIcon}
+        />
         <Text style={styles.infoText}>
           Для добавления новых слов нужно сгенерировать текст
         </Text>
       </View>
-      
+
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+        <Ionicons
+          name="search"
+          size={20}
+          color="#999"
+          style={styles.searchIcon}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder="Поиск темы или введите свою тему..."
@@ -140,7 +165,7 @@ export default function ExploreScreen() {
           onChangeText={setSearchQuery}
         />
       </View>
-      
+
       {isLoadingTopics || isSearching ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
@@ -148,17 +173,19 @@ export default function ExploreScreen() {
       ) : (
         <ScrollView style={styles.topicsContainer}>
           <View style={styles.topicsGrid}>
-            {displayedTopics.map((topic, index) => renderTopicItem(topic, index))}
+            {displayedTopics.map((topic, index) =>
+              renderTopicItem(topic, index)
+            )}
           </View>
         </ScrollView>
       )}
-      
+
       <View style={styles.bottomContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[
             styles.generateButton,
-            generateTextMutation.isPending && styles.disabledButton
-          ]} 
+            generateTextMutation.isPending && styles.disabledButton,
+          ]}
           onPress={handleGenerate}
           disabled={generateTextMutation.isPending}
         >
@@ -168,8 +195,11 @@ export default function ExploreScreen() {
             <Text style={styles.generateButtonText}>Сгенерировать</Text>
           )}
         </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.sortButton} onPress={toggleSettingsModal}>
+
+        <TouchableOpacity
+          style={styles.sortButton}
+          onPress={toggleSettingsModal}
+        >
           <Ionicons name="options-outline" size={24} color="#000" />
         </TouchableOpacity>
       </View>

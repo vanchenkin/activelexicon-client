@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TextInput, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -31,11 +31,12 @@ const mockExercises: Exercise[] = [
   {
     id: '1',
     type: 'fill-blank',
-    text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not _____ five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+    text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not _____ five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
     blankIndex: 8,
     correctAnswer: 'only',
     contextBeforeBlank: 'It has survived not ',
-    contextAfterBlank: ' five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.'
+    contextAfterBlank:
+      ' five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.',
   },
   {
     id: '2',
@@ -44,8 +45,8 @@ const mockExercises: Exercise[] = [
     blankIndex: 12,
     correctAnswer: 'undoubtable',
     contextBeforeBlank: 'discovered the ',
-    contextAfterBlank: ' source.'
-  }
+    contextAfterBlank: ' source.',
+  },
 ];
 
 export default function ExerciseScreen() {
@@ -56,13 +57,13 @@ export default function ExerciseScreen() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  
+
   // Simulate loading exercises
   useEffect(() => {
     const loadExercises = async () => {
       try {
         // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setExercises(mockExercises);
       } catch (error) {
         console.error('Failed to load exercises:', error);
@@ -70,25 +71,26 @@ export default function ExerciseScreen() {
         setIsLoading(false);
       }
     };
-    
+
     loadExercises();
   }, []);
-  
+
   const currentExercise = exercises[currentExerciseIndex];
-  
+
   const handleCheckAnswer = () => {
     if (!userAnswer.trim() || isChecking) return;
-    
+
     setIsChecking(true);
-    
+
     // Simulate checking answer with a delay
     setTimeout(() => {
-      const isAnswerCorrect = userAnswer.trim().toLowerCase() === 
+      const isAnswerCorrect =
+        userAnswer.trim().toLowerCase() ===
         currentExercise.correctAnswer.toLowerCase();
-      
+
       setIsCorrect(isAnswerCorrect);
       setIsChecking(false);
-      
+
       // If correct, move to next exercise after a delay
       if (isAnswerCorrect) {
         setTimeout(() => {
@@ -104,11 +106,11 @@ export default function ExerciseScreen() {
       }
     }, 800);
   };
-  
+
   const handleBack = () => {
     router.back();
   };
-  
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -117,11 +119,11 @@ export default function ExerciseScreen() {
       </View>
     );
   }
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      
+
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#333" />
@@ -129,26 +131,29 @@ export default function ExerciseScreen() {
         <Text style={styles.headerTitle}>Упражнение</Text>
         <View style={styles.placeholder} />
       </View>
-      
+
       <View style={styles.progressContainer}>
         <Text style={styles.progressText}>
-          Выполнено {currentExerciseIndex + 1} из {exercises.length} заданий до получения опыта
+          Выполнено {currentExerciseIndex + 1} из {exercises.length} заданий до
+          получения опыта
         </Text>
         <View style={styles.progressBar}>
-          <View 
+          <View
             style={[
-              styles.progressFill, 
-              { width: `${((currentExerciseIndex + 1) / exercises.length) * 100}%` }
-            ]} 
+              styles.progressFill,
+              {
+                width: `${((currentExerciseIndex + 1) / exercises.length) * 100}%`,
+              },
+            ]}
           />
         </View>
       </View>
-      
+
       <ScrollView style={styles.exerciseContainer}>
         <Text style={styles.instructionText}>
           Вставьте слово, которое лучше всего подходит:
         </Text>
-        
+
         {currentExercise && (
           <View style={styles.textContainer}>
             <Text style={styles.exerciseText}>
@@ -159,7 +164,7 @@ export default function ExerciseScreen() {
           </View>
         )}
       </ScrollView>
-      
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
@@ -176,11 +181,11 @@ export default function ExerciseScreen() {
           onChangeText={setUserAnswer}
           editable={isChecking === false && isCorrect !== true}
         />
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={[
             styles.checkButton,
-            (!userAnswer.trim() || isChecking) ? styles.disabledButton : null
+            !userAnswer.trim() || isChecking ? styles.disabledButton : null,
           ]}
           onPress={handleCheckAnswer}
           disabled={!userAnswer.trim() || isChecking || isCorrect === true}
@@ -313,4 +318,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-}); 
+});

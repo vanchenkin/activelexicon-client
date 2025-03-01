@@ -3,6 +3,7 @@ import { mockApi, Word, UserStats } from '@/services/mockApi';
 import { mockTopicsApi, Topic } from '@/services/mockTopicsApi';
 import { mockChatService, ChatMessage } from '@/services/mockChatService';
 import { mockExerciseService, Exercise } from '@/services/mockExerciseService';
+import { mockAuthService } from '@/services/mockAuth';
 
 // Hook for fetching words
 export function useWords() {
@@ -24,20 +25,20 @@ export function useWord(id: string) {
 // Hook for toggling word learned status
 export function useToggleWordLearned() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => mockApi.toggleWordLearned(id),
     onSuccess: (updatedWord) => {
       // Update the words list
-      queryClient.setQueryData<Word[]>(['words'], (oldWords) => 
-        oldWords?.map(word => 
+      queryClient.setQueryData<Word[]>(['words'], (oldWords) =>
+        oldWords?.map((word) =>
           word.id === updatedWord.id ? updatedWord : word
         )
       );
-      
+
       // Update the single word data
       queryClient.setQueryData(['word', updatedWord.id], updatedWord);
-      
+
       // Invalidate stats to trigger a refetch
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
@@ -72,14 +73,14 @@ export function useSearchTopics(query: string) {
 // Hook for generating text
 export function useGenerateText() {
   return useMutation({
-    mutationFn: ({ 
-      topicId, 
+    mutationFn: ({
+      topicId,
       customTopic,
-      complexity = 'medium'
-    }: { 
-      topicId: string | null, 
-      customTopic: string | null,
-      complexity?: 'easy' | 'medium' | 'hard'
+      complexity = 'medium',
+    }: {
+      topicId: string | null;
+      customTopic: string | null;
+      complexity?: 'easy' | 'medium' | 'hard';
     }) => mockTopicsApi.generateText(topicId, customTopic, complexity),
   });
 }
@@ -95,7 +96,7 @@ export function useChatHistory() {
 // Hook for sending a message
 export function useSendMessage() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (text: string) => mockChatService.sendMessage(text),
     onSuccess: (updatedHistory) => {
@@ -108,7 +109,7 @@ export function useSendMessage() {
 // Hook for clearing chat history
 export function useClearChatHistory() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: () => mockChatService.clearHistory(),
     onSuccess: () => {
@@ -129,8 +130,13 @@ export function useExercises() {
 // Hook for submitting an answer
 export function useSubmitAnswer() {
   return useMutation({
-    mutationFn: ({ exerciseId, answer }: { exerciseId: string, answer: string }) => 
-      mockExerciseService.submitAnswer(exerciseId, answer),
+    mutationFn: ({
+      exerciseId,
+      answer,
+    }: {
+      exerciseId: string;
+      answer: string;
+    }) => mockExerciseService.submitAnswer(exerciseId, answer),
   });
 }
 
@@ -140,4 +146,45 @@ export function useExerciseProgress() {
     queryKey: ['exerciseProgress'],
     queryFn: () => mockExerciseService.getUserProgress(),
   });
-} 
+}
+
+// Hook for fetching current user data (profile)
+export function useCurrentUser() {
+  return useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => {
+      const user = mockAuthService.getCurrentUser();
+      if (!user) throw new Error('Not authenticated');
+      return user;
+    },
+    // Avoid refetching too often
+    staleTime: 60 * 1000, // 1 minute
+  });
+}
+
+// Hook for updating user profile
+export function useUpdateUserProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (updates: Partial<User['profile']>) =>
+      mockAuthService.updateUserProfile(updates),
+    onSuccess: (updatedUser) => {
+      // Update the user data in the cache
+      queryClient.setQueryData(['currentUser'], updatedUser);
+    },
+  });
+}
+
+// Hook for adding experience points
+export function useAddExperience() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (points: number) => mockAuthService.addExperience(points),
+    onSuccess: (updatedUser) => {
+      // Update the user data in the cache
+      queryClient.setQueryData(['currentUser'], updatedUser);
+    },
+  });
+}

@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { StatusBar } from 'expo-status-bar';
@@ -16,7 +23,7 @@ export default function LoginScreen() {
       setError('Пожалуйста, заполните все поля');
       return;
     }
-    
+
     try {
       await signIn(email, password);
       router.replace('/(tabs)');
@@ -32,18 +39,18 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-            
+
       <View style={styles.formContainer}>
         <View style={styles.logoContainer}>
           <View style={styles.logoCircle}>
             <Text style={styles.logoText}>ActiveLexicon</Text>
           </View>
         </View>
-        
+
         <Text style={styles.descriptionText}>
           Приложение для развития активного словарного запаса
         </Text>
-        
+
         <TextInput
           style={styles.input}
           placeholder="E-mail"
@@ -52,7 +59,7 @@ export default function LoginScreen() {
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        
+
         <TextInput
           style={styles.input}
           placeholder="Пароль"
@@ -60,11 +67,11 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-        
+
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        
-        <TouchableOpacity 
-          style={styles.loginButton} 
+
+        <TouchableOpacity
+          style={styles.loginButton}
           onPress={handleLogin}
           disabled={loading}
         >
@@ -148,4 +155,4 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
-}); 
+});

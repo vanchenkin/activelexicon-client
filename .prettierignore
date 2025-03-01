@@ -1,5 +1,7 @@
-/.expo
+android
+ios
 node_modules
+.expo
 .vscode
 .git
 .env
@@ -7,5 +9,3 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
-android
-ios

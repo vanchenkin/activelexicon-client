@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, Image } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+  Image,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -30,12 +39,12 @@ export default function WordsScreen() {
 
   const handleSearch = async (query: string) => {
     setSearchQuery(query);
-    
+
     if (!query.trim()) {
       loadWords();
       return;
     }
-    
+
     try {
       setIsSearching(true);
       const results = await mockWordsService.searchUserWords(query);
@@ -56,7 +65,7 @@ export default function WordsScreen() {
     try {
       const success = await mockWordsService.deleteWord(wordId);
       if (success) {
-        setWords(words.filter(word => word.id !== wordId));
+        setWords(words.filter((word) => word.id !== wordId));
       }
     } catch (error) {
       console.error('Failed to delete word:', error);
@@ -73,7 +82,7 @@ export default function WordsScreen() {
         <Text style={styles.wordText}>{item.word}</Text>
         <View style={styles.wordDivider} />
       </View>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => handleDeleteWord(item.id)}
       >
@@ -84,9 +93,14 @@ export default function WordsScreen() {
 
   const EmptyListComponent = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="information-circle-outline" size={48} color="#999" style={styles.emptyIcon} />
+      <Ionicons
+        name="information-circle-outline"
+        size={48}
+        color="#999"
+        style={styles.emptyIcon}
+      />
       <Text style={styles.emptyText}>
-        {searchQuery 
+        {searchQuery
           ? 'Не найдено слов по вашему запросу'
           : 'У вас еще нет слов. Добавьте их!'}
       </Text>
@@ -96,26 +110,39 @@ export default function WordsScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      
-      <Text style={[styles.screenTitle, {position: 'absolute', top: 8, left: 0, right: 0, textAlign: 'center'}]}>
+
+      <Text
+        style={[
+          styles.screenTitle,
+          {
+            position: 'absolute',
+            top: 8,
+            left: 0,
+            right: 0,
+            textAlign: 'center',
+          },
+        ]}
+      >
         СПИСОК МОИХ СЛОВ
       </Text>
-      
+
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.title}>Изучаемые слова</Text>
-        <TouchableOpacity 
-          style={styles.addButton}
-          onPress={handleAddWord}
-        >
+        <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>
           <Text style={styles.addButtonText}>Добавить</Text>
         </TouchableOpacity>
       </View>
-      
+
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+        <Ionicons
+          name="search"
+          size={20}
+          color="#999"
+          style={styles.searchIcon}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder="Введите слово..."
@@ -126,7 +153,7 @@ export default function WordsScreen() {
           <Ionicons name="add" size={24} color="#000" />
         </TouchableOpacity>
       </View>
-      
+
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
@@ -135,10 +162,10 @@ export default function WordsScreen() {
         <FlatList
           data={words}
           renderItem={renderWordItem}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={[
             styles.wordsList,
-            words.length === 0 && styles.emptyListContent
+            words.length === 0 && styles.emptyListContent,
           ]}
           ListEmptyComponent={EmptyListComponent}
         />
@@ -255,5 +282,5 @@ const styles = StyleSheet.create({
   },
   plusButton: {
     padding: 8,
-  }
-}); 
+  },
+});

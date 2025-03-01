@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -42,19 +49,23 @@ export default function HomeScreen() {
     return (
       <View style={styles.container}>
         <StatusBar style="auto" />
-        
+
         <View style={styles.emptyContainer}>
           <View style={styles.emptyIconContainer}>
-            <Ionicons name="chatbubble-ellipses-outline" size={40} color="#666" />
+            <Ionicons
+              name="chatbubble-ellipses-outline"
+              size={40}
+              color="#666"
+            />
           </View>
-          
+
           <Text style={styles.emptyText}>
             У вас еще нет слов для изучения.{'\n'}
             Добавьте их!
           </Text>
         </View>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.addWordsButton}
           onPress={handleAddWords}
         >
@@ -67,19 +78,24 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      
+
       <Text style={styles.title}>Лента заданий</Text>
-      
+
       <Text style={styles.description}>
-        Вам предстоит выполнять упражнения. Они будут подбираться в случайном порядке на основе вашего словаря и уровня английского языка
+        Вам предстоит выполнять упражнения. Они будут подбираться в случайном
+        порядке на основе вашего словаря и уровня английского языка
       </Text>
-      
+
       <Text style={styles.sectionTitle}>Типы заданий:</Text>
-      
+
       <ScrollView style={styles.exerciseList}>
         <View style={styles.exerciseCard}>
           <View style={styles.iconContainer}>
-            <Ionicons name="chatbubble-ellipses-outline" size={32} color="#666" />
+            <Ionicons
+              name="chatbubble-ellipses-outline"
+              size={32}
+              color="#666"
+            />
           </View>
           <View style={styles.exerciseContent}>
             <Text style={styles.exerciseTitle}>Составить предложение</Text>
@@ -88,7 +104,7 @@ export default function HomeScreen() {
             </Text>
           </View>
         </View>
-        
+
         <View style={styles.exerciseCard}>
           <View style={styles.iconContainer}>
             <Ionicons name="text-outline" size={32} color="#666" />
@@ -101,8 +117,8 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
-      
-      <TouchableOpacity 
+
+      <TouchableOpacity
         style={styles.startExercisesButton}
         onPress={handleStartExercises}
       >

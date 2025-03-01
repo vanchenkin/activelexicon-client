@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (currentUser) {
       setUser({
         id: currentUser.id,
-        email: currentUser.email
+        email: currentUser.email,
       });
     }
     setLoading(false);
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const newUser = await mockAuthService.register(email, password);
       setUser({
         id: newUser.id,
-        email: newUser.email
+        email: newUser.email,
       });
     } finally {
       setLoading(false);
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const loggedInUser = await mockAuthService.login(email, password);
       setUser({
         id: loggedInUser.id,
-        email: loggedInUser.email
+        email: loggedInUser.email,
       });
     } finally {
       setLoading(false);
@@ -86,4 +86,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-} 
+}

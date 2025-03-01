@@ -37,13 +37,17 @@ export default function WordDetailsModal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <TouchableOpacity style={styles.overlay} onPress={onClose} activeOpacity={1}>
+      <TouchableOpacity
+        style={styles.overlay}
+        onPress={onClose}
+        activeOpacity={1}
+      >
         <View style={styles.container} onStartShouldSetResponder={() => true}>
           <Text style={styles.word}>{wordDetails.word}</Text>
           <Text style={styles.translation}>{wordDetails.translation}</Text>
           <Text style={styles.partOfSpeech}>{formatPartOfSpeech()}</Text>
           <Text style={styles.example}>{wordDetails.example}</Text>
-          
+
           <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>
             <Ionicons name="add-circle" size={32} color="#0099FF" />
           </TouchableOpacity>
@@ -92,4 +96,4 @@ const styles = StyleSheet.create({
     bottom: 10,
     right: 10,
   },
-}); 
+});

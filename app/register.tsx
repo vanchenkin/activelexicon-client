@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { StatusBar } from 'expo-status-bar';
@@ -16,13 +23,13 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
     // Reset error
     setError('');
-    
+
     // Validate inputs
     if (!email || !password || !confirmPassword || !languageLevel) {
       setError('Пожалуйста, заполните все поля');
       return;
     }
-    
+
     if (password !== confirmPassword) {
       setError('Пароли не совпадают');
       return;
@@ -40,20 +47,20 @@ export default function RegisterScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-            
+
       <View style={styles.formContainer}>
         <View style={styles.logoContainer}>
           <View style={styles.logoCircle}>
             <Text style={styles.logoText}>ActiveLexicon</Text>
           </View>
         </View>
-        
+
         <Text style={styles.descriptionText}>
           Приложение для развития активного словарного запаса
         </Text>
-        
+
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        
+
         <TextInput
           style={styles.input}
           placeholder="E-mail"
@@ -62,7 +69,7 @@ export default function RegisterScreen() {
           autoCapitalize="none"
           keyboardType="email-address"
         />
-        
+
         <TextInput
           style={styles.input}
           placeholder="Пароль"
@@ -70,7 +77,7 @@ export default function RegisterScreen() {
           onChangeText={setPassword}
           secureTextEntry
         />
-        
+
         <TextInput
           style={styles.input}
           placeholder="Повторите пароль"
@@ -78,16 +85,16 @@ export default function RegisterScreen() {
           onChangeText={setConfirmPassword}
           secureTextEntry
         />
-        
+
         <TextInput
           style={styles.input}
           placeholder="Уровень языка"
           value={languageLevel}
           onChangeText={setLanguageLevel}
         />
-        
-        <TouchableOpacity 
-          style={styles.button} 
+
+        <TouchableOpacity
+          style={styles.button}
           onPress={handleRegister}
           disabled={loading}
         >
@@ -171,4 +178,4 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
-}); 
+});

@@ -19,7 +19,8 @@ export default function TextComplexityModal({
   onComplexityChange,
 }: TextComplexityModalProps) {
   const router = useRouter();
-  const [selectedComplexity, setSelectedComplexity] = useState<TextComplexity>(initialComplexity);
+  const [selectedComplexity, setSelectedComplexity] =
+    useState<TextComplexity>(initialComplexity);
 
   const handleComplexitySelect = (complexity: TextComplexity) => {
     setSelectedComplexity(complexity);
@@ -41,14 +42,23 @@ export default function TextComplexityModal({
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <TouchableOpacity style={styles.wordListButton} onPress={handleMyWordsList}>
+          <TouchableOpacity
+            style={styles.wordListButton}
+            onPress={handleMyWordsList}
+          >
             <Text style={styles.wordListButtonText}>Мой список слов</Text>
           </TouchableOpacity>
 
           <View style={styles.infoCard}>
-            <Ionicons name="information-circle-outline" size={24} color="#666" style={styles.infoIcon} />
+            <Ionicons
+              name="information-circle-outline"
+              size={24}
+              color="#666"
+              style={styles.infoIcon}
+            />
             <Text style={styles.infoText}>
-              Если текст вам кажется слишком легким или слишком трудным, то можете изменить его сложность
+              Если текст вам кажется слишком легким или слишком трудным, то
+              можете изменить его сложность
             </Text>
           </View>
 
@@ -57,7 +67,7 @@ export default function TextComplexityModal({
           <TouchableOpacity
             style={[
               styles.complexityButton,
-              selectedComplexity === 'easy' && styles.selectedComplexityButton
+              selectedComplexity === 'easy' && styles.selectedComplexityButton,
             ]}
             onPress={() => handleComplexitySelect('easy')}
           >
@@ -67,7 +77,8 @@ export default function TextComplexityModal({
           <TouchableOpacity
             style={[
               styles.complexityButton,
-              selectedComplexity === 'medium' && styles.selectedComplexityButton
+              selectedComplexity === 'medium' &&
+                styles.selectedComplexityButton,
             ]}
             onPress={() => handleComplexitySelect('medium')}
           >
@@ -77,7 +88,7 @@ export default function TextComplexityModal({
           <TouchableOpacity
             style={[
               styles.complexityButton,
-              selectedComplexity === 'hard' && styles.selectedComplexityButton
+              selectedComplexity === 'hard' && styles.selectedComplexityButton,
             ]}
             onPress={() => handleComplexitySelect('hard')}
           >
@@ -161,4 +172,4 @@ const styles = StyleSheet.create({
   closeButton: {
     marginTop: 10,
   },
-}); 
+});

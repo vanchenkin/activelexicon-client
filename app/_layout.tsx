@@ -1,4 +1,8 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -23,10 +27,20 @@ function RootLayoutNav() {
     if (loading) return;
 
     // Check if the user is authenticated
-    if (!user && segments[0] !== 'enter' && segments[0] !== 'login' && segments[0] !== 'register') {
+    if (
+      !user &&
+      segments[0] !== 'enter' &&
+      segments[0] !== 'login' &&
+      segments[0] !== 'register'
+    ) {
       // Redirect to the enter page if not logged in
       router.replace('/enter');
-    } else if (user && (segments[0] === 'enter' || segments[0] === 'login' || segments[0] === 'register')) {
+    } else if (
+      user &&
+      (segments[0] === 'enter' ||
+        segments[0] === 'login' ||
+        segments[0] === 'register')
+    ) {
       // Redirect to the home page if logged in and trying to access login/register
       router.replace('/(tabs)');
     }

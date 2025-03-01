@@ -9,28 +9,28 @@ export default function EnterScreen() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      
+
       <Text style={styles.welcomeText}>Добро пожаловать!</Text>
-      
+
       <View style={styles.logoContainer}>
         <View style={styles.logoCircle}>
           <Text style={styles.logoText}>ActiveLexicon</Text>
         </View>
       </View>
-      
+
       <Text style={styles.descriptionText}>
         Приложение для развития активного словарного запаса
       </Text>
-      
+
       <View style={styles.buttonContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.button}
           onPress={() => router.push('/register')}
         >
           <Text style={styles.buttonText}>Регистрация</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.button}
           onPress={() => router.push('/login')}
         >
@@ -97,4 +97,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
-}); 
+});
