@@ -1,74 +1,210 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '@/context/AuthContext';
+import { useWords } from '@/hooks/useApi';
 
 export default function HomeScreen() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { data: words, isLoading } = useWords();
+  const [hasWords, setHasWords] = useState(false);
+
+  useEffect(() => {
+    if (words && words.length > 0) {
+      setHasWords(true);
+    } else {
+      setHasWords(false);
+    }
+  }, [words]);
+
+  const handleStartExercises = () => {
+    // Navigate to exercise screen
+    router.push('/exercise');
+  };
+
+  const handleAddWords = () => {
+    // Navigate to add words screen
+    router.push('/(tabs)/explore');
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text>Загрузка...</Text>
+      </View>
+    );
+  }
+
+  if (!hasWords) {
+    return (
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        
+        <View style={styles.emptyContainer}>
+          <View style={styles.emptyIconContainer}>
+            <Ionicons name="chatbubble-ellipses-outline" size={40} color="#666" />
+          </View>
+          
+          <Text style={styles.emptyText}>
+            У вас еще нет слов для изучения.{'\n'}
+            Добавьте их!
+          </Text>
+        </View>
+        
+        <TouchableOpacity 
+          style={styles.addWordsButton}
+          onPress={handleAddWords}
+        >
+          <Text style={styles.buttonText}>Добавить слова</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <StatusBar style="auto" />
+      
+      <Text style={styles.title}>Лента заданий</Text>
+      
+      <Text style={styles.description}>
+        Вам предстоит выполнять упражнения. Они будут подбираться в случайном порядке на основе вашего словаря и уровня английского языка
+      </Text>
+      
+      <Text style={styles.sectionTitle}>Типы заданий:</Text>
+      
+      <ScrollView style={styles.exerciseList}>
+        <View style={styles.exerciseCard}>
+          <View style={styles.iconContainer}>
+            <Ionicons name="chatbubble-ellipses-outline" size={32} color="#666" />
+          </View>
+          <View style={styles.exerciseContent}>
+            <Text style={styles.exerciseTitle}>Составить предложение</Text>
+            <Text style={styles.exerciseDescription}>
+              Составьте предложение с данным словом
+            </Text>
+          </View>
+        </View>
+        
+        <View style={styles.exerciseCard}>
+          <View style={styles.iconContainer}>
+            <Ionicons name="text-outline" size={32} color="#666" />
+          </View>
+          <View style={styles.exerciseContent}>
+            <Text style={styles.exerciseTitle}>Вставить слово</Text>
+            <Text style={styles.exerciseDescription}>
+              Вставьте наиболее подходящее слово в предложение
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+      
+      <TouchableOpacity 
+        style={styles.startExercisesButton}
+        onPress={handleStartExercises}
+      >
+        <Text style={styles.buttonText}>Начать упражнения</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 40,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  description: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 30,
+    lineHeight: 22,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  exerciseList: {
+    flex: 1,
+    marginBottom: 20,
+  },
+  exerciseCard: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  iconContainer: {
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  exerciseContent: {
+    flex: 1,
+  },
+  exerciseTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  exerciseDescription: {
+    fontSize: 14,
+    color: '#666',
+  },
+  startExercisesButton: {
+    backgroundColor: '#0099FF',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#0099FF',
+    borderRadius: 5,
+    margin: 20,
+  },
+  emptyIconContainer: {
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 24,
+  },
+  addWordsButton: {
+    backgroundColor: '#0099FF',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 20,
   },
 });
