@@ -4,23 +4,20 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
-  Modal,
-  Pressable,
-  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTopics, useSearchTopics, useGenerateText } from '@/hooks/useApi';
-import { Topic } from '@/services/mockTopicsApi';
+import { useTopics, useSearchTopics } from '@/hooks/useApi';
+import { useRouter } from 'expo-router';
 import TextComplexityModal from '@/components/TextComplexityModal';
-import TextSelectionScreen from '@/components/TextSelectionScreen';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
-import Button from '@/components/Button';
 import Input from '../../components/Input';
+import TopicItem, { Topic } from '@/components/TopicItem';
 
 type TextComplexity = 'easy' | 'medium' | 'hard';
 
 export default function ExploreScreen() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -28,7 +25,6 @@ export default function ExploreScreen() {
   const [textComplexity, setTextComplexity] =
     useState<TextComplexity>('medium');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
-  const [selectedWords, setSelectedWords] = useState<string[]>([]);
 
   // Fetch all topics
   const { data: allTopics, isLoading: isLoadingTopics } = useTopics();
@@ -36,9 +32,6 @@ export default function ExploreScreen() {
   // Search topics when query changes
   const { data: searchResults, isLoading: isSearching } =
     useSearchTopics(debouncedQuery);
-
-  // Text generation mutation
-  const generateTextMutation = useGenerateText();
 
   // Debounce search query
   useEffect(() => {
@@ -63,19 +56,15 @@ export default function ExploreScreen() {
   };
 
   const handleGenerate = () => {
-    setSelectedWords([]);
-    generateTextMutation.mutate({
-      topicId: selectedTopic,
-      customTopic: searchQuery && !selectedTopic ? searchQuery : null,
-      complexity: textComplexity,
+    // Navigate to the generated text screen with the necessary parameters
+    router.push({
+      pathname: '/generated-text',
+      params: {
+        topicId: selectedTopic || '',
+        customTopic: searchQuery && !selectedTopic ? searchQuery : '',
+        complexity: textComplexity,
+      },
     });
-  };
-
-  const handleWordSelected = (word: string) => {
-    // Here you would implement logic to save the word or show a definition
-    if (!selectedWords.includes(word)) {
-      setSelectedWords([...selectedWords, word]);
-    }
   };
 
   const handleComplexityChange = (complexity: TextComplexity) => {
@@ -85,50 +74,6 @@ export default function ExploreScreen() {
   const toggleSettingsModal = () => {
     setIsSettingsModalVisible(!isSettingsModalVisible);
   };
-
-  const handleDone = () => {
-    // Close the generated text view
-    generateTextMutation.reset();
-    setSelectedWords([]);
-  };
-
-  const renderTopicItem = (topic: Topic, index: number) => {
-    const isSelected = topic.id === selectedTopic;
-    const isLastInRow = index % 2 === 1;
-    const isLastRow = index >= displayedTopics.length - 2;
-
-    return (
-      <TouchableOpacity
-        key={topic.id}
-        style={[
-          styles.topicButton,
-          isSelected && styles.selectedTopicButton,
-          isLastInRow && { marginRight: 0 },
-          isLastRow && { marginBottom: 0 },
-        ]}
-        onPress={() => handleTopicSelect(topic.id)}
-      >
-        <Ionicons
-          name={topic.icon as any}
-          size={16}
-          color="#0066CC"
-          style={styles.topicIcon}
-        />
-        <Typography style={styles.topicText}>{topic.name}</Typography>
-      </TouchableOpacity>
-    );
-  };
-
-  if (generateTextMutation.isSuccess) {
-    return (
-      <TextSelectionScreen
-        generatedText={generateTextMutation.data}
-        onRegenerateText={handleGenerate}
-        onDone={handleDone}
-        onWordSelected={handleWordSelected}
-      />
-    );
-  }
 
   return (
     <ThemedView style={styles.container}>
@@ -166,34 +111,33 @@ export default function ExploreScreen() {
       ) : (
         <ScrollView style={styles.topicsContainer}>
           <ThemedView style={styles.topicsGrid}>
-            {displayedTopics.map((topic, index) =>
-              renderTopicItem(topic, index)
-            )}
+            {displayedTopics.map((topic, index) => (
+              <TopicItem
+                key={topic.id}
+                topic={topic}
+                index={index}
+                isSelected={topic.id === selectedTopic}
+                totalItems={displayedTopics.length}
+                onPress={handleTopicSelect}
+              />
+            ))}
           </ThemedView>
         </ScrollView>
       )}
 
       <ThemedView style={styles.bottomContainer}>
         <TouchableOpacity
-          style={[
-            styles.generateButton,
-            generateTextMutation.isPending && styles.disabledButton,
-          ]}
+          style={styles.generateButton}
           onPress={handleGenerate}
-          disabled={generateTextMutation.isPending}
         >
-          {generateTextMutation.isPending ? (
-            <ActivityIndicator color="white" size="small" />
-          ) : (
-            <Typography
-              color="white"
-              weight="bold"
-              size="md"
-              style={styles.generateButtonText}
-            >
-              Сгенерировать
-            </Typography>
-          )}
+          <Typography
+            color="white"
+            weight="bold"
+            size="md"
+            style={styles.generateButtonText}
+          >
+            Сгенерировать
+          </Typography>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -272,26 +216,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  topicButton: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 16,
-    width: '48%',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  selectedTopicButton: {
-    borderWidth: 2,
-    borderColor: '#0066CC',
-  },
-  topicIcon: {
-    marginRight: 8,
-  },
-  topicText: {
-    fontSize: 16,
-    color: '#333',
-  },
   bottomContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -303,9 +227,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
     alignItems: 'center',
-  },
-  disabledButton: {
-    backgroundColor: '#99CCFF',
   },
   generateButtonText: {},
   sortButton: {

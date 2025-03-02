@@ -25,8 +25,8 @@ export interface AuthResponse {
 const users: User[] = [
   {
     id: '1',
-    email: 'test@example.com',
-    password: 'password123',
+    email: '123',
+    password: '123',
     profile: {
       level: 26,
       maxLevel: 27,
@@ -83,7 +83,7 @@ export class MockAuthService {
 
     // TODO: fix
     // // Store tokens securely
-    // await this.saveTokens(authResponse);
+    await this.saveTokens(authResponse);
 
     return authResponse;
   }
@@ -108,7 +108,7 @@ export class MockAuthService {
     const authResponse = this.generateTokens(user);
 
     // Store tokens securely
-    // await this.saveTokens(authResponse);
+    await this.saveTokens(authResponse);
 
     return authResponse;
   }

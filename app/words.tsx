@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import {
   StyleSheet,
-  View,
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { UserWord } from '@/services/mockWordsService';
-import { useUserWords, useSearchWords, useDeleteWord } from '@/hooks/useApi';
-import Typography from '@/components/Typography';
-import { ThemedView } from '@/components/ThemedView';
-import { useQuery } from '@tanstack/react-query';
-import Input from '../../components/Input';
+import { useDeleteWord, useSearchWords, useUserWords } from '../hooks/useApi';
+import { ThemedView } from '../components/ThemedView';
+import Typography from '../components/Typography';
+import { UserWord } from '../services/mockWordsService';
+import Input from '../components/Input';
 
 export default function WordsScreen() {
   const router = useRouter();

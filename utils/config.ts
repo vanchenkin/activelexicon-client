@@ -17,8 +17,6 @@ export const Config = {
   googleClientId: GOOGLE_CLIENT_ID || '',
   googleAndroidClientId: GOOGLE_ANDROID_CLIENT_ID || '',
   googleIosClientId: GOOGLE_IOS_CLIENT_ID || '',
-
-  // Add more configuration variables as needed
 };
 
 // Helper function to validate the configuration

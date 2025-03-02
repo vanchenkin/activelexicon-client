@@ -8,6 +8,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: 'white',
           height: 70,
+          borderTopWidth: 0,
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#8E8E93',
@@ -37,15 +38,6 @@ export default function TabLayout() {
           title: 'Найти',
           tabBarIcon: ({ color, size }: { color: string; size: number }) => (
             <Ionicons name="search-outline" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="words"
-        options={{
-          title: 'Слова',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="book-outline" size={24} color={color} />
           ),
         }}
       />

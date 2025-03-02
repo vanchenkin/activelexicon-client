@@ -32,7 +32,7 @@ export default function TextComplexityModal({
   const handleMyWordsList = () => {
     // Navigate to words list
     onClose();
-    router.push('/(tabs)/words');
+    router.push('/words');
   };
 
   return (

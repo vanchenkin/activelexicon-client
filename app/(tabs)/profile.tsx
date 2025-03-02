@@ -12,6 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useUserStats, useExerciseProgress } from '@/hooks/useApi';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
+import Streak from '@/components/Streak';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -23,44 +24,8 @@ export default function ProfileScreen() {
     useExerciseProgress();
   const { user: currentUser, isLoading: isLoadingUser } = useAuth();
 
-  // Function to render streak triangles
-  const renderStreakIndicators = () => {
-    // Get streak from exercise progress
-    const currentStreak = exerciseProgress?.streak || 0;
-
-    // Generate 15 triangles (3 rows of 5)
-    const indicators = [];
-    const filledTriangles = Math.min(currentStreak, 15);
-
-    for (let i = 0; i < 15; i++) {
-      indicators.push(
-        <Typography
-          key={i}
-          style={[
-            styles.triangleIndicator,
-            i < filledTriangles ? styles.filledTriangle : {},
-          ]}
-        >
-          ▲
-        </Typography>
-      );
-    }
-
-    // Split into rows of 5
-    const rows = [];
-    for (let i = 0; i < 3; i++) {
-      rows.push(
-        <ThemedView key={i} style={styles.triangleRow}>
-          {indicators.slice(i * 5, (i + 1) * 5)}
-        </ThemedView>
-      );
-    }
-
-    return rows;
-  };
-
   const handleOpenVocabulary = () => {
-    router.push('/(tabs)/words');
+    router.push('/words');
   };
 
   const handleOpenSettings = () => {
@@ -70,7 +35,7 @@ export default function ProfileScreen() {
   const handleLogout = async () => {
     try {
       await logOut();
-      router.replace('/login');
+      router.replace('/enter');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -193,15 +158,11 @@ export default function ProfileScreen() {
 
         {/* Streak Card */}
         <ThemedView style={styles.card}>
-          <ThemedView style={styles.streakHeader}>
-            <Typography weight="medium" size="md" style={styles.streakLabel}>
-              Дней подряд:{' '}
-              {isLoadingProgress ? '...' : exerciseProgress?.streak || 0}
-            </Typography>
-            <ThemedView style={styles.streakIndicators}>
-              {renderStreakIndicators()}
-            </ThemedView>
-          </ThemedView>
+          {isLoadingProgress ? (
+            <ActivityIndicator size="small" color="#4096FE" />
+          ) : (
+            <Streak streak={exerciseProgress?.streak || 0} />
+          )}
         </ThemedView>
 
         {/* Vocabulary Button */}
@@ -317,27 +278,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   levelValue: {},
-  streakHeader: {
-    marginBottom: 5,
-  },
-  streakLabel: {
-    marginBottom: 10,
-  },
-  streakIndicators: {
-    alignItems: 'flex-end',
-  },
-  triangleRow: {
-    flexDirection: 'row',
-    marginBottom: 5,
-  },
-  triangleIndicator: {
-    fontSize: 16,
-    color: '#DDD',
-    marginHorizontal: 5,
-  },
-  filledTriangle: {
-    color: '#4096FE',
-  },
   vocabularyButton: {
     backgroundColor: '#4096FE',
     padding: 16,

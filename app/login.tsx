@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import Logo from '../components/Logo';
@@ -7,7 +7,6 @@ import Button from '../components/Button';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import BackButton from '../components/BackButton';
-import GoogleSignInButton from '../components/GoogleSignInButton';
 import Input from '../components/Input';
 
 export default function LoginScreen() {

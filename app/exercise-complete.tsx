@@ -8,45 +8,19 @@ import { ThemedView } from '../components/ThemedView';
 import Logo from '../components/Logo';
 import { useExerciseProgress } from '@/hooks/useApi';
 import { useAuth } from '../context/AuthContext';
+import Streak from '@/components/Streak';
 
 export default function ExerciseCompleteScreen() {
   const router = useRouter();
 
   // Use React Query to fetch the user's exercise progress
-  const { data: progress, isLoading: progressLoading } = useExerciseProgress();
+  const { data: progress } = useExerciseProgress();
 
-  // Use React Query to fetch the current user's data
-  const { data: user } = useAuth();
+  const { user } = useAuth();
 
   const handleContinue = () => {
     // Navigate back to the home screen
     router.replace('/(tabs)');
-  };
-
-  // Function to render streak triangles
-  const renderStreakIndicators = () => {
-    // Generate 15 triangles (3 rows of 5)
-    const indicators = [];
-    const streak = progress?.streak || 0;
-    const filledTriangles = Math.min(streak, 15);
-
-    for (let i = 0; i < 15; i++) {
-      indicators.push(
-        <Typography
-          key={i}
-          style={[
-            styles.triangleIndicator,
-            i < filledTriangles
-              ? styles.filledIndicator
-              : styles.emptyIndicator,
-          ]}
-        >
-          ▲
-        </Typography>
-      );
-    }
-
-    return indicators;
   };
 
   return (
@@ -89,31 +63,13 @@ export default function ExerciseCompleteScreen() {
         </ThemedView>
 
         <ThemedView style={styles.streakContainer}>
-          <Typography size="md" style={styles.streakTitle}>
-            Серия: {progress?.streak || 0}{' '}
-            {getStreakText(progress?.streak || 0)}
-          </Typography>
-          <ThemedView style={styles.streakIndicators}>
-            {renderStreakIndicators()}
-          </ThemedView>
+          <Streak streak={progress?.streak || 0} />
         </ThemedView>
 
-        <Button
-          title="Продолжить"
-          onPress={handleContinue}
-          size="large"
-          style={styles.continueButton}
-        />
+        <Button title="Продолжить" onPress={handleContinue} size="large" />
       </ThemedView>
     </SafeAreaView>
   );
-}
-
-// Helper function to get the correct streak text form in Russian
-function getStreakText(streak: number) {
-  if (streak === 1) return 'день';
-  if (streak >= 2 && streak <= 4) return 'дня';
-  return 'дней';
 }
 
 const styles = StyleSheet.create({
@@ -172,35 +128,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 16,
-    elevation: 2,
-  },
-  streakTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  streakIndicators: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  triangleIndicator: {
-    fontSize: 16,
-    color: '#DDD',
-    marginHorizontal: 5,
-  },
-  filledIndicator: {
-    color: '#4096FE',
-  },
-  emptyIndicator: {
-    color: '#DDD',
-  },
-  continueButton: {
-    backgroundColor: '#4096FE',
-    padding: 16,
-    borderRadius: 8,
-    marginHorizontal: 24,
     marginBottom: 24,
-    alignItems: 'center',
+    elevation: 2,
   },
 });

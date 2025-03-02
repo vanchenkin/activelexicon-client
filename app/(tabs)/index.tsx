@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useWords } from '@/hooks/useApi';
 import { ThemedView } from '../../components/ThemedView';
+import Button from '../../components/Button';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -54,12 +55,7 @@ export default function HomeScreen() {
           </Text>
         </ThemedView>
 
-        <TouchableOpacity
-          style={styles.addWordsButton}
-          onPress={handleAddWords}
-        >
-          <Text style={styles.buttonText}>Добавить слова</Text>
-        </TouchableOpacity>
+        <Button title="Добавить слова" onPress={handleAddWords} />
       </ThemedView>
     );
   }
@@ -105,12 +101,7 @@ export default function HomeScreen() {
         </ThemedView>
       </ScrollView>
 
-      <TouchableOpacity
-        style={styles.startExercisesButton}
-        onPress={handleStartExercises}
-      >
-        <Text style={styles.buttonText}>Начать упражнения</Text>
-      </TouchableOpacity>
+      <Button title="Начать упражнения" onPress={handleStartExercises} />
     </ThemedView>
   );
 }
@@ -173,18 +164,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-  startExercisesButton: {
-    backgroundColor: '#0099FF',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -202,12 +181,5 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     lineHeight: 24,
-  },
-  addWordsButton: {
-    backgroundColor: '#0099FF',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginBottom: 20,
   },
 });

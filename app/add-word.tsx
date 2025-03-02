@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { useAddWord } from '@/hooks/useApi';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
@@ -62,9 +66,7 @@ export default function AddWordScreen() {
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
         <BackButton onPress={handleCancel} />
-        <Typography style={styles.headerTitle}>
-          Добавить слово
-        </Typography>
+        <Typography style={styles.headerTitle}>Добавить слово</Typography>
         <ThemedView style={styles.placeholderButton} />
       </ThemedView>
 
@@ -155,4 +157,4 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 30,
   },
-}); 
+});

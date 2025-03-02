@@ -18,12 +18,7 @@ export default function NotFoundScreen() {
         <Link href="/" style={styles.link}>
           <Typography type="link">Go to home screen!</Typography>
         </Link>
-        <Button
-          title="Go Back"
-          onPress={() => router.back()}
-          style={styles.button}
-          textStyle={styles.buttonText}
-        />
+        <Button title="Go Back" onPress={() => router.back()} />
       </ThemedView>
     </>
   );
@@ -39,13 +34,5 @@ const styles = StyleSheet.create({
   link: {
     marginTop: 15,
     paddingVertical: 15,
-  },
-  button: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });

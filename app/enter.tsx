@@ -5,9 +5,11 @@ import Logo from '../components/Logo';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import { router } from 'expo-router';
-import GoogleSignInButton from '../components/GoogleSignInButton';
+import { useAuth } from '../context/AuthContext';
 
 export default function EnterScreen() {
+  const { signInWithGoogle } = useAuth();
+
   return (
     <ThemedView style={styles.container}>
       <Typography size="2xl" style={styles.welcomeText}>
@@ -30,7 +32,13 @@ export default function EnterScreen() {
           onPress={() => router.push('/login')}
         />
 
-        {/* <GoogleSignInButton fullWidth /> */}
+        {/* <Button
+          title="Войти через Google"
+          onPress={signInWithGoogle}
+          variant="primary"
+          size="medium"
+          fullWidth
+        /> */}
       </ThemedView>
     </ThemedView>
   );
