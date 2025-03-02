@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { mockAuthService, User } from '@/services/mockAuth';
+import { mockAuthService, User, AuthResponse } from '@/services/mockAuth';
+import { Alert } from 'react-native';
+import * as Google from 'expo-auth-session/providers/google';
+import { Config } from '@/utils/config';
 
 // API functions that work directly with the mockAuthService
 const authAPI = {
@@ -10,13 +13,20 @@ const authAPI = {
   },
 
   // Login using mock service
-  login: async (email: string, password: string): Promise<User> => {
+  login: async (email: string, password: string): Promise<AuthResponse> => {
     return mockAuthService.login(email, password);
   },
 
   // Register using mock service
-  register: async (email: string, password: string): Promise<User> => {
+  register: async (email: string, password: string): Promise<AuthResponse> => {
     return mockAuthService.register(email, password);
+  },
+
+  // Login with Google token
+  loginWithGoogle: async (token: string): Promise<AuthResponse> => {
+    // In a real app, this would send the token to your backend
+    // For mock service, we'll create a fake user based on the token
+    return mockAuthService.login('google-user@example.com', 'google-password');
   },
 
   // Logout using mock service
@@ -36,6 +46,7 @@ type AuthContextType = {
   isError: boolean;
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   logOut: () => Promise<void>;
 };
 
@@ -45,6 +56,7 @@ const AuthContext = createContext<AuthContextType>({
   isError: false,
   signUp: async () => {},
   signIn: async () => {},
+  signInWithGoogle: async () => {},
   logOut: async () => {},
 });
 
@@ -54,6 +66,14 @@ export const useAuth = () => useContext(AuthContext);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Use the queryClient
   const queryClient = useQueryClient();
+
+  // Google Auth configuration
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: Config.googleAndroidClientId,
+    iosClientId: Config.googleIosClientId,
+    clientId: Config.googleClientId, // For Expo web
+    scopes: ['profile', 'email'],
+  });
 
   // Query for getting the current user
   const {
@@ -78,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       authAPI.login(email, password),
     onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data);
+      queryClient.setQueryData(['user'], data.user);
       // Also invalidate other user-related queries that might depend on auth status
       queryClient.invalidateQueries({ queryKey: ['userWords'] });
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
@@ -86,12 +106,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
+  // Mutation for Google login
+  const loginWithGoogleMutation = useMutation({
+    mutationFn: (token: string) => authAPI.loginWithGoogle(token),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['user'], data.user);
+      queryClient.invalidateQueries({ queryKey: ['userWords'] });
+      queryClient.invalidateQueries({ queryKey: ['exercises'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+    },
+  });
+
+  // Handle Google sign-in response
+  useEffect(() => {
+    if (response?.type === 'success' && response.authentication?.accessToken) {
+      const handleGoogleSignIn = async () => {
+        try {
+          if (!response.authentication) {
+            throw new Error('No authentication data');
+          }
+
+          await loginWithGoogleMutation.mutateAsync(
+            response.authentication.accessToken
+          );
+        } catch (error) {
+          Alert.alert(
+            'Google Sign-In Error',
+            'Could not sign in with Google. Please try again.'
+          );
+        }
+      };
+      handleGoogleSignIn();
+    } else if (response?.type === 'error') {
+      Alert.alert(
+        'Google Sign-In Error',
+        response.error?.message || 'An unknown error occurred'
+      );
+    }
+  }, [response, loginWithGoogleMutation]);
+
   // Mutation for registration
   const registerMutation = useMutation({
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       authAPI.register(email, password),
     onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data);
+      queryClient.setQueryData(['user'], data.user);
     },
   });
 
@@ -110,6 +169,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await loginMutation.mutateAsync({ email, password });
   };
 
+  // Sign in with Google function
+  const signInWithGoogle = async () => {
+    if (!request) {
+      Alert.alert('Error', 'Google sign-in is not available');
+      return;
+    }
+    await promptAsync();
+  };
+
   // Sign up function
   const signUp = async (email: string, password: string) => {
     await registerMutation.mutateAsync({ email, password });
@@ -125,14 +193,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoadingUser ||
     loginMutation.isPending ||
     registerMutation.isPending ||
-    logoutMutation.isPending;
+    logoutMutation.isPending ||
+    loginWithGoogleMutation.isPending;
 
   // Combine error states
   const isError =
     isErrorUser ||
     loginMutation.isError ||
     registerMutation.isError ||
-    logoutMutation.isError;
+    logoutMutation.isError ||
+    loginWithGoogleMutation.isError;
 
   const value = {
     user: user || null,
@@ -140,6 +210,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isError,
     signUp,
     signIn,
+    signInWithGoogle,
     logOut,
   };
 

@@ -48,3 +48,33 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Environment Variables
+
+This project uses environment variables for configuration. To set up your environment:
+
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file and update the values:
+   ```
+   API_URL=https://your-api-url.com
+   ```
+
+3. For Google authentication, uncomment and update the Google client IDs in the `.env` file.
+
+The environment variables are loaded using `react-native-dotenv` and can be accessed in your code by importing from `@env`:
+
+```typescript
+import { API_URL } from '@env';
+```
+
+Or use the config utility:
+
+```typescript
+import { Config } from './utils/config';
+
+// Use Config.apiUrl
+```

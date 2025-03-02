@@ -6,7 +6,6 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
@@ -81,11 +80,9 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
-
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <ThemedView style={styles.header}>
-          <Typography weight="bold" size="lg" style={styles.headerTitle}>
+          <Typography size="lg" style={styles.headerTitle}>
             Профиль
           </Typography>
           <TouchableOpacity

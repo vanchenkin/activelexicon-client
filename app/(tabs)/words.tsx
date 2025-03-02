@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import {
   StyleSheet,
-  TextInput,
-  TouchableOpacity,
+  View,
   FlatList,
+  TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { UserWord } from '@/services/mockWordsService';
 import { useUserWords, useSearchWords, useDeleteWord } from '@/hooks/useApi';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
+import { useQuery } from '@tanstack/react-query';
+import Input from '../../components/Input';
 
 export default function WordsScreen() {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function WordsScreen() {
 
   const handleAddWord = () => {
     // Navigate to add word screen or show a modal
-    router.push('/add-word');
+    router.push('/add-word' as any);
   };
 
   const handleDeleteWord = (wordId: string) => {
@@ -82,30 +83,33 @@ export default function WordsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar style="auto" />
-
       <ThemedView style={styles.header}>
-        <Typography weight="bold" size="lg" style={styles.headerTitle}>
+        <Typography size="lg" style={styles.headerTitle}>
           Мои слова
         </Typography>
       </ThemedView>
 
       <ThemedView style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color="#999" />
-        <TextInput
-          style={styles.searchInput}
+        <Input
+          variant="search"
           placeholder="Поиск слов..."
           value={searchQuery}
           onChangeText={handleSearch}
+          containerStyle={styles.searchInputContainer}
+          leadingIcon={
+            <Ionicons name="search-outline" size={20} color="#999" />
+          }
+          trailingIcon={
+            searchQuery.length > 0 ? (
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={() => handleSearch('')}
+              >
+                <Ionicons name="close-circle" size={20} color="#999" />
+              </TouchableOpacity>
+            ) : null
+          }
         />
-        {searchQuery.length > 0 && (
-          <TouchableOpacity
-            style={styles.clearButton}
-            onPress={() => handleSearch('')}
-          >
-            <Ionicons name="close-circle" size={20} color="#999" />
-          </TouchableOpacity>
-        )}
       </ThemedView>
 
       {isLoading ? (
@@ -166,8 +170,8 @@ const styles = StyleSheet.create({
     margin: 16,
     marginTop: 8,
   },
-  searchIcon: {
-    marginRight: 8,
+  searchInputContainer: {
+    flex: 1,
   },
   searchInput: {
     flex: 1,

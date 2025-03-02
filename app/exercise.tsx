@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
+  View,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -20,6 +21,7 @@ import {
 } from '@/hooks/useApi';
 import { ThemedView } from '@/components/ThemedView';
 import BackButton from '@/components/BackButton';
+import Input from '../components/Input';
 
 export default function ExerciseScreen() {
   const queryClient = useQueryClient();
@@ -179,15 +181,18 @@ export default function ExerciseScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         style={styles.inputContainer}
       >
-        <TextInput
-          style={[
-            styles.input,
-            isCorrect === true ? styles.correctInput : null,
-            isCorrect === false ? styles.incorrectInput : null,
-          ]}
+        <Input
+          variant={
+            isCorrect === true
+              ? 'success'
+              : isCorrect === false
+                ? 'error'
+                : 'default'
+          }
           placeholder="Введите текст..."
           value={userAnswer}
           onChangeText={setUserAnswer}
+          fullWidth
           editable={isChecking === false && isCorrect !== true}
         />
 

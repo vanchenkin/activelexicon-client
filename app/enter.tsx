@@ -1,23 +1,21 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import Button from '../components/Button';
 import Logo from '../components/Logo';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import { router } from 'expo-router';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 
 export default function EnterScreen() {
   return (
     <ThemedView style={styles.container}>
-      <StatusBar style="auto" />
-
-      <Typography weight="bold" size="2xl" style={styles.welcomeText}>
+      <Typography size="2xl" style={styles.welcomeText}>
         Добро пожаловать!
       </Typography>
 
       <ThemedView style={styles.logoContainer}>
-        <Logo size={150} />
+        <Logo />
       </ThemedView>
 
       <Typography size="md" style={styles.descriptionText}>
@@ -25,19 +23,14 @@ export default function EnterScreen() {
       </Typography>
 
       <ThemedView style={styles.buttonContainer}>
-        <Button
-          title="Регистрация"
-          onPress={() => router.push('/register')}
-          style={styles.button}
-          textStyle={styles.buttonText}
-        />
+        <Button title="Регистрация" onPress={() => router.push('/register')} />
 
         <Button
           title="Войти по логину и паролю"
           onPress={() => router.push('/login')}
-          style={styles.button}
-          textStyle={styles.buttonText}
         />
+
+        {/* <GoogleSignInButton fullWidth /> */}
       </ThemedView>
     </ThemedView>
   );
@@ -53,7 +46,6 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     marginBottom: 30,
-    color: '#333',
   },
   logoContainer: {
     marginBottom: 20,
@@ -65,20 +57,8 @@ const styles = StyleSheet.create({
     maxWidth: '80%',
   },
   buttonContainer: {
+    gap: 10,
     width: '100%',
     maxWidth: 300,
-  },
-  button: {
-    backgroundColor: '#0099FF',
-    width: '100%',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
   },
 });

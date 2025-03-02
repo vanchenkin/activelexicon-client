@@ -108,26 +108,19 @@ export default function LanguageLevelSelect({
                 style={styles.levelOption}
                 onPress={() => handleSelect(level.value)}
               >
-                <ThemedView style={styles.levelHeader}>
+                <View style={styles.levelHeader}>
                   <Typography style={styles.levelLabel}>
                     {level.label}
                   </Typography>
                   {value === level.value && (
                     <Ionicons name="checkmark" size={20} color="#0099FF" />
                   )}
-                </ThemedView>
+                </View>
                 <Typography style={styles.levelDescription}>
                   {level.description}
                 </Typography>
               </TouchableOpacity>
             ))}
-
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Typography style={styles.closeButtonText}>Закрыть</Typography>
-            </TouchableOpacity>
           </ThemedView>
         </Pressable>
       </Modal>
@@ -139,8 +132,6 @@ const styles = StyleSheet.create({
   selectButton: {
     backgroundColor: 'white',
     width: '100%',
-    padding: 15,
-    borderRadius: 5,
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#E0E0E0',
@@ -149,7 +140,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectButtonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#333',
   },
   modalOverlay: {
@@ -165,7 +156,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',

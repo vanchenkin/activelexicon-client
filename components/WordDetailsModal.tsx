@@ -45,7 +45,7 @@ export default function WordDetailsModal({
           style={styles.container}
           onStartShouldSetResponder={() => true}
         >
-          <Typography weight="bold" size="lg" style={styles.word}>
+          <Typography size="lg" style={styles.word}>
             {word.word}
           </Typography>
           <Typography size="lg" style={styles.translation}>

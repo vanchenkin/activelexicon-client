@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
-import { StatusBar } from 'expo-status-bar';
 import Logo from '../components/Logo';
 import Button from '../components/Button';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import BackButton from '../components/BackButton';
+import GoogleSignInButton from '../components/GoogleSignInButton';
+import Input from '../components/Input';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -32,42 +33,37 @@ export default function LoginScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <BackButton onPress={() => router.back()} />
+      <BackButton onPress={() => router.replace('/')} />
 
       <ThemedView style={styles.formContainer}>
         <ThemedView style={styles.logoContainer}>
-          <Logo size={150} />
+          <Logo />
         </ThemedView>
         <Typography size="md" style={styles.descriptionText}>
           Приложение для развития активного словарного запаса
         </Typography>
-        <TextInput
-          style={styles.input}
+        <Input
           placeholder="E-mail"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
+          fullWidth
         />
-        <TextInput
-          style={styles.input}
+        <Input
           placeholder="Пароль"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          fullWidth
+          error={error || undefined}
         />
-        {error ? (
-          <Typography color="red" style={styles.errorText}>
-            {error}
-          </Typography>
-        ) : null}
         <Button
+          fullWidth
           title="Войти"
           onPress={handleLogin}
           disabled={isLoading}
           isLoading={isLoading}
-          style={styles.loginButton}
-          textStyle={styles.buttonText}
         />
       </ThemedView>
     </ThemedView>
@@ -78,6 +74,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    padding: 20,
   },
   headerText: {
     color: 'white',
@@ -100,34 +97,35 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
     color: '#666',
-    maxWidth: '80%',
   },
   input: {
     fontFamily: 'Inter-Regular',
     backgroundColor: 'white',
-    width: '100%',
     padding: 15,
     borderRadius: 5,
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-  },
-  loginButton: {
-    backgroundColor: '#0099FF',
     width: '100%',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
   },
   errorText: {
     color: 'red',
     marginBottom: 15,
     textAlign: 'center',
+  },
+  divider: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#E0E0E0',
+  },
+  dividerText: {
+    marginHorizontal: 10,
+    color: '#666',
   },
 });

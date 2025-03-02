@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
-  TextInput,
-  TouchableOpacity,
+  View,
   FlatList,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '@/context/AuthContext';
+import Typography from '../../components/Typography';
+import { ThemedView } from '../../components/ThemedView';
+import Input from '../../components/Input';
 import { useRouter } from 'expo-router';
 import { mockChatService, ChatMessage } from '@/services/mockChatService';
-import Typography from '@/components/Typography';
-import { ThemedView } from '@/components/ThemedView';
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -88,12 +90,8 @@ export default function ChatScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar style="auto" />
-
       <ThemedView style={styles.header}>
-        <Typography weight="bold" style={styles.headerTitle}>
-          Чат
-        </Typography>
+        <Typography style={styles.headerTitle}>Чат</Typography>
         <TouchableOpacity
           style={styles.settingsButton}
           onPress={handleOpenSettings}
@@ -123,24 +121,27 @@ export default function ChatScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
         style={styles.inputContainer}
       >
-        <TextInput
-          style={styles.input}
+        <Input
+          variant="chat"
           placeholder="Введите текст..."
           value={inputText}
           onChangeText={setInputText}
           multiline
+          containerStyle={styles.chatInputContainer}
+          trailingIcon={
+            <TouchableOpacity
+              style={styles.sendButton}
+              onPress={handleSendMessage}
+              disabled={isSending || !inputText.trim()}
+            >
+              {isSending ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Ionicons name="send" size={20} color="#fff" />
+              )}
+            </TouchableOpacity>
+          }
         />
-        <TouchableOpacity
-          style={styles.sendButton}
-          onPress={handleSendMessage}
-          disabled={isSending || !inputText.trim()}
-        >
-          {isSending ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Ionicons name="send" size={24} color="#fff" />
-          )}
-        </TouchableOpacity>
       </KeyboardAvoidingView>
     </ThemedView>
   );
@@ -214,13 +215,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#EFEFEF',
   },
-  input: {
+  chatInputContainer: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    maxHeight: 100,
   },
   sendButton: {
     width: 44,

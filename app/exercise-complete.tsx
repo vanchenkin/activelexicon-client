@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, SafeAreaView } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
@@ -52,8 +51,6 @@ export default function ExerciseCompleteScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-
       <ThemedView style={styles.card} lightColor="#FFFFFF" darkColor="#1E1E1E">
         <Logo size={80} />
 
@@ -61,7 +58,7 @@ export default function ExerciseCompleteScreen() {
           <Ionicons name="star" size={80} color="#FFD700" />
         </ThemedView>
 
-        <Typography weight="bold" size="2xl" style={styles.title}>
+        <Typography size="2xl" style={styles.title}>
           Отлично!
         </Typography>
 
@@ -70,7 +67,7 @@ export default function ExerciseCompleteScreen() {
         </Typography>
 
         <ThemedView style={styles.rewardContainer}>
-          <Typography weight="bold" size="lg" style={styles.rewardTitle}>
+          <Typography size="lg" style={styles.rewardTitle}>
             +100 XP
           </Typography>
           <Typography size="sm" style={styles.rewardSubtitle}>
@@ -92,7 +89,7 @@ export default function ExerciseCompleteScreen() {
         </ThemedView>
 
         <ThemedView style={styles.streakContainer}>
-          <Typography weight="bold" size="md" style={styles.streakTitle}>
+          <Typography size="md" style={styles.streakTitle}>
             Серия: {progress?.streak || 0}{' '}
             {getStreakText(progress?.streak || 0)}
           </Typography>

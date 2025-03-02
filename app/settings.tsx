@@ -5,10 +5,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
-  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import Typography from '@/components/Typography';
@@ -50,12 +48,10 @@ export default function SettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar style="auto" />
-
       {/* Header */}
       <ThemedView style={styles.header}>
         <BackButton onPress={handleBackPress} />
-        <Typography weight="bold" size="lg" style={styles.headerTitle}>
+        <Typography size="lg" style={styles.headerTitle}>
           Настройки
         </Typography>
         <ThemedView style={{ width: 40 }} />

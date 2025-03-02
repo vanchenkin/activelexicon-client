@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { useWords } from '@/hooks/useApi';
 import { ThemedView } from '../../components/ThemedView';
@@ -40,8 +39,6 @@ export default function HomeScreen() {
   if (!hasWords) {
     return (
       <ThemedView style={styles.container}>
-        <StatusBar style="auto" />
-
         <ThemedView style={styles.emptyContainer}>
           <ThemedView style={styles.emptyIconContainer}>
             <Ionicons
@@ -69,8 +66,6 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar style="auto" />
-
       <Text style={styles.title}>Лента заданий</Text>
 
       <Text style={styles.description}>

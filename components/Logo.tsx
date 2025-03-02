@@ -7,7 +7,7 @@ interface LogoProps {
   style?: ViewStyle;
 }
 
-const Logo = ({ size = 100, style }: LogoProps) => {
+const Logo = ({ size = 300, style }: LogoProps) => {
   return (
     <ThemedView style={[styles.container, style]}>
       <Image

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
-import { StatusBar } from 'expo-status-bar';
 import Logo from '../components/Logo';
 import Button from '../components/Button';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import LanguageLevelSelect from '../components/LanguageLevelSelect';
 import BackButton from '../components/BackButton';
+import Input from '../components/Input';
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState('');
@@ -45,11 +45,11 @@ export default function RegisterScreen() {
     <ThemedView style={styles.container}>
       <ThemedView style={styles.formContainer}>
         <ThemedView style={styles.backButtonContainer}>
-          <BackButton onPress={() => router.back()} />
+          <BackButton onPress={() => router.replace('/')} />
         </ThemedView>
 
         <ThemedView style={styles.logoContainer}>
-          <Logo size={150} />
+          <Logo />
         </ThemedView>
 
         <Typography style={styles.descriptionText}>
@@ -62,29 +62,30 @@ export default function RegisterScreen() {
           </Typography>
         ) : null}
 
-        <TextInput
-          style={styles.input}
+        <Input
           placeholder="E-mail"
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           keyboardType="email-address"
+          fullWidth
+          error={error || undefined}
         />
 
-        <TextInput
-          style={styles.input}
+        <Input
           placeholder="Пароль"
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          fullWidth
         />
 
-        <TextInput
-          style={styles.input}
+        <Input
           placeholder="Повторите пароль"
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           secureTextEntry
+          fullWidth
         />
 
         <LanguageLevelSelect
@@ -99,8 +100,7 @@ export default function RegisterScreen() {
           onPress={handleRegister}
           disabled={isLoading}
           isLoading={isLoading}
-          style={styles.button}
-          textStyle={styles.buttonText}
+          fullWidth
         />
       </ThemedView>
     </ThemedView>
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 20,
+    padding: 40,
     alignItems: 'center',
     justifyContent: 'center', // Center content vertically
   },
@@ -148,19 +148,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-  },
-  button: {
-    backgroundColor: '#0099FF',
-    width: '100%',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
   },
   errorText: {
     color: 'red',

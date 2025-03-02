@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
   ScrollView,
+  Modal,
+  Pressable,
+  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
 import { useTopics, useSearchTopics, useGenerateText } from '@/hooks/useApi';
 import { Topic } from '@/services/mockTopicsApi';
 import TextComplexityModal from '@/components/TextComplexityModal';
 import TextSelectionScreen from '@/components/TextSelectionScreen';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
+import Button from '@/components/Button';
+import Input from '../../components/Input';
 
 type TextComplexity = 'easy' | 'medium' | 'hard';
 
@@ -129,9 +132,7 @@ export default function ExploreScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar style="auto" />
-
-      <Typography weight="bold" size="2xl" style={styles.title}>
+      <Typography size="2xl" style={styles.title}>
         Генерация текста
       </Typography>
 
@@ -148,17 +149,13 @@ export default function ExploreScreen() {
       </ThemedView>
 
       <ThemedView style={styles.searchContainer}>
-        <Ionicons
-          name="search"
-          size={20}
-          color="#999"
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
+        <Input
+          variant="search"
           placeholder="Поиск темы или введите свою тему..."
           value={searchQuery}
           onChangeText={setSearchQuery}
+          containerStyle={styles.searchInputContainer}
+          leadingIcon={<Ionicons name="search" size={20} color="#999" />}
         />
       </ThemedView>
 
@@ -258,13 +255,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginBottom: 16,
   },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
+  searchInputContainer: {
     flex: 1,
-    height: 50,
-    fontSize: 16,
   },
   loadingContainer: {
     flex: 1,

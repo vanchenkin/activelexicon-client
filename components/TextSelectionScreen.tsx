@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
 import {
   mockTranslationService,
   WordDetails,
@@ -104,8 +103,6 @@ export default function TextSelectionScreen({
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar style="auto" />
-
       <ThemedView style={styles.generatedTextInfoCard}>
         <Ionicons
           name="information-circle-outline"

@@ -16,6 +16,7 @@ interface ButtonProps extends TouchableOpacityProps {
   size?: 'small' | 'medium' | 'large';
   isLoading?: boolean;
   disabled?: boolean;
+  fullWidth?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -27,6 +28,7 @@ const Button = ({
   size = 'medium',
   isLoading = false,
   disabled = false,
+  fullWidth = false,
   style,
   textStyle,
   ...rest
@@ -36,6 +38,7 @@ const Button = ({
     styles.button,
     styles[variant],
     styles[size],
+    fullWidth && styles.fullWidth,
     disabled && styles.disabled,
     style,
   ];
@@ -75,11 +78,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  fullWidth: {
+    width: '100%',
+  },
   primary: {
-    backgroundColor: '#3498db',
+    backgroundColor: '#0099FF',
+    shadowColor: '#0066CC',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 0,
   },
   secondary: {
-    backgroundColor: '#2ecc71',
+    backgroundColor: 'grey',
   },
   outline: {
     backgroundColor: 'transparent',
@@ -87,30 +97,32 @@ const styles = StyleSheet.create({
     borderColor: '#3498db',
   },
   small: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  medium: {
     paddingVertical: 10,
     paddingHorizontal: 16,
+    height: 40,
   },
-  large: {
+  medium: {
     paddingVertical: 14,
     paddingHorizontal: 20,
+    height: 50,
+  },
+  large: {
+    paddingVertical: 18,
+    paddingHorizontal: 24,
+    height: 60,
   },
   disabled: {
     backgroundColor: '#bdc3c7',
     borderColor: '#bdc3c7',
   },
   text: {
-    fontFamily: 'Inter-SemiBold',
-    fontWeight: '600',
+    fontFamily: 'Inter-Regular',
   },
   primaryText: {
-    color: '#fff',
+    color: '#ffffff',
   },
   secondaryText: {
-    color: '#fff',
+    color: '#ffffff',
   },
   outlineText: {
     color: '#3498db',
