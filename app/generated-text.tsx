@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ActivityIndicator, StyleSheet } from 'react-native';
-import TextSelectionScreen from '../components/TextSelectionScreen';
-import { useGenerateText } from '../hooks/useApi';
-import { ThemedView } from '../components/ThemedView';
+import TextSelectionScreen from '@/components/TextSelectionScreen';
+import { useGenerateText } from '@/hooks/useApi';
+import { ThemedView } from '@/components/ThemedView';
+
+// Define the type for the complexity parameter
+type TextComplexity = 'easy' | 'medium' | 'hard';
 
 export default function GeneratedTextScreen() {
   const router = useRouter();
@@ -13,21 +16,19 @@ export default function GeneratedTextScreen() {
     complexity: string;
   }>();
 
+  // TextSelectionScreen manages its own selected words state
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
 
   // Use the mutation for text generation
   const generateTextMutation = useGenerateText();
 
   // Generate text when the component mounts
-  React.useEffect(() => {
+  useEffect(() => {
     if (!generateTextMutation.isSuccess && !generateTextMutation.isPending) {
       generateTextMutation.mutate({
         topicId: params.topicId || null,
         customTopic: params.customTopic || null,
-        complexity: (params.complexity || 'medium') as
-          | 'easy'
-          | 'medium'
-          | 'hard',
+        complexity: (params.complexity || 'medium') as TextComplexity,
       });
     }
   }, [params.topicId, params.customTopic, params.complexity]);
@@ -36,7 +37,7 @@ export default function GeneratedTextScreen() {
     generateTextMutation.mutate({
       topicId: params.topicId || null,
       customTopic: params.customTopic || null,
-      complexity: (params.complexity || 'medium') as 'easy' | 'medium' | 'hard',
+      complexity: (params.complexity || 'medium') as TextComplexity,
     });
   };
 

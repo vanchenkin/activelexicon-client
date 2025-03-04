@@ -1,22 +1,15 @@
-import {
-  API_URL,
-  GOOGLE_CLIENT_ID,
-  GOOGLE_ANDROID_CLIENT_ID,
-  GOOGLE_IOS_CLIENT_ID,
-} from '@env';
-
 // Default values as fallbacks
 const DEFAULT_API_URL = 'https://api.example.com';
 
 // Configuration object with environment variables and fallbacks
 export const Config = {
   // API
-  apiUrl: API_URL || DEFAULT_API_URL,
+  apiUrl: process.env.API_URL || DEFAULT_API_URL,
 
   // Google Authentication
-  googleClientId: GOOGLE_CLIENT_ID || '',
-  googleAndroidClientId: GOOGLE_ANDROID_CLIENT_ID || '',
-  googleIosClientId: GOOGLE_IOS_CLIENT_ID || '',
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
+  googleAndroidClientId: process.env.GOOGLE_ANDROID_CLIENT_ID || '',
+  googleIosClientId: process.env.GOOGLE_IOS_CLIENT_ID || '',
 };
 
 // Helper function to validate the configuration
