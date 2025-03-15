@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native';
 import Button from '../components/Button';
 import Logo from '../components/Logo';
 import Typography from '../components/Typography';
+import DescriptionTitle from '../components/DescriptionTitle';
 import { ThemedView } from '../components/ThemedView';
 import { router } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
@@ -20,9 +21,7 @@ export default function EnterScreen() {
         <Logo />
       </ThemedView>
 
-      <Typography size="md" style={styles.descriptionText}>
-        Приложение для развития активного словарного запаса
-      </Typography>
+      <DescriptionTitle />
 
       <ThemedView style={styles.buttonContainer}>
         <Button title="Регистрация" onPress={() => router.push('/register')} />
@@ -57,12 +56,6 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     marginBottom: 20,
-  },
-  descriptionText: {
-    textAlign: 'center',
-    marginBottom: 40,
-    color: '#666',
-    maxWidth: '80%',
   },
   buttonContainer: {
     gap: 10,

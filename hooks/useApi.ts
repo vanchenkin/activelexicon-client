@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { mockApi, Word, UserStats } from '@/services/mockApi';
-import { mockTopicsApi, Topic } from '@/services/mockTopicsApi';
-import { mockChatService, ChatMessage } from '@/services/mockChatService';
-import { mockExerciseService, Exercise } from '@/services/mockExerciseService';
-import { mockWordsService, UserWord } from '@/services/mockWordsService';
+import { mockApi, Word } from '@/services/mockApi';
+import { mockTopicsApi } from '@/services/mockTopicsApi';
+import { mockChatService } from '@/services/mockChatService';
+import { mockExerciseService } from '@/services/mockExerciseService';
+import { mockWordsService } from '@/services/mockWordsService';
 import { mockAuthService, User } from '@/services/mockAuth';
 
 // Hook for fetching words

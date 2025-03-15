@@ -21,21 +21,16 @@ const Typography = ({
   children,
   weight = 'regular',
   size = 'md',
-  color,
   style,
   lightColor,
   darkColor,
   type,
   ...rest
 }: TypographyProps) => {
-  // Get theme color if using themed colors
   const themeColor = useThemeColor(
     { light: lightColor, dark: darkColor },
     'text'
   );
-
-  // Determine which color to use (prop color overrides theme color)
-  const textColor = color || themeColor;
 
   return (
     <Text
@@ -45,10 +40,8 @@ const Typography = ({
         weight && styles[weight],
         // Font size based on size prop
         size && styles[size],
-        // Legacy type styles for backward compatibility
-        type && styles[type],
         // Apply color
-        { color: textColor },
+        { color: themeColor },
         // Custom styles passed as prop
         style,
       ]}
@@ -104,30 +97,6 @@ const styles = StyleSheet.create({
   '3xl': {
     fontSize: 30,
     lineHeight: 36,
-  },
-  // Legacy type styles
-  default: {
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  defaultSemiBold: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '600',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
-  },
-  subtitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  link: {
-    fontSize: 16,
-    lineHeight: 30,
-    color: '#0a7ea4',
   },
 });
 

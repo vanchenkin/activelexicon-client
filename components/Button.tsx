@@ -83,10 +83,7 @@ const styles = StyleSheet.create({
   },
   primary: {
     backgroundColor: '#0099FF',
-    shadowColor: '#0066CC',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 0,
+    boxShadow: '0px 2px 0px 0px #2A63A9',
   },
   secondary: {
     backgroundColor: 'grey',

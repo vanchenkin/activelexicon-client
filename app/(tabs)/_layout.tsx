@@ -27,8 +27,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Учить!',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="school-outline" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="school-outline" size={size} color={color} />
           ),
         }}
       />
@@ -36,8 +36,8 @@ export default function TabLayout() {
         name="explore"
         options={{
           title: 'Найти',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="search-outline" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search-outline" size={size} color={color} />
           ),
         }}
       />
@@ -45,8 +45,8 @@ export default function TabLayout() {
         name="chat"
         options={{
           title: 'Чат',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="chatbubble-outline" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubble-outline" size={size} color={color} />
           ),
         }}
       />
@@ -54,8 +54,8 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Профиль',
-          tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-            <Ionicons name="person-outline" size={24} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
           ),
         }}
       />
