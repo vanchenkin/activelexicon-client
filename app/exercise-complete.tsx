@@ -26,7 +26,7 @@ export default function ExerciseCompleteScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ThemedView style={styles.card} lightColor="#FFFFFF" darkColor="#1E1E1E">
-        <Logo size={80} />
+        <Logo width={80} height={80} />
 
         <ThemedView style={styles.congratsIconContainer}>
           <Ionicons name="star" size={80} color="#FFD700" />

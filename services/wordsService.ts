@@ -1,10 +1,11 @@
 import { ApiService } from './api';
 
-export interface UserWord {
+export interface Word {
   id: string;
   word: string;
   translation: string;
-  isLearned: boolean;
+  examples?: string[];
+  learned: boolean;
   addedAt: Date;
 }
 
@@ -12,7 +13,7 @@ export interface UserStats {
   totalWords: number;
   learnedWords: number;
   learningStreak: number;
-  lastLearnedDate: Date | null;
+  lastActiveDate: Date | null;
 }
 
 class WordsService {
@@ -22,30 +23,43 @@ class WordsService {
     this.api = new ApiService();
   }
 
-  async getUserWords(): Promise<UserWord[]> {
-    const response = await this.api.get<UserWord[]>('/words');
+  async getWords(): Promise<Word[]> {
+    const response = await this.api.get<Word[]>('/words');
 
-    // Convert string dates to Date objects
+    // Convert string dates to Date objects if needed
     return response.map((word) => ({
       ...word,
-      addedAt: new Date(word.addedAt),
+      addedAt:
+        word.addedAt instanceof Date ? word.addedAt : new Date(word.addedAt),
     }));
   }
 
-  async searchUserWords(query: string): Promise<UserWord[]> {
-    if (!query) return this.getUserWords();
+  async getWord(id: string): Promise<Word> {
+    const word = await this.api.get<Word>(`/words/${id}`);
 
-    const response = await this.api.get<UserWord[]>(`/words/search`, { query });
+    // Convert string date to Date object if needed
+    return {
+      ...word,
+      addedAt:
+        word.addedAt instanceof Date ? word.addedAt : new Date(word.addedAt),
+    };
+  }
 
-    // Convert string dates to Date objects
+  async searchWords(query: string): Promise<Word[]> {
+    if (!query) return this.getWords();
+
+    const response = await this.api.get<Word[]>(`/words/search`, { query });
+
+    // Convert string dates to Date objects if needed
     return response.map((word) => ({
       ...word,
-      addedAt: new Date(word.addedAt),
+      addedAt:
+        word.addedAt instanceof Date ? word.addedAt : new Date(word.addedAt),
     }));
   }
 
-  async addWord(word: string, translation: string): Promise<UserWord> {
-    const response = await this.api.post<UserWord>('/words', {
+  async addWord(word: string, translation: string): Promise<Word> {
+    const response = await this.api.post<Word>('/words', {
       word,
       translation,
     });
@@ -53,7 +67,23 @@ class WordsService {
     // Convert string date to Date object
     return {
       ...response,
-      addedAt: new Date(response.addedAt),
+      addedAt:
+        response.addedAt instanceof Date
+          ? response.addedAt
+          : new Date(response.addedAt),
+    };
+  }
+
+  async toggleWordLearned(id: string): Promise<Word> {
+    const response = await this.api.patch<Word>(`/words/${id}/toggle-learned`);
+
+    // Convert string date to Date object
+    return {
+      ...response,
+      addedAt:
+        response.addedAt instanceof Date
+          ? response.addedAt
+          : new Date(response.addedAt),
     };
   }
 
@@ -68,8 +98,10 @@ class WordsService {
     // Convert string date to Date object if it exists
     return {
       ...response,
-      lastLearnedDate: response.lastLearnedDate
-        ? new Date(response.lastLearnedDate)
+      lastActiveDate: response.lastActiveDate
+        ? response.lastActiveDate instanceof Date
+          ? response.lastActiveDate
+          : new Date(response.lastActiveDate)
         : null,
     };
   }

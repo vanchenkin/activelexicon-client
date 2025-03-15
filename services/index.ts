@@ -9,7 +9,6 @@ import { chatService } from './chatService';
 import { exerciseService } from './exerciseService';
 import { translationService } from './translationService';
 import { topicsService } from './topicsService';
-import { vocabularyService } from './vocabularyService';
 import { setRefreshTokenFunction } from './api';
 
 // Import mock services
@@ -18,7 +17,6 @@ import { mockChatService } from './mockChatService';
 import { mockExerciseService } from './mockExerciseService';
 import { mockTranslationService } from './mockTranslationService';
 import { mockTopicsService } from './mockTopicsService';
-import { mockVocabularyService } from './mockVocabularyService';
 
 export const USE_REAL_BACKEND = false;
 
@@ -45,10 +43,6 @@ export const topicsServiceInstance = USE_REAL_BACKEND
   ? topicsService
   : mockTopicsService;
 
-export const vocabularyServiceInstance = USE_REAL_BACKEND
-  ? vocabularyService
-  : mockVocabularyService;
-
 // Connect the AuthService's refreshToken method to the API service
 setRefreshTokenFunction(async (refreshToken: string) => {
   return authService.refreshToken(refreshToken);
@@ -56,9 +50,8 @@ setRefreshTokenFunction(async (refreshToken: string) => {
 
 // Re-export interfaces for ease of use
 export type { User } from './authService';
-export type { UserWord, UserStats } from './wordsService';
+export type { Word, UserStats } from './wordsService';
 export type { ChatMessage } from './chatService';
 export type { Exercise, ExerciseType, UserProgress } from './exerciseService';
 export type { WordDetails } from './translationService';
 export type { Topic } from './topicsService';
-export type { Word } from './vocabularyService';

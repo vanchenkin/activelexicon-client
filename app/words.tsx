@@ -7,10 +7,10 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useDeleteWord, useSearchWords, useUserWords } from '../hooks/useApi';
+import { useDeleteWord, useSearchWords, useWords } from '../hooks/useApi';
 import { ThemedView } from '../components/ThemedView';
 import Typography from '../components/Typography';
-import { UserWord } from '../services/mockWordsService';
+import { Word } from '../services/wordsService';
 import Input from '../components/Input';
 
 export default function WordsScreen() {
@@ -19,10 +19,10 @@ export default function WordsScreen() {
 
   // Always call hooks unconditionally
   const {
-    data: userWords = [],
-    isLoading: isUserWordsLoading,
-    isError: isUserWordsError,
-  } = useUserWords();
+    data: words = [],
+    isLoading: isWordsLoading,
+    isError: isWordsError,
+  } = useWords();
 
   const {
     data: searchResults = [],
@@ -31,9 +31,9 @@ export default function WordsScreen() {
   } = useSearchWords(searchQuery);
 
   // Determine which data to use based on search query
-  const words = searchQuery.trim() ? searchResults : userWords;
-  const isLoading = searchQuery.trim() ? isSearchLoading : isUserWordsLoading;
-  const isError = searchQuery.trim() ? isSearchError : isUserWordsError;
+  const displayWords = searchQuery.trim() ? searchResults : words;
+  const isLoading = searchQuery.trim() ? isSearchLoading : isWordsLoading;
+  const isError = searchQuery.trim() ? isSearchError : isWordsError;
 
   // Use React Query mutation for deleting words
   const deleteWordMutation = useDeleteWord();
@@ -51,7 +51,7 @@ export default function WordsScreen() {
     deleteWordMutation.mutate(wordId);
   };
 
-  const renderWordItem = ({ item }: { item: UserWord }) => (
+  const renderWordItem = ({ item }: { item: Word }) => (
     <ThemedView style={styles.wordItem}>
       <ThemedView style={styles.wordInfo}>
         <Typography style={styles.wordText}>{item.word}</Typography>
@@ -83,7 +83,7 @@ export default function WordsScreen() {
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
         <Typography size="lg" style={styles.headerTitle}>
-          Мои слова
+          Словарь
         </Typography>
       </ThemedView>
 
@@ -126,7 +126,7 @@ export default function WordsScreen() {
         </ThemedView>
       ) : (
         <FlatList
-          data={words}
+          data={displayWords}
           renderItem={renderWordItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.wordsList}

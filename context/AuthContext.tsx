@@ -148,7 +148,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [response, loginWithGoogleMutation]);
 
   // Mutation for registration
-  const registerMutation = useMutation({
+  const registerMutation = useMutation<
+    AuthResponse,
+    Error,
+    { email: string; password: string }
+  >({
     mutationFn: ({ email, password }: { email: string; password: string }) => {
       return authService.register(email, password);
     },

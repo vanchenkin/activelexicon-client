@@ -2,27 +2,34 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { mockTopicsService } from '@/services/mockTopicsService';
 import { mockChatService } from '@/services/mockChatService';
 import { mockExerciseService } from '@/services/mockExerciseService';
-import { mockWordsService, UserWord } from '@/services/mockWordsService';
-import { mockAuthService, User } from '@/services/mockAuthService';
-import { topicsServiceInstance } from '@/services/index';
+import { mockAuthService } from '@/services/mockAuthService';
+import { topicsServiceInstance, User } from '@/services/index';
+import { mockWordsService } from '@/services/mockWordsService';
+import { Word } from '@/services/wordsService';
 
 // Hook for fetching words
 export function useWords() {
   return useQuery({
     queryKey: ['words'],
-    queryFn: () => mockWordsService.getUserWords(),
+    queryFn: () => mockWordsService.getWords(),
   });
 }
 
 // Hook for fetching a single word
 export function useWord(id: string) {
   return useQuery({
-    queryKey: ['word', id],
-    queryFn: async () => {
-      const words = await mockWordsService.getUserWords();
-      return words.find((word) => word.id === id);
-    },
+    queryKey: ['words', id],
+    queryFn: () => mockWordsService.getWord(id),
     enabled: !!id,
+  });
+}
+
+// Hook for searching words
+export function useSearchWords(query: string) {
+  return useQuery({
+    queryKey: ['words', 'search', query],
+    queryFn: () => mockWordsService.searchWords(query),
+    enabled: query.length > 0,
   });
 }
 
@@ -31,41 +38,60 @@ export function useToggleWordLearned() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string) => {
-      const words = await mockWordsService.getUserWords();
-      const targetWord = words.find((word) => word.id === id);
-      if (!targetWord) throw new Error('Word not found');
-
-      // We'll create a mock implementation since the service doesn't have this method
-      const updatedWord = {
-        ...targetWord,
-        isLearned: !targetWord.isLearned,
-      };
-
-      // Update our mock words (this is just for the demo, in a real app this would be handled by the service)
-      return updatedWord;
-    },
-    onSuccess: (updatedWord: UserWord) => {
+    mutationFn: (id: string) => mockWordsService.toggleWordLearned(id),
+    onSuccess: (updatedWord: Word) => {
       // Update the words list
-      queryClient.setQueryData<UserWord[]>(['words'], (oldWords) =>
+      queryClient.setQueryData<Word[]>(['words'], (oldWords) =>
         oldWords?.map((word) =>
           word.id === updatedWord.id ? updatedWord : word
         )
       );
 
       // Update the single word data
-      queryClient.setQueryData(['word', updatedWord.id], updatedWord);
+      queryClient.setQueryData(['words', updatedWord.id], updatedWord);
 
       // Invalidate stats to trigger a refetch
-      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+      queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
   });
 }
 
-// Hook for fetching user stats
+// Hook for adding a new word
+export function useAddWord() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      word,
+      translation,
+    }: {
+      word: string;
+      translation: string;
+    }) => mockWordsService.addWord(word, translation),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
+      queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
+    },
+  });
+}
+
+// Hook for deleting a word
+export function useDeleteWord() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (wordId: string) => mockWordsService.deleteWord(wordId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['words'] });
+      queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
+    },
+  });
+}
+
+// Hook for fetching words stats
 export function useUserStats() {
   return useQuery({
-    queryKey: ['userStats'],
+    queryKey: ['wordsStats'],
     queryFn: () => mockWordsService.getUserStats(),
   });
 }
@@ -175,7 +201,7 @@ export function useUpdateUserProfile() {
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['currentUser'], updatedUser);
       // Also update user stats which might depend on profile data
-      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+      queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
   });
 }
@@ -204,56 +230,7 @@ export function useAddExperience() {
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['currentUser'], updatedUser);
       queryClient.invalidateQueries({ queryKey: ['exerciseProgress'] });
-      queryClient.invalidateQueries({ queryKey: ['userStats'] });
-    },
-  });
-}
-
-// Hook for fetching user words
-export function useUserWords() {
-  return useQuery({
-    queryKey: ['userWords'],
-    queryFn: () => mockWordsService.getUserWords(),
-  });
-}
-
-// Hook for searching user words
-export function useSearchWords(query: string) {
-  return useQuery({
-    queryKey: ['searchWords', query],
-    queryFn: () => mockWordsService.searchUserWords(query),
-    enabled: query.length > 0,
-  });
-}
-
-// Hook for adding a new word
-export function useAddWord() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      word,
-      translation,
-    }: {
-      word: string;
-      translation: string;
-    }) => mockWordsService.addWord(word, translation),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userWords'] });
-      queryClient.invalidateQueries({ queryKey: ['userStats'] });
-    },
-  });
-}
-
-// Hook for deleting a word
-export function useDeleteWord() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (wordId: string) => mockWordsService.deleteWord(wordId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userWords'] });
-      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+      queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
   });
 }

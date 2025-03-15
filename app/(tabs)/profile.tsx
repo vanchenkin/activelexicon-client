@@ -24,7 +24,7 @@ export default function ProfileScreen() {
     useExerciseProgress();
   const { user: currentUser, isLoading: isLoadingUser } = useAuth();
 
-  const handleOpenVocabulary = () => {
+  const handleOpenWords = () => {
     router.push('/words');
   };
 
@@ -90,7 +90,7 @@ export default function ProfileScreen() {
                       size="sm"
                       style={styles.statValue}
                     >
-                      {userStats.wordsLearned}
+                      {userStats.learnedWords}
                     </Typography>
                   </ThemedView>
 
@@ -116,7 +116,11 @@ export default function ProfileScreen() {
                       size="sm"
                       style={styles.statValue}
                     >
-                      {new Date(userStats.lastActive).toLocaleDateString()}
+                      {userStats.lastActiveDate
+                        ? new Date(
+                            userStats.lastActiveDate
+                          ).toLocaleDateString()
+                        : 'Никогда'}
                     </Typography>
                   </ThemedView>
                 </>
@@ -165,11 +169,8 @@ export default function ProfileScreen() {
           )}
         </ThemedView>
 
-        {/* Vocabulary Button */}
-        <TouchableOpacity
-          style={styles.vocabularyButton}
-          onPress={handleOpenVocabulary}
-        >
+        {/* Words Button */}
+        <TouchableOpacity style={styles.wordsButton} onPress={handleOpenWords}>
           <Typography
             color="white"
             weight="medium"
@@ -278,13 +279,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   levelValue: {},
-  vocabularyButton: {
-    backgroundColor: '#4096FE',
-    padding: 16,
-    borderRadius: 8,
-    marginHorizontal: 16,
-    marginTop: 8,
-    alignItems: 'center',
+  wordsButton: {
+    backgroundColor: '#0099FF',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderRadius: 10,
+    marginBottom: 12,
   },
   buttonText: {},
   logoutButton: {

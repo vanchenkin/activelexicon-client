@@ -1,28 +1,15 @@
 // Mock user data store
 import { TokenStorage } from './tokenStorage';
 import { v4 as uuidv4 } from 'uuid';
+import { User, AuthResponse } from './authService';
 
-export interface User {
-  id: string;
-  email: string;
+// Type augmentation to add password to User type for mock purposes only
+interface MockUser extends User {
   password: string;
-  profile: {
-    level: number;
-    maxLevel: number;
-    experiencePoints: number;
-    joinedDate: Date;
-    lastLogin: Date;
-  };
-}
-
-export interface AuthResponse {
-  user: User;
-  token: string;
-  refreshToken: string;
 }
 
 // In-memory user database
-const users: User[] = [
+const users: MockUser[] = [
   {
     id: '1',
     email: '123',
@@ -62,7 +49,22 @@ const findTokenByRefreshToken = (
   return tokens.find((t) => t.refreshToken === refreshToken);
 };
 
-export class MockAuthService {
+class MockAuthService {
+  private mockUser: MockUser = {
+    id: 'mock-user-id',
+    email: 'mock@example.com',
+    password: 'mock-password',
+    profile: {
+      level: 1,
+      maxLevel: 10,
+      experiencePoints: 0,
+      joinedDate: new Date(),
+      lastLogin: new Date(),
+    },
+  };
+
+  private mockToken = 'mock-jwt-token';
+
   constructor() {
     // Initialize by loading any stored tokens into memory
     this.initializeFromStorage();
@@ -109,35 +111,28 @@ export class MockAuthService {
 
   // Register a new user
   async register(email: string, password: string): Promise<AuthResponse> {
-    // Simulate network delay
-    await delay(800);
+    await delay(600); // Simulate network delay
 
-    // Check if user already exists
-    if (users.find((user) => user.email === email)) {
-      throw new Error('User already exists');
-    }
-
-    // Create new user
-    const newUser: User = {
+    // Create a new user
+    const newUser: MockUser = {
       id: uuidv4(),
       email,
       password,
       profile: {
         level: 1,
-        maxLevel: 27,
+        maxLevel: 10,
         experiencePoints: 0,
         joinedDate: new Date(),
         lastLogin: new Date(),
       },
     };
 
-    // Add to "database"
     users.push(newUser);
 
-    // Generate tokens
+    // Generate tokens for the new user
     const authResponse = this.generateTokens(newUser);
 
-    // Store tokens securely
+    // Save tokens
     await this.saveTokens(authResponse);
 
     return authResponse;
@@ -145,15 +140,15 @@ export class MockAuthService {
 
   // Login user
   async login(email: string, password: string): Promise<AuthResponse> {
-    // Simulate network delay
-    await delay(800);
+    await delay(800); // Simulate network delay
 
-    // Find user
-    const user = users.find((u) => u.email === email);
+    // Find the user
+    const user = users.find(
+      (u) => u.email === email && u.password === password
+    );
 
-    // Check if user exists and password matches
-    if (!user || user.password !== password) {
-      throw new Error('Invalid email or password');
+    if (!user) {
+      throw new Error('Invalid credentials');
     }
 
     // Update last login
@@ -162,7 +157,7 @@ export class MockAuthService {
     // Generate tokens
     const authResponse = this.generateTokens(user);
 
-    // Store tokens securely
+    // Save tokens
     await this.saveTokens(authResponse);
 
     return authResponse;
@@ -170,20 +165,21 @@ export class MockAuthService {
 
   // Logout user
   async logout(): Promise<void> {
-    // Simulate network delay
-    await delay(300);
-
-    // Clear stored tokens
     await TokenStorage.clearAuthData();
+  }
 
-    // Remove token from in-memory database
-    const currentToken = await TokenStorage.getToken();
-    if (currentToken) {
-      const tokenIndex = tokens.findIndex((t) => t.token === currentToken);
-      if (tokenIndex >= 0) {
-        tokens.splice(tokenIndex, 1);
-      }
-    }
+  // Ping with authentication
+  async pingAuth(ping?: string): Promise<{ pong: string }> {
+    return {
+      pong: ping || 'auth-pong',
+    };
+  }
+
+  // Refresh token
+  async refreshToken(refreshToken: string): Promise<boolean> {
+    // Always return success in mock
+    await TokenStorage.saveToken(this.mockToken);
+    return true;
   }
 
   // Get current user using token
@@ -251,38 +247,6 @@ export class MockAuthService {
     return this.getPublicUserData(user);
   }
 
-  // Refresh token
-  async refreshToken(refreshToken: string): Promise<boolean> {
-    // Simulate network delay
-    await delay(500);
-
-    // Find token in database
-    const tokenData = findTokenByRefreshToken(refreshToken);
-    if (!tokenData) {
-      return false;
-    }
-
-    // Find user
-    const user = users.find((u) => u.id === tokenData.userId);
-    if (!user) {
-      return false;
-    }
-
-    // Generate new tokens
-    const authResponse = this.generateTokens(user);
-
-    // Remove old token
-    const tokenIndex = tokens.findIndex((t) => t.refreshToken === refreshToken);
-    if (tokenIndex >= 0) {
-      tokens.splice(tokenIndex, 1);
-    }
-
-    // Save new tokens
-    await this.saveTokens(authResponse);
-
-    return true;
-  }
-
   // Update user profile
   async updateUserProfile(updates: Partial<User['profile']>): Promise<User> {
     await delay(500);
@@ -335,6 +299,11 @@ export class MockAuthService {
       users.push(user);
     }
 
+    // Ensure user exists at this point
+    if (!user) {
+      throw new Error('Failed to create or find Google user');
+    }
+
     // Update last login
     user.profile.lastLogin = new Date();
 
@@ -348,27 +317,16 @@ export class MockAuthService {
   }
 
   // Helper to omit sensitive information (like password)
-  private getPublicUserData(user: User): User {
+  private getPublicUserData(user: MockUser): User {
+    // Destructure to remove password and create a clean user object
     const { password, ...publicUser } = user;
-    return { ...publicUser, password: '' } as User;
+    return publicUser;
   }
 
-  // Generate authentication tokens
-  private generateTokens(user: User): AuthResponse {
-    const token = uuidv4();
-    const refreshToken = uuidv4();
-
-    // Token expires in 1 hour
-    const expires = new Date();
-    expires.setHours(expires.getHours() + 1);
-
-    // Add to tokens database
-    tokens.push({
-      userId: user.id,
-      token,
-      refreshToken,
-      expires,
-    });
+  // Generate tokens for a user
+  private generateTokens(user: MockUser): AuthResponse {
+    const token = `mock-token-${user.id}-${Date.now()}`;
+    const refreshToken = `mock-refresh-${user.id}-${Date.now()}`;
 
     return {
       user: this.getPublicUserData(user),
