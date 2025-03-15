@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
@@ -22,7 +22,7 @@ export default function ExerciseCompleteScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView style={styles.container}>
       <ThemedView style={styles.card} lightColor="#FFFFFF" darkColor="#1E1E1E">
         <Logo width={80} height={80} />
 
@@ -66,7 +66,7 @@ export default function ExerciseCompleteScreen() {
 
         <Button title="Продолжить" onPress={handleContinue} size="large" />
       </ThemedView>
-    </SafeAreaView>
+    </ThemedView>
   );
 }
 

@@ -5,7 +5,6 @@ import { useRouter } from 'expo-router';
 import { useDeleteWord, useSearchWords, useWords } from '../hooks/useApi';
 import { ThemedView } from '../components/ThemedView';
 import Typography from '../components/Typography';
-import { Word } from '../services/wordsService';
 import Input from '../components/Input';
 import WordItem from '../components/WordItem';
 import AnimatedFlatList from '../components/AnimatedFlatList';
@@ -14,7 +13,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated';
 
 export default function WordsScreen() {

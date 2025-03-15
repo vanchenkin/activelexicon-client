@@ -16,7 +16,6 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontSize: 12,
         },
-        tabBarIconStyle: {},
         tabBarItemStyle: {
           paddingVertical: 8,
         },

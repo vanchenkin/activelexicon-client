@@ -1,12 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  StyleSheet,
-  Modal,
-  Pressable,
-  View,
-  Animated,
-  Easing,
-} from 'react-native';
+import { StyleSheet, Modal, Pressable, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { WordDetails } from '@/services/translationService';
 import Typography from './Typography';
@@ -36,7 +29,7 @@ export default function WordDetailsModal({
       fadeAnim.setValue(0);
       scaleAnim.setValue(1);
     }
-  }, [isAdding]);
+  }, [isAdding, fadeAnim, scaleAnim]);
 
   if (!word) return null;
 
@@ -151,7 +144,8 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    marginHorizontal: 20,
+    alignSelf: 'center',
+    maxWidth: 400,
   },
   animatedContainer: {
     width: '100%',

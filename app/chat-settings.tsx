@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
-  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,10 +12,12 @@ import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import BackButton from '../components/BackButton';
 import Button from '../components/Button';
-import { chatServiceInstance } from '../services';
+import { useClearChatHistory } from '../hooks/useApi';
+import { Alert } from '../utils/crossPlatformAlert';
 
 export default function ChatSettingsScreen() {
   const router = useRouter();
+  const clearChatHistory = useClearChatHistory();
 
   const [autocompleteEnabled, setAutocompleteEnabled] = useState(true);
   const [sentimentAnalysisEnabled, setSentimentAnalysisEnabled] =
@@ -45,7 +46,7 @@ export default function ChatSettingsScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await chatServiceInstance.clearHistory();
+              await clearChatHistory.mutateAsync();
               Alert.alert('Успешно', 'История чата успешно очищена');
             } catch (error) {
               console.error('Failed to clear chat history:', error);
@@ -65,12 +66,11 @@ export default function ChatSettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <BackButton onPress={handleBackPress} />
       <ThemedView style={styles.header}>
-        <BackButton onPress={handleBackPress} />
         <Typography size="lg" style={styles.headerTitle}>
           Настройки чата
         </Typography>
-        <ThemedView style={{ width: 40 }} />
       </ThemedView>
 
       <ScrollView style={styles.scrollView}>
@@ -264,9 +264,9 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 16,
-    paddingTop: 50,
+    paddingTop: 35,
     paddingBottom: 16,
     backgroundColor: 'white',
     borderBottomWidth: 1,
@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
+    textAlign: 'center',
   },
   scrollView: {
     flex: 1,

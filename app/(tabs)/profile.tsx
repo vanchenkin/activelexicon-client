@@ -2,7 +2,6 @@ import React from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
@@ -43,7 +42,7 @@ export default function ProfileScreen() {
   const isLoading = isLoadingStats || isLoadingProgress || isLoadingUser;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <ThemedView style={styles.header}>
           <Typography size="lg" style={styles.headerTitle}>
@@ -186,7 +185,7 @@ export default function ProfileScreen() {
           </Typography>
         </TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </ThemedView>
   );
 }
 

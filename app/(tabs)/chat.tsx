@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
-  View,
   FlatList,
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -9,7 +8,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../../context/AuthContext';
 import Typography from '../../components/Typography';
 import { ThemedView } from '../../components/ThemedView';
 import Input from '../../components/Input';
@@ -151,7 +149,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 16,
     paddingTop: 50,
     paddingBottom: 16,
@@ -161,6 +159,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
+    width: '100%',
+    textAlign: 'center',
   },
   settingsButton: {
     padding: 8,

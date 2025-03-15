@@ -10,7 +10,7 @@ const DescriptionTitle: React.FC = () => {
         ...styles.descriptionText,
       }}
     >
-      Приложение для развития <br /> активного словарного запаса
+      Приложение для развития {'\n'} активного словарного запаса
     </Typography>
   );
 };

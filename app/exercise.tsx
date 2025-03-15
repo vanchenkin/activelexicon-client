@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -116,7 +115,7 @@ export default function ExerciseScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
         <BackButton onPress={handleBack} />
         <Text style={styles.headerTitle}>Упражнение</Text>
@@ -204,7 +203,7 @@ export default function ExerciseScreen() {
           )}
         </TouchableOpacity>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ThemedView>
   );
 }
 
