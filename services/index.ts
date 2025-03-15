@@ -9,6 +9,7 @@ import { chatService } from './chatService';
 import { exerciseService } from './exerciseService';
 import { translationService } from './translationService';
 import { topicsService } from './topicsService';
+import { notificationService } from './notificationService';
 import { setRefreshTokenFunction } from './api';
 
 // Import mock services
@@ -55,3 +56,6 @@ export type { ChatMessage } from './chatService';
 export type { Exercise, ExerciseType, UserProgress } from './exerciseService';
 export type { WordDetails } from './translationService';
 export type { Topic } from './topicsService';
+
+// Export notification service
+export { notificationService };

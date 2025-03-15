@@ -7,11 +7,13 @@ import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { QueryProvider } from '@/context/QueryContext';
+import { notificationService } from '@/services';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -50,6 +52,7 @@ function RootLayoutNav() {
       <Stack
         screenOptions={{
           headerShown: false,
+          animation: 'slide_from_right',
         }}
       >
         <Stack.Screen name="enter" options={{ headerShown: false }} />
@@ -72,11 +75,19 @@ export default function RootLayout() {
     'Inter-Bold': require('../assets/fonts/Inter-Bold.ttf'),
   });
 
-  // Use effect to hide splash screen once fonts are loaded
+  // Use effect to hide splash screen once fonts are loaded and initialize notifications
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
+    const initApp = async () => {
+      if (loaded) {
+        // Initialize notification service
+        await notificationService.initialize();
+
+        // Hide splash screen
+        await SplashScreen.hideAsync();
+      }
+    };
+
+    initApp();
   }, [loaded]);
 
   if (!loaded) {

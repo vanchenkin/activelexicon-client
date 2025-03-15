@@ -6,14 +6,13 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTopics } from '@/hooks/useApi';
+import { useTopics, useSearchTopics } from '@/hooks/useApi';
 import { useRouter } from 'expo-router';
 import TextComplexityModal from '@/components/TextComplexityModal';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 import Input from '../../components/Input';
 import TopicItem, { Topic } from '@/components/TopicItem';
-import { topicsServiceInstance } from '@/services';
 import Button from '@/components/Button';
 
 type TextComplexity = 'easy' | 'medium' | 'hard';
@@ -27,12 +26,11 @@ export default function ExploreScreen() {
   const [textComplexity, setTextComplexity] =
     useState<TextComplexity>('medium');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
 
-  // Fetch all topics
   const { data: allTopics, isLoading: isLoadingTopics } = useTopics();
+  const { data: searchResults, isLoading: isSearchLoading } =
+    useSearchTopics(debouncedQuery);
 
-  // Debounce search query
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
@@ -41,38 +39,24 @@ export default function ExploreScreen() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Handle topic search as a standalone request
   useEffect(() => {
-    const searchTopics = async () => {
-      if (!debouncedQuery) {
-        // If no query, display all topics
-        if (allTopics) {
-          setDisplayedTopics(allTopics);
-        }
-        return;
+    if (!debouncedQuery) {
+      if (allTopics) {
+        setDisplayedTopics(allTopics);
       }
+      return;
+    }
 
-      try {
-        setIsSearching(true);
-        const results =
-          await topicsServiceInstance.searchTopics(debouncedQuery);
-        setDisplayedTopics(results);
-      } catch (error) {
-        console.error('Error searching topics:', error);
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    searchTopics();
-  }, [debouncedQuery, allTopics]);
+    if (searchResults) {
+      setDisplayedTopics(searchResults);
+    }
+  }, [debouncedQuery, allTopics, searchResults]);
 
   const handleTopicSelect = (topicId: string) => {
     setSelectedTopic(topicId === selectedTopic ? null : topicId);
   };
 
   const handleGenerate = () => {
-    // Navigate to the generated text screen with the necessary parameters
     router.push({
       pathname: '/generated-text',
       params: {
@@ -91,13 +75,21 @@ export default function ExploreScreen() {
     setIsSettingsModalVisible(!isSettingsModalVisible);
   };
 
-  const isLoading = isLoadingTopics || isSearching;
+  const isLoading = isLoadingTopics || isSearchLoading;
 
   return (
     <ThemedView style={styles.container}>
-      <Typography size="2xl" style={styles.title}>
-        Генерация текста
-      </Typography>
+      <ThemedView style={styles.titleContainer}>
+        <Typography size="xl" style={styles.title}>
+          Генерация текста
+        </Typography>
+        <Button
+          title="Мой список слов"
+          onPress={() => router.push('/words')}
+          variant="outline"
+          size="small"
+        />
+      </ThemedView>
 
       <ThemedView style={styles.infoCard}>
         <Ionicons
@@ -176,10 +168,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     padding: 16,
   },
-  title: {
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
-    textAlign: 'center',
+    backgroundColor: 'transparent',
+    paddingHorizontal: 16,
+  },
+  title: {
+    textAlign: 'left',
+  },
+  wordsButton: {
+    padding: 8,
   },
   infoCard: {
     borderRadius: 10,

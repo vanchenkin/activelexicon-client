@@ -1,13 +1,19 @@
 import React from 'react';
 import {
-  TouchableOpacity,
   Text,
   StyleSheet,
   ActivityIndicator,
   TouchableOpacityProps,
   ViewStyle,
   TextStyle,
+  Pressable,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  interpolate,
+} from 'react-native-reanimated';
 
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
@@ -33,6 +39,8 @@ const Button = ({
   textStyle,
   ...rest
 }: ButtonProps) => {
+  const pressed = useSharedValue(0);
+
   // Compute button styles based on variant and size
   const buttonStyles = [
     styles.button,
@@ -52,23 +60,37 @@ const Button = ({
     textStyle,
   ];
 
+  const animatedStyle = useAnimatedStyle(() => {
+    const scale = interpolate(pressed.value, [0, 1], [1, 0.96]);
+
+    return {
+      transform: [{ scale }],
+    };
+  });
+
   return (
-    <TouchableOpacity
+    <Pressable
+      onPressIn={() => {
+        pressed.value = withSpring(1);
+      }}
+      onPressOut={() => {
+        pressed.value = withSpring(0);
+      }}
       onPress={onPress}
       disabled={disabled || isLoading}
-      style={buttonStyles}
-      activeOpacity={0.7}
       {...rest}
     >
-      {isLoading ? (
-        <ActivityIndicator
-          color={variant === 'outline' ? '#3498db' : '#fff'}
-          size="small"
-        />
-      ) : (
-        <Text style={textStyles}>{title}</Text>
-      )}
-    </TouchableOpacity>
+      <Animated.View style={[buttonStyles, animatedStyle]}>
+        {isLoading ? (
+          <ActivityIndicator
+            color={variant === 'outline' ? '#3498db' : '#fff'}
+            size="small"
+          />
+        ) : (
+          <Text style={textStyles}>{title}</Text>
+        )}
+      </Animated.View>
+    </Pressable>
   );
 };
 
@@ -112,6 +134,7 @@ const styles = StyleSheet.create({
   disabled: {
     backgroundColor: '#bdc3c7',
     borderColor: '#bdc3c7',
+    boxShadow: '0px 2px 0px 0px rgb(111, 111, 111)',
   },
   text: {
     fontFamily: 'Inter-Regular',

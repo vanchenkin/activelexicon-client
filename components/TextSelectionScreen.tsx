@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { WordDetails } from '@/services/translationService';
-import { translationServiceInstance } from '@/services/index';
+import { useWordDetails, useAddWordToVocabulary } from '@/hooks/useApi';
 import WordDetailsModal from '@/components/WordDetailsModal';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
@@ -30,6 +30,9 @@ export default function TextSelectionScreen({
     useState<WordDetails | null>(null);
   const [loadingWord, setLoadingWord] = useState(false);
 
+  const getWordDetails = useWordDetails();
+  const addWordToVocabulary = useAddWordToVocabulary();
+
   // Process the text to split it into words and non-words
   useEffect(() => {
     if (generatedText) {
@@ -52,7 +55,7 @@ export default function TextSelectionScreen({
 
     try {
       setLoadingWord(true);
-      const details = await translationServiceInstance.getWordDetails(word);
+      const details = await getWordDetails.mutateAsync(word);
       setCurrentWordDetails(details);
       setIsModalVisible(true);
 
@@ -69,7 +72,7 @@ export default function TextSelectionScreen({
 
   const handleAddWordToVocabulary = async (word: string) => {
     try {
-      await translationServiceInstance.addWordToVocabulary(word);
+      await addWordToVocabulary.mutateAsync(word);
       if (!selectedWords.includes(word)) {
         setSelectedWords([...selectedWords, word]);
       }
@@ -97,8 +100,6 @@ export default function TextSelectionScreen({
       );
     });
   };
-
-  const selectedWordsCount = selectedWords.length;
 
   return (
     <ThemedView style={styles.container}>

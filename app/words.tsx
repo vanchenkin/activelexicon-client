@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useDeleteWord, useSearchWords, useWords } from '../hooks/useApi';
@@ -12,12 +7,21 @@ import { ThemedView } from '../components/ThemedView';
 import Typography from '../components/Typography';
 import { Word } from '../services/wordsService';
 import Input from '../components/Input';
+import WordItem from '../components/WordItem';
+import AnimatedFlatList from '../components/AnimatedFlatList';
+import FadeIn from '../components/FadeIn';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 export default function WordsScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const addButtonScale = useSharedValue(1);
 
-  // Always call hooks unconditionally
   const {
     data: words = [],
     isLoading: isWordsLoading,
@@ -30,12 +34,10 @@ export default function WordsScreen() {
     isError: isSearchError,
   } = useSearchWords(searchQuery);
 
-  // Determine which data to use based on search query
   const displayWords = searchQuery.trim() ? searchResults : words;
   const isLoading = searchQuery.trim() ? isSearchLoading : isWordsLoading;
   const isError = searchQuery.trim() ? isSearchError : isWordsError;
 
-  // Use React Query mutation for deleting words
   const deleteWordMutation = useDeleteWord();
 
   const handleSearch = (query: string) => {
@@ -43,7 +45,6 @@ export default function WordsScreen() {
   };
 
   const handleAddWord = () => {
-    // Navigate to add word screen or show a modal
     router.push('/add-word' as any);
   };
 
@@ -51,92 +52,117 @@ export default function WordsScreen() {
     deleteWordMutation.mutate(wordId);
   };
 
-  const renderWordItem = ({ item }: { item: Word }) => (
-    <ThemedView style={styles.wordItem}>
-      <ThemedView style={styles.wordInfo}>
-        <Typography style={styles.wordText}>{item.word}</Typography>
-        <Typography color="#666" style={styles.translationText}>
-          {item.translation}
-        </Typography>
-      </ThemedView>
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => handleDeleteWord(item.id)}
-      >
-        <Ionicons name="trash-outline" size={20} color="#FF3B30" />
-      </TouchableOpacity>
-    </ThemedView>
-  );
+  const animatedAddButtonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: addButtonScale.value }],
+  }));
+
+  const handleAddButtonPress = () => {
+    addButtonScale.value = withSpring(0.9, {}, () => {
+      addButtonScale.value = withSpring(1, {}, () => {
+        handleAddWord();
+      });
+    });
+  };
 
   const EmptyListComponent = () => (
-    <ThemedView style={styles.emptyContainer}>
-      <Ionicons name="book-outline" size={50} color="#CCC" />
-      <Typography color="#666" style={styles.emptyText}>
-        {searchQuery
-          ? 'По вашему запросу ничего не найдено'
-          : 'У вас пока нет добавленных слов'}
-      </Typography>
-    </ThemedView>
+    <FadeIn delay={300}>
+      <ThemedView style={styles.emptyContainer}>
+        <Ionicons name="book-outline" size={50} color="#CCC" />
+        <Typography color="#666" style={styles.emptyText}>
+          {searchQuery
+            ? 'По вашему запросу ничего не найдено'
+            : 'У вас пока нет добавленных слов'}
+        </Typography>
+      </ThemedView>
+    </FadeIn>
   );
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <Typography size="lg" style={styles.headerTitle}>
-          Словарь
-        </Typography>
-      </ThemedView>
+      <FadeIn>
+        <ThemedView style={styles.header}>
+          <ThemedView style={styles.headerLeft}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Ionicons name="chevron-back" size={24} color="#007AFF" />
+            </TouchableOpacity>
+            <Typography size="lg" style={styles.headerTitle}>
+              Словарь
+            </Typography>
+          </ThemedView>
+        </ThemedView>
+      </FadeIn>
 
-      <ThemedView style={styles.searchContainer}>
-        <Input
-          variant="search"
-          placeholder="Поиск слов..."
-          value={searchQuery}
-          onChangeText={handleSearch}
-          leadingIcon={
-            <Ionicons name="search-outline" size={20} color="#999" />
-          }
-          trailingIcon={
-            searchQuery.length > 0 ? (
-              <TouchableOpacity
-                style={styles.clearButton}
-                onPress={() => handleSearch('')}
-              >
-                <Ionicons name="close-circle" size={20} color="#999" />
-              </TouchableOpacity>
-            ) : null
-          }
-        />
-      </ThemedView>
+      <FadeIn delay={100}>
+        <ThemedView style={styles.searchContainer}>
+          <Input
+            variant="search"
+            placeholder="Поиск слов..."
+            value={searchQuery}
+            onChangeText={handleSearch}
+            leadingIcon={
+              <Ionicons name="search-outline" size={20} color="#999" />
+            }
+            trailingIcon={
+              searchQuery.length > 0 ? (
+                <TouchableOpacity
+                  style={styles.clearButton}
+                  onPress={() => handleSearch('')}
+                >
+                  <Ionicons name="close-circle" size={20} color="#999" />
+                </TouchableOpacity>
+              ) : null
+            }
+          />
+        </ThemedView>
+      </FadeIn>
 
       {isLoading ? (
-        <ThemedView style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0099FF" />
-        </ThemedView>
+        <FadeIn delay={200}>
+          <ThemedView style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0099FF" />
+          </ThemedView>
+        </FadeIn>
       ) : isError ? (
-        <ThemedView style={styles.errorContainer}>
-          <Typography color="#FF3B30" size="md" style={styles.errorText}>
-            Не удалось загрузить слова
-          </Typography>
-          <TouchableOpacity style={styles.retryButton}>
-            <Typography color="white" weight="medium" style={styles.retryText}>
-              Повторить
+        <FadeIn delay={200}>
+          <ThemedView style={styles.errorContainer}>
+            <Typography color="#FF3B30" size="md" style={styles.errorText}>
+              Не удалось загрузить слова
             </Typography>
-          </TouchableOpacity>
-        </ThemedView>
+            <TouchableOpacity style={styles.retryButton}>
+              <Typography
+                color="white"
+                weight="medium"
+                style={styles.retryText}
+              >
+                Повторить
+              </Typography>
+            </TouchableOpacity>
+          </ThemedView>
+        </FadeIn>
       ) : (
-        <FlatList
+        <AnimatedFlatList
           data={displayWords}
-          renderItem={renderWordItem}
+          renderItem={({ item }) => (
+            <WordItem item={item} onDelete={handleDeleteWord} />
+          )}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.wordsList}
           ListEmptyComponent={EmptyListComponent}
+          itemAnimationDelay={80}
         />
       )}
 
-      <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
+      <Animated.View style={animatedAddButtonStyle}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={handleAddButtonPress}
+        >
+          <Ionicons name="add" size={24} color="white" />
+        </TouchableOpacity>
+      </Animated.View>
     </ThemedView>
   );
 }
@@ -154,6 +180,14 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
     backgroundColor: '#FFF',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    padding: 8,
+    marginRight: 8,
   },
   headerTitle: {
     fontSize: 18,
@@ -186,35 +220,6 @@ const styles = StyleSheet.create({
   wordsList: {
     paddingHorizontal: 16,
   },
-  wordItem: {
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    marginBottom: 8,
-  },
-  wordInfo: {
-    flex: 1,
-  },
-  wordText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  translationText: {
-    fontSize: 14,
-  },
-  deleteButton: {
-    padding: 8,
-  },
-  screenTitle: {
-    fontSize: 12,
-    color: '#888',
-    letterSpacing: 1,
-    marginTop: 8,
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -234,12 +239,19 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: '#0099FF',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    borderRadius: 28,
+    width: 56,
+    height: 56,
+    justifyContent: 'center',
+    alignItems: 'center',
     position: 'absolute',
     bottom: 16,
     right: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   addButtonText: {
     color: 'white',

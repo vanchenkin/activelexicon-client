@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, Text, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,15 +9,8 @@ import Button from '../../components/Button';
 export default function HomeScreen() {
   const router = useRouter();
   const { data: words, isLoading } = useWords();
-  const [hasWords, setHasWords] = useState(false);
 
-  useEffect(() => {
-    if (words && words.length > 0) {
-      setHasWords(true);
-    } else {
-      setHasWords(false);
-    }
-  }, [words]);
+  const hasWords = words && words.length > 0;
 
   const handleStartExercises = () => {
     router.push('/exercise');

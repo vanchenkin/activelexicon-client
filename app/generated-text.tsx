@@ -50,7 +50,7 @@ export default function GeneratedTextScreen() {
 
   const handleDone = () => {
     // Navigate back to the explore screen
-    router.back();
+    router.replace('/explore');
   };
 
   const handleWordSelected = (word: string) => {

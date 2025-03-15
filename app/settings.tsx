@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Switch,
   TouchableOpacity,
   ScrollView,
   Platform,
+  View,
+  Modal,
+  Button,
+  TextInput,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,6 +17,8 @@ import { useAuth } from '@/context/AuthContext';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 import BackButton from '@/components/BackButton';
+import { notificationService } from '@/services';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 type LanguageLevel = 'beginner' | 'intermediate' | 'advanced';
 
@@ -20,12 +27,21 @@ export default function SettingsScreen() {
   const { user, logOut } = useAuth();
 
   // Sample settings state
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [autoCorrectEnabled, setAutoCorrectEnabled] = useState(true);
   const [selectedLanguageLevel, setSelectedLanguageLevel] =
     useState<LanguageLevel>('intermediate');
+
+  // Notification time settings
+  const [notificationTime, setNotificationTime] = useState(new Date());
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [notificationTitle, setNotificationTitle] = useState('Пора учиться!');
+  const [notificationBody, setNotificationBody] = useState(
+    'Время для изучения новых слов'
+  );
+  const [showCustomization, setShowCustomization] = useState(false);
 
   const handleBackPress = () => {
     router.back();
@@ -45,6 +61,115 @@ export default function SettingsScreen() {
   };
 
   const appVersion = '1.0.0'; // This should be fetched from your app config
+
+  // Load notification settings
+  useEffect(() => {
+    const loadNotificationSettings = async () => {
+      try {
+        const settings = await notificationService.getNotificationSettings();
+
+        if (settings) {
+          setNotificationsEnabled(settings.isEnabled);
+
+          // Set notification time
+          if (settings.hour !== undefined && settings.minute !== undefined) {
+            const date = new Date();
+            date.setHours(settings.hour);
+            date.setMinutes(settings.minute);
+            setNotificationTime(date);
+          }
+
+          // Set title and body if available
+          if (settings.title) setNotificationTitle(settings.title);
+          if (settings.body) setNotificationBody(settings.body);
+        }
+      } catch (error) {
+        console.error('Error loading notification settings:', error);
+      }
+    };
+
+    loadNotificationSettings();
+
+    // Initialize notification service
+    notificationService.initialize();
+  }, []);
+
+  // Handle notification toggle
+  const handleNotificationToggle = async (value: boolean) => {
+    try {
+      setNotificationsEnabled(value);
+
+      if (value) {
+        // When enabling notifications, schedule them
+        await notificationService.scheduleDailyNotification(
+          notificationTitle,
+          notificationBody,
+          notificationTime.getHours(),
+          notificationTime.getMinutes()
+        );
+
+        Alert.alert(
+          'Уведомления включены',
+          `Ежедневные уведомления будут приходить в ${notificationTime.getHours()}:${notificationTime.getMinutes() < 10 ? '0' : ''}${notificationTime.getMinutes()}`
+        );
+      } else {
+        // When disabling, cancel all notifications
+        await notificationService.cancelAllScheduledNotifications();
+      }
+    } catch (error) {
+      console.error('Error toggling notifications:', error);
+      setNotificationsEnabled(!value); // Revert if there was an error
+      Alert.alert('Ошибка', 'Не удалось изменить настройки уведомлений');
+    }
+  };
+
+  // Handle time change
+  const handleTimeChange = async (event: any, selectedDate?: Date) => {
+    setShowTimePicker(false);
+
+    if (selectedDate) {
+      setNotificationTime(selectedDate);
+
+      // If notifications are enabled, update the scheduled time
+      if (notificationsEnabled) {
+        try {
+          await notificationService.scheduleDailyNotification(
+            notificationTitle,
+            notificationBody,
+            selectedDate.getHours(),
+            selectedDate.getMinutes()
+          );
+
+          Alert.alert(
+            'Время уведомлений обновлено',
+            `Уведомления будут приходить в ${selectedDate.getHours()}:${selectedDate.getMinutes() < 10 ? '0' : ''}${selectedDate.getMinutes()}`
+          );
+        } catch (error) {
+          console.error('Error updating notification time:', error);
+          Alert.alert('Ошибка', 'Не удалось обновить время уведомлений');
+        }
+      }
+    }
+  };
+
+  // Handle notification customization
+  const handleCustomizationSave = async () => {
+    setShowCustomization(false);
+
+    if (notificationsEnabled) {
+      try {
+        await notificationService.scheduleDailyNotification(
+          notificationTitle,
+          notificationBody,
+          notificationTime.getHours(),
+          notificationTime.getMinutes()
+        );
+      } catch (error) {
+        console.error('Error updating notification content:', error);
+        Alert.alert('Ошибка', 'Не удалось обновить содержание уведомлений');
+      }
+    }
+  };
 
   return (
     <ThemedView style={styles.container}>
@@ -107,7 +232,7 @@ export default function SettingsScreen() {
             </ThemedView>
             <Switch
               value={notificationsEnabled}
-              onValueChange={setNotificationsEnabled}
+              onValueChange={handleNotificationToggle}
               trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
               thumbColor={
                 Platform.OS === 'ios'
@@ -119,6 +244,49 @@ export default function SettingsScreen() {
               ios_backgroundColor="#D1D1D6"
             />
           </ThemedView>
+
+          {/* Notification Time Setting - Only show if notifications are enabled */}
+          {notificationsEnabled && (
+            <>
+              <ThemedView style={styles.settingItem}>
+                <ThemedView style={styles.settingInfoRow}>
+                  <Ionicons
+                    name="time-outline"
+                    size={20}
+                    color="#555"
+                    style={styles.settingIcon}
+                  />
+                  <Typography style={styles.settingText}>
+                    Время уведомлений
+                  </Typography>
+                </ThemedView>
+                <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+                  <Typography style={styles.timeText}>
+                    {notificationTime.getHours()}:
+                    {notificationTime.getMinutes() < 10 ? '0' : ''}
+                    {notificationTime.getMinutes()}
+                  </Typography>
+                </TouchableOpacity>
+              </ThemedView>
+
+              <ThemedView style={styles.settingItem}>
+                <ThemedView style={styles.settingInfoRow}>
+                  <Ionicons
+                    name="create-outline"
+                    size={20}
+                    color="#555"
+                    style={styles.settingIcon}
+                  />
+                  <Typography style={styles.settingText}>
+                    Настроить сообщение
+                  </Typography>
+                </ThemedView>
+                <TouchableOpacity onPress={() => setShowCustomization(true)}>
+                  <Ionicons name="chevron-forward" size={20} color="#555" />
+                </TouchableOpacity>
+              </ThemedView>
+            </>
+          )}
 
           <ThemedView style={styles.settingItem}>
             <ThemedView style={styles.settingInfoRow}>
@@ -309,6 +477,58 @@ export default function SettingsScreen() {
         {/* Bottom spacing */}
         <ThemedView style={styles.bottomSpacing} />
       </ScrollView>
+
+      {/* Time Picker Modal */}
+      {showTimePicker && (
+        <DateTimePicker
+          value={notificationTime}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={handleTimeChange}
+        />
+      )}
+
+      {/* Notification Customization Modal */}
+      <Modal
+        visible={showCustomization}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowCustomization(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Typography style={styles.modalTitle}>
+              Настройка уведомления
+            </Typography>
+
+            <Typography style={styles.label}>Заголовок</Typography>
+            <TextInput
+              style={styles.input}
+              value={notificationTitle}
+              onChangeText={setNotificationTitle}
+              placeholder="Введите заголовок"
+            />
+
+            <Typography style={styles.label}>Сообщение</Typography>
+            <TextInput
+              style={[styles.input, styles.multilineInput]}
+              value={notificationBody}
+              onChangeText={setNotificationBody}
+              placeholder="Введите текст сообщения"
+              multiline
+            />
+
+            <View style={styles.modalButtons}>
+              <Button
+                title="Отмена"
+                onPress={() => setShowCustomization(false)}
+              />
+              <Button title="Сохранить" onPress={handleCustomizationSave} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ThemedView>
   );
 }
@@ -422,5 +642,53 @@ const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 40,
+  },
+  timeText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#0A84FF',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 15,
+  },
+  multilineInput: {
+    height: 100,
+    textAlignVertical: 'top',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
   },
 });

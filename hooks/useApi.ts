@@ -6,6 +6,8 @@ import { mockAuthService } from '@/services/mockAuthService';
 import { topicsServiceInstance, User } from '@/services/index';
 import { mockWordsService } from '@/services/mockWordsService';
 import { Word } from '@/services/wordsService';
+import { mockTranslationService } from '@/services/mockTranslationService';
+import { WordDetails } from '@/services/translationService';
 
 // Hook for fetching words
 export function useWords() {
@@ -232,5 +234,20 @@ export function useAddExperience() {
       queryClient.invalidateQueries({ queryKey: ['exerciseProgress'] });
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
+  });
+}
+
+// Hook for getting word details
+export function useWordDetails() {
+  return useMutation({
+    mutationFn: (word: string) => mockTranslationService.getWordDetails(word),
+  });
+}
+
+// Hook for adding word to vocabulary
+export function useAddWordToVocabulary() {
+  return useMutation({
+    mutationFn: (word: string) =>
+      mockTranslationService.addWordToVocabulary(word),
   });
 }
