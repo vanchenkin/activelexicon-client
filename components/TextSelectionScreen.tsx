@@ -99,8 +99,31 @@ export default function TextSelectionScreen({
     });
   };
 
+  const closeModal = () => {
+    setIsModalVisible(false);
+    setCurrentWordDetails(null);
+  };
+
   return (
     <ThemedView style={styles.container}>
+      {currentWordDetails && (
+        <WordDetailsModal
+          visible={isModalVisible}
+          word={currentWordDetails}
+          onClose={closeModal}
+          onAdd={() => {
+            if (currentWordDetails?.word) {
+              handleAddWordToVocabulary(currentWordDetails.word);
+            }
+          }}
+          isAlreadyAdded={
+            currentWordDetails?.word
+              ? selectedWords.includes(currentWordDetails.word)
+              : false
+          }
+        />
+      )}
+
       <ThemedView style={styles.generatedTextInfoCard}>
         <Ionicons
           name="information-circle-outline"
@@ -136,23 +159,6 @@ export default function TextSelectionScreen({
           style={styles.doneButton}
         />
       </ThemedView>
-
-      {currentWordDetails && (
-        <WordDetailsModal
-          visible={isModalVisible}
-          onClose={() => setIsModalVisible(false)}
-          word={currentWordDetails}
-          onAdd={() =>
-            currentWordDetails &&
-            handleAddWordToVocabulary(currentWordDetails.word)
-          }
-          isAlreadyAdded={
-            currentWordDetails
-              ? selectedWords.includes(currentWordDetails.word)
-              : false
-          }
-        />
-      )}
     </ThemedView>
   );
 }

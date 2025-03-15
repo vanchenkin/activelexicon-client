@@ -73,65 +73,75 @@ export default function WordDetailsModal({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable
-          style={styles.modalContent}
-          onPress={(e) => e.stopPropagation()}
-        >
-          <Animated.View
-            style={[
-              styles.animatedContainer,
-              { transform: [{ scale: scaleAnim }] },
-            ]}
+    <ThemedView>
+      <Modal
+        visible={visible}
+        transparent
+        animationType="fade"
+        onRequestClose={onClose}
+      >
+        <Pressable style={styles.modalOverlay} onPress={onClose}>
+          <Pressable
+            style={styles.modalContent}
+            onPress={(e) => e.stopPropagation()}
           >
-            <ThemedView style={styles.container}>
-              <Typography size="lg" style={styles.word}>
-                {word.word}
-              </Typography>
-              <Typography size="lg" style={styles.translation}>
-                {word.translation}
-              </Typography>
-              <Typography color="#666" style={styles.partOfSpeech}>
-                {formatPartOfSpeech()}
-              </Typography>
-              <Typography style={styles.example}>{word.example}</Typography>
+            <Animated.View
+              style={[
+                styles.animatedContainer,
+                { transform: [{ scale: scaleAnim }] },
+              ]}
+            >
+              <ThemedView style={styles.container}>
+                <Typography size="lg" style={styles.word}>
+                  {word.word}
+                </Typography>
+                <Typography size="lg" style={styles.translation}>
+                  {word.translation}
+                </Typography>
+                <Typography color="#666" style={styles.partOfSpeech}>
+                  {formatPartOfSpeech()}
+                </Typography>
+                <Typography style={styles.example}>{word.example}</Typography>
 
-              {isAdding ? (
-                <Animated.View
-                  style={[styles.successContainer, { opacity: fadeAnim }]}
-                >
-                  <Ionicons name="checkmark-circle" size={36} color="#4CAF50" />
-                  <Typography
-                    color="#4CAF50"
-                    weight="medium"
-                    style={styles.successText}
+                {isAdding ? (
+                  <Animated.View
+                    style={[styles.successContainer, { opacity: fadeAnim }]}
                   >
-                    Слово добавлено!
-                  </Typography>
-                </Animated.View>
-              ) : !isAlreadyAdded ? (
-                <Pressable style={styles.addButton} onPress={handleAddWord}>
-                  <Ionicons name="add-circle" size={40} color="#0099FF" />
-                </Pressable>
-              ) : (
-                <ThemedView style={styles.addedIndicator}>
-                  <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
-                  <Typography color="#4CAF50" style={styles.addedText}>
-                    Добавлено
-                  </Typography>
-                </ThemedView>
-              )}
-            </ThemedView>
-          </Animated.View>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={36}
+                      color="#4CAF50"
+                    />
+                    <Typography
+                      color="#4CAF50"
+                      weight="medium"
+                      style={styles.successText}
+                    >
+                      Слово добавлено!
+                    </Typography>
+                  </Animated.View>
+                ) : !isAlreadyAdded ? (
+                  <Pressable style={styles.addButton} onPress={handleAddWord}>
+                    <Ionicons name="add-circle" size={40} color="#0099FF" />
+                  </Pressable>
+                ) : (
+                  <ThemedView style={styles.addedIndicator}>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={24}
+                      color="#4CAF50"
+                    />
+                    <Typography color="#4CAF50" style={styles.addedText}>
+                      Добавлено
+                    </Typography>
+                  </ThemedView>
+                )}
+              </ThemedView>
+            </Animated.View>
+          </Pressable>
         </Pressable>
-      </Pressable>
-    </Modal>
+      </Modal>
+    </ThemedView>
   );
 }
 
