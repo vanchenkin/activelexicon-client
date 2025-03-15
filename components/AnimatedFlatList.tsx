@@ -18,7 +18,6 @@ const AnimatedFlatList = <T extends any>({
   itemAnimationDelay = 150,
   ...rest
 }: AnimatedFlatListProps<T>) => {
-  // Modified render item function that adds animation
   const animatedRenderItem = (info: ListRenderItemInfo<T>) => {
     const { item, index } = info;
 
@@ -27,7 +26,6 @@ const AnimatedFlatList = <T extends any>({
       const translateY = useSharedValue(20);
 
       React.useEffect(() => {
-        // Delay increases with each item
         const delay = index * itemAnimationDelay;
 
         setTimeout(() => {

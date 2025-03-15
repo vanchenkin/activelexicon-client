@@ -7,7 +7,6 @@ import { ThemedView } from '@/components/ThemedView';
 import Button from '@/components/Button';
 import Typography from '@/components/Typography';
 
-// Define the type for the complexity parameter
 type TextComplexity = 'easy' | 'medium' | 'hard';
 
 export default function GeneratedTextScreen() {
@@ -18,13 +17,10 @@ export default function GeneratedTextScreen() {
     complexity: string;
   }>();
 
-  // TextSelectionScreen manages its own selected words state
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
 
-  // Use the mutation for text generation
   const generateTextMutation = useGenerateText();
 
-  // Generate text when the component mounts
   useEffect(() => {
     if (!generateTextMutation.isSuccess && !generateTextMutation.isPending) {
       generateTextMutation.mutate({
@@ -49,18 +45,15 @@ export default function GeneratedTextScreen() {
   };
 
   const handleDone = () => {
-    // Navigate back to the explore screen
     router.replace('/explore');
   };
 
   const handleWordSelected = (word: string) => {
-    // Add word to selected words if not already selected
     if (!selectedWords.includes(word)) {
       setSelectedWords([...selectedWords, word]);
     }
   };
 
-  // Show loading state
   if (generateTextMutation.isPending) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -77,7 +70,6 @@ export default function GeneratedTextScreen() {
     );
   }
 
-  // Show the generated text once available
   if (generateTextMutation.isSuccess) {
     return (
       <TextSelectionScreen
@@ -89,7 +81,6 @@ export default function GeneratedTextScreen() {
     );
   }
 
-  // Fallback for errors or unexpected states
   return (
     <ThemedView style={styles.loadingContainer}>
       <Typography style={styles.errorText}>

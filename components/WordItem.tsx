@@ -24,11 +24,10 @@ interface WordItemProps {
 
 const WordItem = ({ item, onDelete }: WordItemProps) => {
   const translateX = useSharedValue(0);
-  const itemHeight = useSharedValue(72); // Approximate height of the item with padding
+  const itemHeight = useSharedValue(72);
   const opacity = useSharedValue(1);
 
   const handleDelete = (wordId: string) => {
-    // Animation sequence: collapse and fade out, then call onDelete
     itemHeight.value = withTiming(0, { duration: 300 });
     opacity.value = withTiming(0, { duration: 300 }, () => {
       runOnJS(onDelete)(wordId);
@@ -37,16 +36,13 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
 
   const panGesture = useAnimatedGestureHandler({
     onActive: (event) => {
-      // Only allow swipe left
       translateX.value = Math.min(0, event.translationX);
     },
     onEnd: (event) => {
-      // If the user swiped far enough
       if (translateX.value < THRESHOLD) {
         translateX.value = withTiming(-SCREEN_WIDTH);
         runOnJS(handleDelete)(item.id);
       } else {
-        // Spring back to original position
         translateX.value = withSpring(0);
       }
     },

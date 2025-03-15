@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 40,
     alignItems: 'center',
-    justifyContent: 'center', // Center content vertically
+    justifyContent: 'center',
   },
   logoContainer: {
     marginVertical: 30,

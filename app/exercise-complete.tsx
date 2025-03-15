@@ -13,13 +13,11 @@ import Streak from '@/components/Streak';
 export default function ExerciseCompleteScreen() {
   const router = useRouter();
 
-  // Use React Query to fetch the user's exercise progress
   const { data: progress } = useExerciseProgress();
 
   const { user } = useAuth();
 
   const handleContinue = () => {
-    // Navigate back to the home screen
     router.replace('/(tabs)');
   };
 

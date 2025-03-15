@@ -4,21 +4,12 @@ import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 
 interface StreakProps {
-  /**
-   * Current streak count
-   */
   streak: number;
-  /**
-   * Maximum number of triangles to show (default: 15)
-   */
+
   maxTriangles?: number;
-  /**
-   * Whether to show the streak count label (default: true)
-   */
+
   showLabel?: boolean;
-  /**
-   * Custom styles for the container
-   */
+
   style?: any;
 }
 
@@ -28,14 +19,12 @@ export default function Streak({
   showLabel = true,
   style,
 }: StreakProps) {
-  // Helper function to get the correct streak text form in Russian
   const getStreakText = (count: number) => {
     if (count === 1) return 'день';
     if (count >= 2 && count <= 4) return 'дня';
     return 'дней';
   };
 
-  // Function to render streak triangles
   const renderStreakIndicators = () => {
     const indicators = [];
     const filledTriangles = Math.min(streak, maxTriangles);
@@ -52,7 +41,6 @@ export default function Streak({
       );
     }
 
-    // Split into rows of 5
     const rows = [];
     const rowSize = 5;
     const numRows = Math.ceil(maxTriangles / rowSize);

@@ -7,7 +7,6 @@ import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -15,7 +14,6 @@ import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { QueryProvider } from '@/context/QueryContext';
 import { notificationService } from '@/services';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
@@ -27,14 +25,12 @@ function RootLayoutNav() {
   useEffect(() => {
     if (isLoading) return;
 
-    // Check if the user is authenticated
     if (
       !user &&
       segments[0] !== 'enter' &&
       segments[0] !== 'login' &&
       segments[0] !== 'register'
     ) {
-      // Redirect to the enter page if not logged in
       router.replace('/enter');
     } else if (
       user &&
@@ -42,8 +38,6 @@ function RootLayoutNav() {
         segments[0] === 'login' ||
         segments[0] === 'register')
     ) {
-      // Redirect to the home page if logged in and trying to access login/register
-      //   router.replace('/(tabs)');
     }
   }, [user, isLoading, segments, router]);
 
@@ -75,14 +69,11 @@ export default function RootLayout() {
     'Inter-Bold': require('../assets/fonts/Inter-Bold.ttf'),
   });
 
-  // Use effect to hide splash screen once fonts are loaded and initialize notifications
   useEffect(() => {
     const initApp = async () => {
       if (loaded) {
-        // Initialize notification service
         await notificationService.initialize();
 
-        // Hide splash screen
         await SplashScreen.hideAsync();
       }
     };

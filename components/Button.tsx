@@ -41,7 +41,6 @@ const Button = ({
 }: ButtonProps) => {
   const pressed = useSharedValue(0);
 
-  // Compute button styles based on variant and size
   const buttonStyles = [
     styles.button,
     styles[variant],
@@ -51,7 +50,6 @@ const Button = ({
     style,
   ];
 
-  // Compute text styles
   const textStyles = [
     styles.text,
     styles[`${variant}Text`],

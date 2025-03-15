@@ -36,13 +36,13 @@ const Typography = ({
     <Text
       style={[
         styles.base,
-        // Font family based on weight
+
         weight && styles[weight],
-        // Font size based on size prop
+
         size && styles[size],
-        // Apply color
+
         { color: themeColor },
-        // Custom styles passed as prop
+
         style,
       ]}
       {...rest}
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   base: {
     fontFamily: 'Inter-Regular',
   },
-  // Font weights
+
   regular: {
     fontFamily: 'Inter-Regular',
   },
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   bold: {
     fontFamily: 'Inter-Bold',
   },
-  // Font sizes
+
   xs: {
     fontSize: 12,
     lineHeight: 16,

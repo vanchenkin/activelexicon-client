@@ -28,13 +28,10 @@ export default function ExerciseScreen() {
   const [isChecking, setIsChecking] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
-  // Use React Query to fetch exercises
   const { data: exercises = [], isLoading, isError } = useExercises();
 
-  // Use React Query mutation to submit answers
   const submitAnswerMutation = useSubmitAnswer();
 
-  // Use React Query mutation to add experience points on completion
   const addExperienceMutation = useAddExperience();
 
   const currentExercise = exercises[currentExerciseIndex];
@@ -54,15 +51,13 @@ export default function ExerciseScreen() {
           setIsCorrect(isAnswerCorrect);
 
           if (isAnswerCorrect) {
-            // If correct, wait a moment and then move to next exercise
             setTimeout(() => {
               if (currentExerciseIndex < exercises.length - 1) {
                 setCurrentExerciseIndex(currentExerciseIndex + 1);
                 setUserAnswer('');
                 setIsCorrect(null);
               } else {
-                // All exercises completed - add experience and navigate to completion screen
-                addExperienceMutation.mutate(100); // Award 100 XP for completion
+                addExperienceMutation.mutate(100);
                 router.push('/exercise-complete');
               }
             }, 1500);

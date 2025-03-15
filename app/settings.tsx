@@ -26,7 +26,6 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { user, logOut } = useAuth();
 
-  // Sample settings state
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -34,7 +33,6 @@ export default function SettingsScreen() {
   const [selectedLanguageLevel, setSelectedLanguageLevel] =
     useState<LanguageLevel>('intermediate');
 
-  // Notification time settings
   const [notificationTime, setNotificationTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [notificationTitle, setNotificationTitle] = useState('Пора учиться!');
@@ -60,9 +58,8 @@ export default function SettingsScreen() {
     }
   };
 
-  const appVersion = '1.0.0'; // This should be fetched from your app config
+  const appVersion = '1.0.0';
 
-  // Load notification settings
   useEffect(() => {
     const loadNotificationSettings = async () => {
       try {
@@ -71,7 +68,6 @@ export default function SettingsScreen() {
         if (settings) {
           setNotificationsEnabled(settings.isEnabled);
 
-          // Set notification time
           if (settings.hour !== undefined && settings.minute !== undefined) {
             const date = new Date();
             date.setHours(settings.hour);
@@ -79,7 +75,6 @@ export default function SettingsScreen() {
             setNotificationTime(date);
           }
 
-          // Set title and body if available
           if (settings.title) setNotificationTitle(settings.title);
           if (settings.body) setNotificationBody(settings.body);
         }
@@ -90,17 +85,14 @@ export default function SettingsScreen() {
 
     loadNotificationSettings();
 
-    // Initialize notification service
     notificationService.initialize();
   }, []);
 
-  // Handle notification toggle
   const handleNotificationToggle = async (value: boolean) => {
     try {
       setNotificationsEnabled(value);
 
       if (value) {
-        // When enabling notifications, schedule them
         await notificationService.scheduleDailyNotification(
           notificationTitle,
           notificationBody,
@@ -113,24 +105,21 @@ export default function SettingsScreen() {
           `Ежедневные уведомления будут приходить в ${notificationTime.getHours()}:${notificationTime.getMinutes() < 10 ? '0' : ''}${notificationTime.getMinutes()}`
         );
       } else {
-        // When disabling, cancel all notifications
         await notificationService.cancelAllScheduledNotifications();
       }
     } catch (error) {
       console.error('Error toggling notifications:', error);
-      setNotificationsEnabled(!value); // Revert if there was an error
+      setNotificationsEnabled(!value);
       Alert.alert('Ошибка', 'Не удалось изменить настройки уведомлений');
     }
   };
 
-  // Handle time change
   const handleTimeChange = async (event: any, selectedDate?: Date) => {
     setShowTimePicker(false);
 
     if (selectedDate) {
       setNotificationTime(selectedDate);
 
-      // If notifications are enabled, update the scheduled time
       if (notificationsEnabled) {
         try {
           await notificationService.scheduleDailyNotification(
@@ -152,7 +141,6 @@ export default function SettingsScreen() {
     }
   };
 
-  // Handle notification customization
   const handleCustomizationSave = async () => {
     setShowCustomization(false);
 
@@ -173,7 +161,6 @@ export default function SettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* Header */}
       <ThemedView style={styles.header}>
         <BackButton onPress={handleBackPress} />
         <Typography size="lg" style={styles.headerTitle}>
@@ -183,7 +170,6 @@ export default function SettingsScreen() {
       </ThemedView>
 
       <ScrollView style={styles.scrollView}>
-        {/* Account Section */}
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             Аккаунт
@@ -214,7 +200,6 @@ export default function SettingsScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Preferences Section */}
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             Предпочтения
@@ -245,7 +230,6 @@ export default function SettingsScreen() {
             />
           </ThemedView>
 
-          {/* Notification Time Setting - Only show if notifications are enabled */}
           {notificationsEnabled && (
             <>
               <ThemedView style={styles.settingItem}>
@@ -366,7 +350,6 @@ export default function SettingsScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Language Level Section */}
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             Уровень языка
@@ -437,7 +420,6 @@ export default function SettingsScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* App Info Section */}
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             О приложении
@@ -467,18 +449,15 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </ThemedView>
 
-        {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Typography color="#FF3B30" weight="medium" size="md">
             Выйти из аккаунта
           </Typography>
         </TouchableOpacity>
 
-        {/* Bottom spacing */}
         <ThemedView style={styles.bottomSpacing} />
       </ScrollView>
 
-      {/* Time Picker Modal */}
       {showTimePicker && (
         <DateTimePicker
           value={notificationTime}
@@ -489,7 +468,6 @@ export default function SettingsScreen() {
         />
       )}
 
-      {/* Notification Customization Modal */}
       <Modal
         visible={showCustomization}
         animationType="slide"

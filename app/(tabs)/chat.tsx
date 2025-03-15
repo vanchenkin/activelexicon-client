@@ -24,7 +24,6 @@ export default function ChatScreen() {
   const [isSending, setIsSending] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
-  // Load chat history when component mounts
   useEffect(() => {
     loadChatHistory();
   }, []);
@@ -52,7 +51,6 @@ export default function ChatScreen() {
       const updatedHistory = await chatServiceInstance.sendMessage(userInput);
       setMessages(updatedHistory);
 
-      // Scroll to bottom after sending
       setTimeout(() => {
         flatListRef.current?.scrollToEnd({ animated: true });
       }, 100);
@@ -68,7 +66,6 @@ export default function ChatScreen() {
   };
 
   const renderMessageItem = ({ item }: { item: ChatMessage }) => {
-    // Format timestamp
     const formattedTime = new Date(item.timestamp).toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',

@@ -18,7 +18,6 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { user, logOut } = useAuth();
 
-  // Use React Query hooks to fetch data from backend
   const { data: userStats, isLoading: isLoadingStats } = useUserStats();
   const { data: exerciseProgress, isLoading: isLoadingProgress } =
     useExerciseProgress();
@@ -58,7 +57,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </ThemedView>
 
-        {/* User Info Card */}
         <ThemedView style={styles.card}>
           <ThemedView style={styles.userInfoContainer}>
             <ThemedView style={styles.avatarPlaceholder}>
@@ -70,7 +68,6 @@ export default function ProfileScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Statistics Card */}
         <ThemedView style={styles.card}>
           <Typography weight="medium" size="lg" style={styles.cardTitle}>
             Статистика
@@ -129,7 +126,6 @@ export default function ProfileScreen() {
           )}
         </ThemedView>
 
-        {/* Level Card */}
         <ThemedView style={styles.card}>
           <Typography weight="medium" size="md" style={styles.levelLabel}>
             Ваш уровень:
@@ -160,7 +156,6 @@ export default function ProfileScreen() {
           )}
         </ThemedView>
 
-        {/* Streak Card */}
         <ThemedView style={styles.card}>
           {isLoadingProgress ? (
             <ActivityIndicator size="small" color="#4096FE" />
@@ -169,7 +164,6 @@ export default function ProfileScreen() {
           )}
         </ThemedView>
 
-        {/* Words Button */}
         <TouchableOpacity style={styles.wordsButton} onPress={handleOpenWords}>
           <Typography
             color="white"
@@ -181,7 +175,6 @@ export default function ProfileScreen() {
           </Typography>
         </TouchableOpacity>
 
-        {/* Logout Button */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Typography
             color="#FF3B30"

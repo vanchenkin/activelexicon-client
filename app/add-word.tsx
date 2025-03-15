@@ -21,15 +21,12 @@ export default function AddWordScreen() {
   const [wordError, setWordError] = useState('');
   const [translationError, setTranslationError] = useState('');
 
-  // Use React Query mutation for adding words
   const addWordMutation = useAddWord();
 
   const handleAddWord = async () => {
-    // Reset errors
     setWordError('');
     setTranslationError('');
 
-    // Validate inputs
     let isValid = true;
 
     if (!word.trim()) {
@@ -50,11 +47,9 @@ export default function AddWordScreen() {
         translation: translation.trim(),
       });
 
-      // Show success message or navigate back
       router.back();
     } catch (error) {
       console.error('Failed to add word:', error);
-      // Show error message
     }
   };
 

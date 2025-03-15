@@ -18,7 +18,6 @@ import { chatServiceInstance } from '../services';
 export default function ChatSettingsScreen() {
   const router = useRouter();
 
-  // Chat-specific settings
   const [autocompleteEnabled, setAutocompleteEnabled] = useState(true);
   const [sentimentAnalysisEnabled, setSentimentAnalysisEnabled] =
     useState(true);
@@ -58,7 +57,6 @@ export default function ChatSettingsScreen() {
     );
   };
 
-  // Fix for the font size selector typography styles
   const getFontSizeTextStyle = (isSelected: boolean) => {
     return {
       color: isSelected ? 'white' : '#333',
@@ -67,7 +65,6 @@ export default function ChatSettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      {/* Header */}
       <ThemedView style={styles.header}>
         <BackButton onPress={handleBackPress} />
         <Typography size="lg" style={styles.headerTitle}>
@@ -77,7 +74,6 @@ export default function ChatSettingsScreen() {
       </ThemedView>
 
       <ScrollView style={styles.scrollView}>
-        {/* Chat Settings Section */}
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             Общие настройки
@@ -186,7 +182,6 @@ export default function ChatSettingsScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Text Display Section */}
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             Отображение текста
@@ -241,7 +236,6 @@ export default function ChatSettingsScreen() {
           </ThemedView>
         </ThemedView>
 
-        {/* Data Section */}
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             Данные

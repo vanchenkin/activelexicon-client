@@ -6,10 +6,6 @@ import {
 } from '@/utils/queryClientPersistence';
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
-  //   useEffect(() => {
-  //     initializeQueryClientPersistence();
-  //   }, []);
-
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );

@@ -33,7 +33,6 @@ export default function TextSelectionScreen({
   const getWordDetails = useWordDetails();
   const addWordToVocabulary = useAddWordToVocabulary();
 
-  // Process the text to split it into words and non-words
   useEffect(() => {
     if (generatedText) {
       const words = [];
@@ -59,7 +58,6 @@ export default function TextSelectionScreen({
       setCurrentWordDetails(details);
       setIsModalVisible(true);
 
-      // Also notify parent component if callback provided
       if (onWordSelected) {
         onWordSelected(word);
       }

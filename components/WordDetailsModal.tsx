@@ -51,7 +51,6 @@ export default function WordDetailsModal({
     setIsAdding(true);
     onAdd();
 
-    // Scale animation for the container
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 1.05,
@@ -67,7 +66,6 @@ export default function WordDetailsModal({
       }),
     ]).start();
 
-    // Fade in animation for success message
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 300,
@@ -75,7 +73,6 @@ export default function WordDetailsModal({
       easing: Easing.out(Easing.ease),
     }).start();
 
-    // Close the modal after animation
     setTimeout(() => {
       setIsAdding(false);
       onClose();

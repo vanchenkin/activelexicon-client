@@ -28,20 +28,16 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-// The provider component that uses the existing QueryClient
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Use the queryClient
   const queryClient = useQueryClient();
 
-  // Google Auth configuration
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: Config.googleAndroidClientId,
     iosClientId: Config.googleIosClientId,
-    clientId: Config.googleClientId, // For Expo web
+    clientId: Config.googleClientId,
     scopes: ['profile', 'email'],
   });
 
-  // Query for getting the current user
   const {
     data: user,
     isLoading: isLoadingUser,
@@ -58,16 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw err;
       }
     },
-    staleTime: 1000 * 60 * 60, // 1 hour
+    staleTime: 1000 * 60 * 60,
     retry: 1,
   });
 
-  // Run on mount to ensure we have the most up-to-date user data
   useEffect(() => {
     refetch();
   }, [refetch]);
 
-  // Mutation for login
   const loginMutation = useMutation({
     mutationFn: async ({
       email,
@@ -80,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['user'], data.user);
-      // Also invalidate other user-related queries that might depend on auth status
+
       queryClient.invalidateQueries({ queryKey: ['userWords'] });
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
@@ -93,15 +87,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  // Mutation for Google login
   const loginWithGoogleMutation = useMutation({
     mutationFn: (token: string) => {
-      // Use a conditional to check if authService has loginWithGoogle method
-      // For mock service, we'll fallback to regular login with default credentials
       if ('loginWithGoogle' in authService) {
         return (authService as any).loginWithGoogle(token);
       } else {
-        // Fallback to regular login with Google credentials for testing
         return authService.login('google-user@example.com', 'google-password');
       }
     },
@@ -119,7 +109,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  // Handle Google sign-in response
   useEffect(() => {
     if (response?.type === 'success' && response.authentication?.accessToken) {
       const handleGoogleSignIn = async () => {
@@ -147,7 +136,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [response, loginWithGoogleMutation]);
 
-  // Mutation for registration
   const registerMutation = useMutation<
     AuthResponse,
     Error,
@@ -167,29 +155,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  // Mutation for logout
   const logoutMutation = useMutation({
     mutationFn: () => {
       return authService.logout();
     },
     onSuccess: () => {
       queryClient.setQueryData(['user'], null);
-      // Clear other cached data when logging out
+
       queryClient.invalidateQueries();
     },
     onError: (error) => {
-      // Still clear local data even if server logout fails
       queryClient.setQueryData(['user'], null);
       queryClient.invalidateQueries();
     },
   });
 
-  // Sign in function
   const signIn = async (email: string, password: string) => {
     await loginMutation.mutateAsync({ email, password });
   };
 
-  // Sign in with Google function
   const signInWithGoogle = async () => {
     if (!request) {
       Alert.alert('Error', 'Google sign-in is not available');
@@ -198,17 +182,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await promptAsync();
   };
 
-  // Sign up function
   const signUp = async (email: string, password: string) => {
     await registerMutation.mutateAsync({ email, password });
   };
 
-  // Log out function
   const logOut = async () => {
     await logoutMutation.mutateAsync();
   };
 
-  // Combine loading states
   const isLoading =
     isLoadingUser ||
     loginMutation.isPending ||
@@ -216,7 +197,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logoutMutation.isPending ||
     loginWithGoogleMutation.isPending;
 
-  // Combine error states
   const isError =
     isErrorUser ||
     loginMutation.isError ||
