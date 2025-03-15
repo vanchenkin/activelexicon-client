@@ -15,14 +15,12 @@ export type LanguageLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 interface LanguageLevelSelectProps {
   value: string;
   onChange: (value: string) => void;
-  placeholder?: string;
   style?: any;
 }
 
 export default function LanguageLevelSelect({
   value,
   onChange,
-  placeholder = 'Выберите уровень языка',
   style,
 }: LanguageLevelSelectProps) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -77,8 +75,14 @@ export default function LanguageLevelSelect({
         style={[styles.selectButton, style]}
         onPress={() => setModalVisible(true)}
       >
-        <Typography style={styles.selectButtonText}>
-          {selectedLevel ? selectedLevel.label : placeholder}
+        <Typography
+          style={
+            selectedLevel
+              ? styles.selectButtonTextFilled
+              : styles.selectButtonText
+          }
+        >
+          {selectedLevel ? selectedLevel.label : 'Выберите уровень языка'}
         </Typography>
         <Ionicons name="chevron-down" size={20} color="#666" />
       </TouchableOpacity>
@@ -140,7 +144,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectButtonText: {
-    fontSize: 14,
+    fontSize: 16,
+    color: '#999',
+  },
+  selectButtonTextFilled: {
+    fontSize: 16,
     color: '#333',
   },
   modalOverlay: {

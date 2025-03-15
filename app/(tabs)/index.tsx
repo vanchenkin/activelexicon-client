@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useWords } from '@/hooks/useApi';
@@ -20,12 +20,10 @@ export default function HomeScreen() {
   }, [words]);
 
   const handleStartExercises = () => {
-    // Navigate to exercise screen
     router.push('/exercise');
   };
 
   const handleAddWords = () => {
-    // Navigate to add words screen
     router.push('/(tabs)/explore');
   };
 
@@ -168,9 +166,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#0099FF',
-    borderRadius: 5,
     margin: 20,
   },
   emptyIconContainer: {

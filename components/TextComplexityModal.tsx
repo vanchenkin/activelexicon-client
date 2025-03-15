@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 
@@ -20,19 +19,13 @@ export default function TextComplexityModal({
   initialComplexity = 'medium',
   onComplexityChange,
 }: TextComplexityModalProps) {
-  const router = useRouter();
   const [selectedComplexity, setSelectedComplexity] =
     useState<TextComplexity>(initialComplexity);
 
   const handleComplexitySelect = (complexity: TextComplexity) => {
     setSelectedComplexity(complexity);
     onComplexityChange(complexity);
-  };
-
-  const handleMyWordsList = () => {
-    // Navigate to words list
     onClose();
-    router.push('/words');
   };
 
   return (
@@ -44,15 +37,6 @@ export default function TextComplexityModal({
     >
       <ThemedView style={styles.modalOverlay}>
         <ThemedView style={styles.modalContent}>
-          <TouchableOpacity
-            style={styles.wordListButton}
-            onPress={handleMyWordsList}
-          >
-            <Typography style={styles.wordListButtonText}>
-              Мой список слов
-            </Typography>
-          </TouchableOpacity>
-
           <ThemedView style={styles.infoCard}>
             <Ionicons
               name="information-circle-outline"
@@ -102,7 +86,7 @@ export default function TextComplexityModal({
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Ionicons name="close-circle-outline" size={32} color="#333" />
+            <Ionicons name="close-circle-outline" size={35} color="#333" />
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>
@@ -124,15 +108,6 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
     elevation: 5,
-  },
-  wordListButton: {
-    backgroundColor: '#F2F2F2',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginBottom: 20,
-    width: '100%',
-    alignItems: 'center',
   },
   wordListButtonText: {
     color: '#333',
@@ -167,6 +142,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: '#F2F2F2',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   selectedComplexityButton: {
     backgroundColor: '#E1F5FE',

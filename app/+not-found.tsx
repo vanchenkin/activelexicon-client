@@ -14,9 +14,9 @@ export default function NotFoundScreen() {
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />
       <ThemedView style={styles.container}>
-        <Typography type="title">This screen doesn't exist.</Typography>
+        <Typography type="title">Экран не найден</Typography>
         <Link href="/" style={styles.link}>
-          <Typography type="link">Go to home screen!</Typography>
+          <Typography type="link">На главную</Typography>
         </Link>
         <Button title="Go Back" onPress={() => router.back()} />
       </ThemedView>

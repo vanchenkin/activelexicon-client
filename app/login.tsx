@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAuth } from '@/context/AuthContext';
 import Logo from '../components/Logo';
 import Button from '../components/Button';
-import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import BackButton from '../components/BackButton';
 import Input from '../components/Input';
+import { useAuth } from '../context/AuthContext';
+import DescriptionTitle from '../components/DescriptionTitle';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -38,9 +38,7 @@ export default function LoginScreen() {
         <ThemedView style={styles.logoContainer}>
           <Logo />
         </ThemedView>
-        <Typography size="md" style={styles.descriptionText}>
-          Приложение для развития активного словарного запаса
-        </Typography>
+        <DescriptionTitle />
         <Input
           placeholder="E-mail"
           value={email}

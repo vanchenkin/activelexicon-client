@@ -41,7 +41,7 @@ function RootLayoutNav() {
         segments[0] === 'register')
     ) {
       // Redirect to the home page if logged in and trying to access login/register
-      router.replace('/(tabs)');
+      //   router.replace('/(tabs)');
     }
   }, [user, isLoading, segments, router]);
 

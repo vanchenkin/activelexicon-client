@@ -1,16 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { mockApi, Word } from '@/services/mockApi';
-import { mockTopicsApi } from '@/services/mockTopicsApi';
+import { mockTopicsService } from '@/services/mockTopicsService';
 import { mockChatService } from '@/services/mockChatService';
 import { mockExerciseService } from '@/services/mockExerciseService';
-import { mockWordsService } from '@/services/mockWordsService';
-import { mockAuthService, User } from '@/services/mockAuth';
+import { mockWordsService, UserWord } from '@/services/mockWordsService';
+import { mockAuthService, User } from '@/services/mockAuthService';
+import { topicsServiceInstance } from '@/services/index';
 
 // Hook for fetching words
 export function useWords() {
   return useQuery({
     queryKey: ['words'],
-    queryFn: () => mockApi.getWords(),
+    queryFn: () => mockWordsService.getUserWords(),
   });
 }
 
@@ -18,7 +18,10 @@ export function useWords() {
 export function useWord(id: string) {
   return useQuery({
     queryKey: ['word', id],
-    queryFn: () => mockApi.getWord(id),
+    queryFn: async () => {
+      const words = await mockWordsService.getUserWords();
+      return words.find((word) => word.id === id);
+    },
     enabled: !!id,
   });
 }
@@ -28,10 +31,23 @@ export function useToggleWordLearned() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => mockApi.toggleWordLearned(id),
-    onSuccess: (updatedWord) => {
+    mutationFn: async (id: string) => {
+      const words = await mockWordsService.getUserWords();
+      const targetWord = words.find((word) => word.id === id);
+      if (!targetWord) throw new Error('Word not found');
+
+      // We'll create a mock implementation since the service doesn't have this method
+      const updatedWord = {
+        ...targetWord,
+        isLearned: !targetWord.isLearned,
+      };
+
+      // Update our mock words (this is just for the demo, in a real app this would be handled by the service)
+      return updatedWord;
+    },
+    onSuccess: (updatedWord: UserWord) => {
       // Update the words list
-      queryClient.setQueryData<Word[]>(['words'], (oldWords) =>
+      queryClient.setQueryData<UserWord[]>(['words'], (oldWords) =>
         oldWords?.map((word) =>
           word.id === updatedWord.id ? updatedWord : word
         )
@@ -50,7 +66,7 @@ export function useToggleWordLearned() {
 export function useUserStats() {
   return useQuery({
     queryKey: ['userStats'],
-    queryFn: () => mockApi.getUserStats(),
+    queryFn: () => mockWordsService.getUserStats(),
   });
 }
 
@@ -58,7 +74,7 @@ export function useUserStats() {
 export function useTopics() {
   return useQuery({
     queryKey: ['topics'],
-    queryFn: () => mockTopicsApi.getTopics(),
+    queryFn: () => mockTopicsService.getTopics(),
   });
 }
 
@@ -66,7 +82,7 @@ export function useTopics() {
 export function useSearchTopics(query: string) {
   return useQuery({
     queryKey: ['topics', 'search', query],
-    queryFn: () => mockTopicsApi.searchTopics(query),
+    queryFn: () => mockTopicsService.searchTopics(query),
     enabled: query.length > 0,
   });
 }
@@ -82,7 +98,7 @@ export function useGenerateText() {
       topicId: string | null;
       customTopic: string | null;
       complexity?: 'easy' | 'medium' | 'hard';
-    }) => mockTopicsApi.generateText(topicId, customTopic, complexity),
+    }) => topicsServiceInstance.generateText(topicId, customTopic, complexity),
   });
 }
 
@@ -169,7 +185,22 @@ export function useAddExperience() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (points: number) => mockAuthService.addExperience(points),
+    mutationFn: async (points: number) => {
+      // Since mockAuthService doesn't have addExperience, we'll create a mock implementation
+      const currentUser = await mockAuthService.getCurrentUser();
+      if (!currentUser) throw new Error('No user logged in');
+
+      // In a real implementation, this would be a service method
+      const updatedUser = {
+        ...currentUser,
+        profile: {
+          ...currentUser.profile,
+          experiencePoints: currentUser.profile.experiencePoints + points,
+        },
+      };
+
+      return updatedUser;
+    },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['currentUser'], updatedUser);
       queryClient.invalidateQueries({ queryKey: ['exerciseProgress'] });

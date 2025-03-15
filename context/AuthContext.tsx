@@ -1,44 +1,10 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { mockAuthService, User, AuthResponse } from '@/services/mockAuth';
 import { Alert } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import { Config } from '@/utils/config';
-
-// API functions that work directly with the mockAuthService
-const authAPI = {
-  // Get current user from mockAuthService
-  getCurrentUser: async (): Promise<User | null> => {
-    return mockAuthService.getCurrentUser();
-  },
-
-  // Login using mock service
-  login: async (email: string, password: string): Promise<AuthResponse> => {
-    return mockAuthService.login(email, password);
-  },
-
-  // Register using mock service
-  register: async (email: string, password: string): Promise<AuthResponse> => {
-    return mockAuthService.register(email, password);
-  },
-
-  // Login with Google token
-  loginWithGoogle: async (token: string): Promise<AuthResponse> => {
-    // In a real app, this would send the token to your backend
-    // For mock service, we'll create a fake user based on the token
-    return mockAuthService.login('google-user@example.com', 'google-password');
-  },
-
-  // Logout using mock service
-  logout: async (): Promise<void> => {
-    return mockAuthService.logout();
-  },
-
-  // Update profile
-  updateProfile: async (updates: Partial<User['profile']>): Promise<User> => {
-    return mockAuthService.updateUserProfile(updates);
-  },
-};
+import { authService, User } from '@/services';
+import { AuthResponse } from '@/services/authService';
 
 type AuthContextType = {
   user: User | null;
@@ -81,9 +47,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading: isLoadingUser,
     isError: isErrorUser,
     refetch,
+    error,
   } = useQuery({
     queryKey: ['user'],
-    queryFn: authAPI.getCurrentUser,
+    queryFn: async () => {
+      try {
+        const userData = await authService.getCurrentUser();
+        return userData;
+      } catch (err) {
+        throw err;
+      }
+    },
     staleTime: 1000 * 60 * 60, // 1 hour
     retry: 1,
   });
@@ -95,8 +69,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Mutation for login
   const loginMutation = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      authAPI.login(email, password),
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => {
+      return authService.login(email, password);
+    },
     onSuccess: (data) => {
       queryClient.setQueryData(['user'], data.user);
       // Also invalidate other user-related queries that might depend on auth status
@@ -104,16 +85,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
+    onError: (error) => {
+      Alert.alert(
+        'Login Failed',
+        'Invalid email or password. Please try again.'
+      );
+    },
   });
 
   // Mutation for Google login
   const loginWithGoogleMutation = useMutation({
-    mutationFn: (token: string) => authAPI.loginWithGoogle(token),
-    onSuccess: (data) => {
+    mutationFn: (token: string) => {
+      // Use a conditional to check if authService has loginWithGoogle method
+      // For mock service, we'll fallback to regular login with default credentials
+      if ('loginWithGoogle' in authService) {
+        return (authService as any).loginWithGoogle(token);
+      } else {
+        // Fallback to regular login with Google credentials for testing
+        return authService.login('google-user@example.com', 'google-password');
+      }
+    },
+    onSuccess: (data: AuthResponse) => {
       queryClient.setQueryData(['user'], data.user);
       queryClient.invalidateQueries({ queryKey: ['userWords'] });
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
+    },
+    onError: (error) => {
+      Alert.alert(
+        'Google Login Failed',
+        'Could not sign in with Google. Please try again.'
+      );
     },
   });
 
@@ -147,19 +149,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Mutation for registration
   const registerMutation = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      authAPI.register(email, password),
+    mutationFn: ({ email, password }: { email: string; password: string }) => {
+      return authService.register(email, password);
+    },
     onSuccess: (data) => {
       queryClient.setQueryData(['user'], data.user);
+    },
+    onError: (error) => {
+      Alert.alert(
+        'Registration Failed',
+        'Could not create account. Please try again.'
+      );
     },
   });
 
   // Mutation for logout
   const logoutMutation = useMutation({
-    mutationFn: authAPI.logout,
+    mutationFn: () => {
+      return authService.logout();
+    },
     onSuccess: () => {
       queryClient.setQueryData(['user'], null);
       // Clear other cached data when logging out
+      queryClient.invalidateQueries();
+    },
+    onError: (error) => {
+      // Still clear local data even if server logout fails
+      queryClient.setQueryData(['user'], null);
       queryClient.invalidateQueries();
     },
   });

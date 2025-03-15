@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    width: 'auto',
   },
   fullWidth: {
     width: '100%',

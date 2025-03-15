@@ -16,13 +16,10 @@ export interface InputProps extends TextInputProps {
   variant?: InputVariant;
   label?: string;
   error?: string;
-  containerStyle?: StyleProp<ViewStyle>;
-  inputStyle?: StyleProp<TextStyle>;
-  labelStyle?: StyleProp<TextStyle>;
-  errorStyle?: StyleProp<TextStyle>;
   fullWidth?: boolean;
   trailingIcon?: React.ReactNode;
   leadingIcon?: React.ReactNode;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 const Input = forwardRef<TextInput, InputProps>(
@@ -32,13 +29,10 @@ const Input = forwardRef<TextInput, InputProps>(
       label,
       error,
       style,
-      containerStyle,
-      inputStyle,
-      labelStyle,
-      errorStyle,
       fullWidth = false,
       trailingIcon,
       leadingIcon,
+      containerStyle,
       ...props
     },
     ref
@@ -66,7 +60,7 @@ const Input = forwardRef<TextInput, InputProps>(
           containerStyle,
         ]}
       >
-        {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
+        {label && <Text style={[styles.label]}>{label}</Text>}
 
         <View style={styles.inputWrapper}>
           {leadingIcon && <View style={styles.leadingIcon}>{leadingIcon}</View>}
@@ -79,7 +73,6 @@ const Input = forwardRef<TextInput, InputProps>(
               leadingIcon ? styles.inputWithLeadingIcon : null,
               trailingIcon ? styles.inputWithTrailingIcon : null,
               error ? styles.inputError : null,
-              inputStyle,
               style,
             ]}
             placeholderTextColor="#999"
@@ -91,15 +84,19 @@ const Input = forwardRef<TextInput, InputProps>(
           )}
         </View>
 
-        {error && <Text style={[styles.errorText, errorStyle]}>{error}</Text>}
+        {error && <Text style={[styles.errorText]}>{error}</Text>}
       </View>
     );
   }
 );
 
+Input.displayName = 'Input';
+
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
   },
   fullWidth: {
     width: '100%',

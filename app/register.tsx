@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAuth } from '@/context/AuthContext';
 import Logo from '../components/Logo';
 import Button from '../components/Button';
 import Typography from '../components/Typography';
@@ -9,6 +8,7 @@ import { ThemedView } from '../components/ThemedView';
 import LanguageLevelSelect from '../components/LanguageLevelSelect';
 import BackButton from '../components/BackButton';
 import Input from '../components/Input';
+import { useAuth } from '../context/AuthContext';
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState('');
@@ -69,7 +69,6 @@ export default function RegisterScreen() {
           autoCapitalize="none"
           keyboardType="email-address"
           fullWidth
-          error={error || undefined}
         />
 
         <Input
@@ -91,7 +90,6 @@ export default function RegisterScreen() {
         <LanguageLevelSelect
           value={languageLevel}
           onChange={setLanguageLevel}
-          placeholder="Выберите уровень языка"
           style={styles.input}
         />
 

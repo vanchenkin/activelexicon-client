@@ -11,7 +11,7 @@ interface BackButtonProps {
 const BackButton = ({
   onPress,
   color = '#333',
-  size = 24,
+  size = 32,
 }: BackButtonProps) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.backButton}>
@@ -23,6 +23,10 @@ const BackButton = ({
 const styles = StyleSheet.create({
   backButton: {
     padding: 8,
+    position: 'absolute',
+    zIndex: 1000,
+    top: 24,
+    left: 24,
   },
 });
 

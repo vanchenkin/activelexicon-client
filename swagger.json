@@ -1,0 +1,773 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "AL API",
+    "description": "AL API",
+    "version": "0.0.0"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Login",
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/loginResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loginReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Register",
+        "operationId": "Register",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {}
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/registerReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/dictionary/word-info/{word}": {
+      "get": {
+        "summary": "Get Word Info",
+        "operationId": "GetWordInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getWordInfoResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "word",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/dictionary/words": {
+      "get": {
+        "summary": "Get User Dictionary",
+        "operationId": "GetUserDictionary",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getUserDictionaryResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "1"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64",
+            "default": "10"
+          }
+        ],
+        "tags": [
+          "al-api"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ]
+      },
+      "post": {
+        "summary": "Add Word To Dictionary",
+        "operationId": "AddWordToDictionary",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/addWordToDictionaryResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/addWordToDictionaryReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/dictionary/words/{word}": {
+      "delete": {
+        "summary": "Remove Word From Dictionary",
+        "operationId": "RemoveWordFromDictionary",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/removeWordFromDictionaryResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "word",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/ping": {
+      "get": {
+        "summary": "Ping",
+        "operationId": "Ping",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pingResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ping",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/ping_auth": {
+      "get": {
+        "summary": "Ping",
+        "operationId": "PingAuth",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pingResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ping",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/search/texts": {
+      "post": {
+        "summary": "Generate Text",
+        "operationId": "GenerateText",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/generateTextResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/generateTextReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/search/topics": {
+      "get": {
+        "summary": "Get Available Topics",
+        "operationId": "GetTopics",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getTopicsResp"
+            }
+          }
+        },
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/tasks/insert-word": {
+      "post": {
+        "summary": "Get Insert Word Task",
+        "operationId": "GetInsertWordTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/insertWordTaskResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/insertWordTaskReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/tasks/insert-word/check": {
+      "post": {
+        "summary": "Check Insert Word Task",
+        "operationId": "CheckInsertWordTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/checkInsertWordTaskResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/checkInsertWordTaskReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/tasks/question-answer": {
+      "post": {
+        "summary": "Get Question Answer Task",
+        "operationId": "GetQuestionAnswerTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/questionAnswerTaskResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/questionAnswerTaskReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/tasks/question-answer/check": {
+      "post": {
+        "summary": "Check Question Answer Task",
+        "operationId": "CheckQuestionAnswerTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/checkQuestionAnswerTaskResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/checkQuestionAnswerTaskReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/tasks/write-text": {
+      "post": {
+        "summary": "Get Write Text Task",
+        "operationId": "GetWriteTextTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/writeTextTaskResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/writeTextTaskReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/tasks/write-text/check": {
+      "post": {
+        "summary": "Check Write Text Task",
+        "operationId": "CheckWriteTextTask",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/checkWriteTextTaskResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/checkWriteTextTaskReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "addWordToDictionaryReq": {
+      "type": "object",
+      "properties": {
+        "word": {
+          "type": "string"
+        }
+      },
+      "title": "addWordToDictionaryReq",
+      "required": [
+        "word"
+      ]
+    },
+    "addWordToDictionaryResp": {
+      "type": "object",
+      "title": "addWordToDictionaryResp"
+    },
+    "checkInsertWordTaskReq": {
+      "type": "object",
+      "properties": {
+        "word": {
+          "type": "string"
+        },
+        "answer": {
+          "type": "string"
+        }
+      },
+      "title": "checkInsertWordTaskReq",
+      "required": [
+        "word",
+        "answer"
+      ]
+    },
+    "checkInsertWordTaskResp": {
+      "type": "object",
+      "properties": {
+        "correct": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "checkInsertWordTaskResp",
+      "required": [
+        "correct"
+      ]
+    },
+    "checkQuestionAnswerTaskReq": {
+      "type": "object",
+      "properties": {
+        "word": {
+          "type": "string"
+        },
+        "answer": {
+          "type": "string"
+        }
+      },
+      "title": "checkQuestionAnswerTaskReq",
+      "required": [
+        "word",
+        "answer"
+      ]
+    },
+    "checkQuestionAnswerTaskResp": {
+      "type": "object",
+      "properties": {
+        "correct": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "checkQuestionAnswerTaskResp",
+      "required": [
+        "correct"
+      ]
+    },
+    "checkWriteTextTaskReq": {
+      "type": "object",
+      "properties": {
+        "word": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "title": "checkWriteTextTaskReq",
+      "required": [
+        "word",
+        "text"
+      ]
+    },
+    "checkWriteTextTaskResp": {
+      "type": "object",
+      "properties": {
+        "correct": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      },
+      "title": "checkWriteTextTaskResp",
+      "required": [
+        "correct"
+      ]
+    },
+    "generateTextReq": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string"
+        }
+      },
+      "title": "generateTextReq",
+      "required": [
+        "topic"
+      ]
+    },
+    "generateTextResp": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "title": "generateTextResp",
+      "required": [
+        "text"
+      ]
+    },
+    "getTopicsReq": {
+      "type": "object",
+      "title": "getTopicsReq"
+    },
+    "getTopicsResp": {
+      "type": "object",
+      "properties": {
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "getTopicsResp",
+      "required": [
+        "topics"
+      ]
+    },
+    "getUserDictionaryReq": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "format": "int64",
+          "default": "1"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int64",
+          "default": "10"
+        }
+      },
+      "title": "getUserDictionaryReq"
+    },
+    "getUserDictionaryResp": {
+      "type": "object",
+      "properties": {
+        "words": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "getUserDictionaryResp",
+      "required": [
+        "words"
+      ]
+    },
+    "getWordInfoReq": {
+      "type": "object",
+      "title": "getWordInfoReq"
+    },
+    "getWordInfoResp": {
+      "type": "object",
+      "properties": {
+        "word": {
+          "type": "string"
+        },
+        "translation": {
+          "type": "string"
+        },
+        "part_of_speech": {
+          "type": "string"
+        }
+      },
+      "title": "getWordInfoResp",
+      "required": [
+        "word",
+        "translation",
+        "part_of_speech"
+      ]
+    },
+    "insertWordTaskReq": {
+      "type": "object",
+      "title": "insertWordTaskReq"
+    },
+    "insertWordTaskResp": {
+      "type": "object",
+      "properties": {
+        "task_text": {
+          "type": "string"
+        }
+      },
+      "title": "insertWordTaskResp",
+      "required": [
+        "task_text"
+      ]
+    },
+    "loginReq": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "title": "loginReq",
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "loginResp": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      },
+      "title": "loginResp",
+      "required": [
+        "token"
+      ]
+    },
+    "pingReq": {
+      "type": "object",
+      "properties": {
+        "ping": {
+          "type": "string"
+        }
+      },
+      "title": "pingReq"
+    },
+    "pingResp": {
+      "type": "object",
+      "properties": {
+        "pong": {
+          "type": "string"
+        }
+      },
+      "title": "pingResp",
+      "required": [
+        "pong"
+      ]
+    },
+    "questionAnswerTaskReq": {
+      "type": "object",
+      "title": "questionAnswerTaskReq"
+    },
+    "questionAnswerTaskResp": {
+      "type": "object",
+      "properties": {
+        "task_text": {
+          "type": "string"
+        }
+      },
+      "title": "questionAnswerTaskResp",
+      "required": [
+        "task_text"
+      ]
+    },
+    "registerReq": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "title": "registerReq",
+      "required": [
+        "email",
+        "password"
+      ]
+    },
+    "removeWordFromDictionaryReq": {
+      "type": "object",
+      "title": "removeWordFromDictionaryReq"
+    },
+    "removeWordFromDictionaryResp": {
+      "type": "object",
+      "title": "removeWordFromDictionaryResp"
+    },
+    "writeTextTaskReq": {
+      "type": "object",
+      "title": "writeTextTaskReq"
+    },
+    "writeTextTaskResp": {
+      "type": "object",
+      "properties": {
+        "task_text": {
+          "type": "string"
+        }
+      },
+      "title": "writeTextTaskResp",
+      "required": [
+        "task_text"
+      ]
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "description": "Enter JWT Bearer token **_only_**",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

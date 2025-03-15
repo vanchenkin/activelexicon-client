@@ -1,5 +1,5 @@
 // Mock API service for topics
-import { mockAuthService } from './mockAuth';
+import { mockAuthService } from './mockAuthService';
 
 // Simulate network delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -25,8 +25,7 @@ const mockTopics: Topic[] = [
   { id: '10', name: 'Кино', icon: 'film-outline' },
 ];
 
-// API methods
-export const mockTopicsApi = {
+export const mockTopicsService = {
   // Get all topics
   async getTopics(): Promise<Topic[]> {
     await delay(600);

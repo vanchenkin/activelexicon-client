@@ -1,10 +1,7 @@
-// Default values as fallbacks
-const DEFAULT_API_URL = 'https://api.example.com';
-
 // Configuration object with environment variables and fallbacks
 export const Config = {
   // API
-  apiUrl: process.env.API_URL || DEFAULT_API_URL,
+  apiUrl: process.env.API_URL || 'https://api.example.com',
 
   // Google Authentication
   googleClientId: process.env.GOOGLE_CLIENT_ID || '',

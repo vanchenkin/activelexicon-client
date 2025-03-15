@@ -1,6 +1,6 @@
 // Mock Exercise Service
 
-import { mockAuthService } from './mockAuth';
+import { mockAuthService } from './mockAuthService';
 
 // Simulate network delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

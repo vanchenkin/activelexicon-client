@@ -93,7 +93,6 @@ export default function WordsScreen() {
           placeholder="Поиск слов..."
           value={searchQuery}
           onChangeText={handleSearch}
-          containerStyle={styles.searchInputContainer}
           leadingIcon={
             <Ionicons name="search-outline" size={20} color="#999" />
           }

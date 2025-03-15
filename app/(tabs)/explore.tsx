@@ -6,13 +6,15 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTopics, useSearchTopics } from '@/hooks/useApi';
+import { useTopics } from '@/hooks/useApi';
 import { useRouter } from 'expo-router';
 import TextComplexityModal from '@/components/TextComplexityModal';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 import Input from '../../components/Input';
 import TopicItem, { Topic } from '@/components/TopicItem';
+import { topicsServiceInstance } from '@/services';
+import Button from '@/components/Button';
 
 type TextComplexity = 'easy' | 'medium' | 'hard';
 
@@ -25,13 +27,10 @@ export default function ExploreScreen() {
   const [textComplexity, setTextComplexity] =
     useState<TextComplexity>('medium');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Fetch all topics
   const { data: allTopics, isLoading: isLoadingTopics } = useTopics();
-
-  // Search topics when query changes
-  const { data: searchResults, isLoading: isSearching } =
-    useSearchTopics(debouncedQuery);
 
   // Debounce search query
   useEffect(() => {
@@ -42,14 +41,31 @@ export default function ExploreScreen() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Update displayed topics based on search results or all topics
+  // Handle topic search as a standalone request
   useEffect(() => {
-    if (debouncedQuery && searchResults) {
-      setDisplayedTopics(searchResults);
-    } else if (allTopics) {
-      setDisplayedTopics(allTopics);
-    }
-  }, [debouncedQuery, searchResults, allTopics]);
+    const searchTopics = async () => {
+      if (!debouncedQuery) {
+        // If no query, display all topics
+        if (allTopics) {
+          setDisplayedTopics(allTopics);
+        }
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+        const results =
+          await topicsServiceInstance.searchTopics(debouncedQuery);
+        setDisplayedTopics(results);
+      } catch (error) {
+        console.error('Error searching topics:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    searchTopics();
+  }, [debouncedQuery, allTopics]);
 
   const handleTopicSelect = (topicId: string) => {
     setSelectedTopic(topicId === selectedTopic ? null : topicId);
@@ -75,6 +91,8 @@ export default function ExploreScreen() {
     setIsSettingsModalVisible(!isSettingsModalVisible);
   };
 
+  const isLoading = isLoadingTopics || isSearching;
+
   return (
     <ThemedView style={styles.container}>
       <Typography size="2xl" style={styles.title}>
@@ -93,18 +111,16 @@ export default function ExploreScreen() {
         </Typography>
       </ThemedView>
 
-      <ThemedView style={styles.searchContainer}>
-        <Input
-          variant="search"
-          placeholder="Поиск темы или введите свою тему..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          containerStyle={styles.searchInputContainer}
-          leadingIcon={<Ionicons name="search" size={20} color="#999" />}
-        />
-      </ThemedView>
+      <Input
+        variant="search"
+        placeholder="Поиск темы или введите свою тему..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        style={styles.searchInput}
+        leadingIcon={<Ionicons name="search" size={20} color="#999" />}
+      />
 
-      {isLoadingTopics || isSearching ? (
+      {isLoading ? (
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
         </ThemedView>
@@ -125,27 +141,23 @@ export default function ExploreScreen() {
         </ScrollView>
       )}
 
-      <ThemedView style={styles.bottomContainer}>
-        <TouchableOpacity
-          style={styles.generateButton}
-          onPress={handleGenerate}
-        >
-          <Typography
-            color="white"
-            weight="bold"
-            size="md"
-            style={styles.generateButtonText}
-          >
-            Сгенерировать
-          </Typography>
-        </TouchableOpacity>
+      <ThemedView style={styles.bottomContainerFullWidth}>
+        <ThemedView style={styles.bottomContainer}>
+          <Button
+            title="Сгенерировать"
+            onPress={handleGenerate}
+            variant="primary"
+            size="medium"
+            fullWidth={true}
+          />
 
-        <TouchableOpacity
-          style={styles.sortButton}
-          onPress={toggleSettingsModal}
-        >
-          <Ionicons name="options-outline" size={24} color="#000" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.settingsButton}
+            onPress={toggleSettingsModal}
+          >
+            <Ionicons name="options-outline" size={24} color="#000" />
+          </TouchableOpacity>
+        </ThemedView>
       </ThemedView>
 
       <TextComplexityModal
@@ -170,7 +182,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   infoCard: {
-    backgroundColor: 'white',
     borderRadius: 10,
     padding: 16,
     marginBottom: 16,
@@ -178,7 +189,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   generatedTextInfoCard: {
-    backgroundColor: 'white',
     borderRadius: 10,
     padding: 16,
     marginVertical: 16,
@@ -190,17 +200,15 @@ const styles = StyleSheet.create({
   },
   infoText: {
     flex: 1,
+    textAlign: 'center',
   },
-  searchContainer: {
+  searchInput: {
+    flex: 1,
     backgroundColor: 'white',
     borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    marginBottom: 16,
-  },
-  searchInputContainer: {
-    flex: 1,
+    justifyContent: 'center',
   },
   loadingContainer: {
     flex: 1,
@@ -210,29 +218,27 @@ const styles = StyleSheet.create({
   topicsContainer: {
     flex: 1,
     marginBottom: 16,
+    backgroundColor: 'transparent',
   },
   topicsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    gap: 10,
+    backgroundColor: 'transparent',
   },
   bottomContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
-  generateButton: {
-    backgroundColor: '#0099FF',
-    borderRadius: 10,
-    padding: 16,
-    flex: 1,
-    marginRight: 12,
+  bottomContainerFullWidth: {
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  generateButtonText: {},
-  sortButton: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 12,
+  settingsButton: {
+    padding: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },

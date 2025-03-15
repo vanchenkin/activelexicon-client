@@ -9,13 +9,12 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import Typography from '../../components/Typography';
 import { ThemedView } from '../../components/ThemedView';
 import Input from '../../components/Input';
 import { useRouter } from 'expo-router';
-import { mockChatService, ChatMessage } from '@/services/mockChatService';
+import { chatServiceInstance, ChatMessage } from '../../services';
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -33,7 +32,7 @@ export default function ChatScreen() {
   const loadChatHistory = async () => {
     try {
       setIsLoading(true);
-      const history = await mockChatService.getChatHistory();
+      const history = await chatServiceInstance.getChatHistory();
       setMessages(history);
     } catch (error) {
       console.error('Failed to load chat history:', error);
@@ -50,7 +49,7 @@ export default function ChatScreen() {
 
     try {
       setIsSending(true);
-      const updatedHistory = await mockChatService.sendMessage(userInput);
+      const updatedHistory = await chatServiceInstance.sendMessage(userInput);
       setMessages(updatedHistory);
 
       // Scroll to bottom after sending
@@ -65,7 +64,7 @@ export default function ChatScreen() {
   };
 
   const handleOpenSettings = () => {
-    router.push('/settings');
+    router.push('/chat-settings');
   };
 
   const renderMessageItem = ({ item }: { item: ChatMessage }) => {

@@ -2,6 +2,18 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { Config } from '../utils/config';
 import { TokenStorage } from './tokenStorage';
 
+// Create a function to refresh the token that will be replaced at runtime
+let refreshTokenFunction: (
+  refreshToken: string
+) => Promise<boolean> = async () => false;
+
+// Function to set the refresh token function
+export function setRefreshTokenFunction(
+  fn: (refreshToken: string) => Promise<boolean>
+): void {
+  refreshTokenFunction = fn;
+}
+
 /**
  * Base API service for making HTTP requests to the backend using Axios
  */
@@ -44,11 +56,14 @@ export class ApiService {
         // Handle 401 Unauthorized errors for token expiration
         if (error.response && error.response.status === 401) {
           // Try to refresh the token
-          const refreshed = await this.refreshToken();
+          const refreshToken = await TokenStorage.getRefreshToken();
+          if (refreshToken) {
+            const refreshed = await refreshTokenFunction(refreshToken);
 
-          if (refreshed && error.config) {
-            // Retry the original request with the new token
-            return this.axiosInstance(error.config);
+            if (refreshed && error.config) {
+              // Retry the original request with the new token
+              return this.axiosInstance(error.config);
+            }
           }
         }
 
@@ -71,38 +86,6 @@ export class ApiService {
         return Promise.reject(error);
       }
     );
-  }
-
-  /**
-   * Attempt to refresh the authentication token
-   * @returns Boolean indicating if token refresh was successful
-   */
-  private async refreshToken(): Promise<boolean> {
-    try {
-      const refreshToken = await TokenStorage.getRefreshToken();
-
-      if (!refreshToken) {
-        // No refresh token available, can't refresh
-        await this.handleUnauthorized();
-        return false;
-      }
-
-      // Call the refresh token endpoint
-      const response = await axios.post<{
-        token: string;
-        refreshToken: string;
-      }>(`${Config.apiUrl}/auth/refresh`, { refreshToken });
-
-      // Store the new tokens
-      await TokenStorage.saveToken(response.data.token);
-      await TokenStorage.saveRefreshToken(response.data.refreshToken);
-
-      return true;
-    } catch (error) {
-      // If refresh fails, log the user out
-      await this.handleUnauthorized();
-      return false;
-    }
   }
 
   /**

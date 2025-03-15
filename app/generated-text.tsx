@@ -4,6 +4,8 @@ import { ActivityIndicator, StyleSheet } from 'react-native';
 import TextSelectionScreen from '@/components/TextSelectionScreen';
 import { useGenerateText } from '@/hooks/useApi';
 import { ThemedView } from '@/components/ThemedView';
+import Button from '@/components/Button';
+import Typography from '@/components/Typography';
 
 // Define the type for the complexity parameter
 type TextComplexity = 'easy' | 'medium' | 'hard';
@@ -31,7 +33,12 @@ export default function GeneratedTextScreen() {
         complexity: (params.complexity || 'medium') as TextComplexity,
       });
     }
-  }, [params.topicId, params.customTopic, params.complexity]);
+  }, [
+    params.topicId,
+    params.customTopic,
+    params.complexity,
+    generateTextMutation,
+  ]);
 
   const handleRegenerateText = () => {
     generateTextMutation.mutate({
@@ -58,6 +65,14 @@ export default function GeneratedTextScreen() {
     return (
       <ThemedView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0099FF" />
+        <Typography style={styles.loadingText}>Генерируем текст...</Typography>
+        <Button
+          title="Отмена"
+          onPress={() => router.back()}
+          variant="outline"
+          size="medium"
+          style={styles.cancelButton}
+        />
       </ThemedView>
     );
   }
@@ -77,7 +92,23 @@ export default function GeneratedTextScreen() {
   // Fallback for errors or unexpected states
   return (
     <ThemedView style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#0099FF" />
+      <Typography style={styles.errorText}>
+        Произошла ошибка при генерации текста
+      </Typography>
+      <Button
+        title="Попробовать снова"
+        onPress={handleRegenerateText}
+        variant="primary"
+        size="medium"
+        style={styles.retryButton}
+      />
+      <Button
+        title="Назад"
+        onPress={() => router.back()}
+        variant="outline"
+        size="medium"
+        style={styles.backButton}
+      />
     </ThemedView>
   );
 }
@@ -87,5 +118,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    marginBottom: 24,
+  },
+  cancelButton: {
+    marginTop: 16,
+    minWidth: 120,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#FF3B30',
+    marginBottom: 24,
+  },
+  retryButton: {
+    marginBottom: 16,
+    minWidth: 200,
+  },
+  backButton: {
+    minWidth: 200,
   },
 });

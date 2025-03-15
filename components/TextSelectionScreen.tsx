@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  mockTranslationService,
-  WordDetails,
-} from '@/services/mockTranslationService';
+import { WordDetails } from '@/services/translationService';
+import { translationServiceInstance } from '@/services/index';
 import WordDetailsModal from '@/components/WordDetailsModal';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
+import Button from './Button';
 
 interface TextSelectionScreenProps {
   generatedText: string;
@@ -53,7 +52,7 @@ export default function TextSelectionScreen({
 
     try {
       setLoadingWord(true);
-      const details = await mockTranslationService.getWordDetails(word);
+      const details = await translationServiceInstance.getWordDetails(word);
       setCurrentWordDetails(details);
       setIsModalVisible(true);
 
@@ -70,7 +69,7 @@ export default function TextSelectionScreen({
 
   const handleAddWordToVocabulary = async (word: string) => {
     try {
-      await mockTranslationService.addWordToVocabulary(word);
+      await translationServiceInstance.addWordToVocabulary(word);
       if (!selectedWords.includes(word)) {
         setSelectedWords([...selectedWords, word]);
       }
@@ -121,27 +120,22 @@ export default function TextSelectionScreen({
         </ThemedView>
       </ScrollView>
 
-      <ThemedView style={styles.selectedWordsContainer}>
-        <Typography weight="medium" style={styles.selectedWordsText}>
-          Выбрано слов: {selectedWordsCount}
-        </Typography>
-      </ThemedView>
-
       <ThemedView style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.regenerateButton}
+        <Button
+          title="Сгенерировать заново"
           onPress={onRegenerateText}
-        >
-          <Typography color="white" weight="medium" style={styles.buttonText}>
-            Сгенерировать заново
-          </Typography>
-        </TouchableOpacity>
+          variant="primary"
+          fullWidth
+          style={styles.regenerateButton}
+        />
 
-        <TouchableOpacity style={styles.doneButton} onPress={onDone}>
-          <Typography weight="medium" style={styles.doneButtonText}>
-            Готово
-          </Typography>
-        </TouchableOpacity>
+        <Button
+          title="Готово"
+          onPress={onDone}
+          variant="outline"
+          fullWidth
+          style={styles.doneButton}
+        />
       </ThemedView>
 
       {currentWordDetails && (
@@ -169,6 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
     padding: 16,
+    position: 'relative',
   },
   generatedTextInfoCard: {
     backgroundColor: 'white',
@@ -213,12 +208,9 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginBottom: 20,
+    backgroundColor: 'transparent',
   },
   regenerateButton: {
-    backgroundColor: '#0099FF',
-    borderRadius: 10,
-    padding: 16,
-    alignItems: 'center',
     marginBottom: 12,
   },
   buttonText: {
@@ -226,9 +218,6 @@ const styles = StyleSheet.create({
   },
   doneButton: {
     backgroundColor: '#F0F0F0',
-    borderRadius: 10,
-    padding: 16,
-    alignItems: 'center',
   },
   doneButtonText: {
     color: '#333',
