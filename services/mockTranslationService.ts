@@ -1,4 +1,3 @@
-// Mock Translation Service
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export interface WordDetails {
@@ -9,7 +8,6 @@ export interface WordDetails {
   example: string;
 }
 
-// Mock translations database
 const mockTranslations: Record<string, WordDetails> = {
   desktop: {
     word: 'desktop',
@@ -61,7 +59,6 @@ const mockTranslations: Record<string, WordDetails> = {
   },
 };
 
-// Default response for words not in our database
 const defaultWordDetails: Omit<WordDetails, 'word'> = {
   translation: 'перевод недоступен',
   partOfSpeech: 'часть речи не определена',
@@ -70,7 +67,6 @@ const defaultWordDetails: Omit<WordDetails, 'word'> = {
 
 export const mockTranslationService = {
   async getWordDetails(word: string): Promise<WordDetails> {
-    // Simulate network delay
     await delay(500);
 
     const lowercaseWord = word.toLowerCase();
@@ -79,7 +75,6 @@ export const mockTranslationService = {
       return mockTranslations[lowercaseWord];
     }
 
-    // Return default data for unknown words
     return {
       word: word,
       ...defaultWordDetails,
@@ -87,10 +82,8 @@ export const mockTranslationService = {
   },
 
   async addWordToVocabulary(word: string): Promise<boolean> {
-    // Simulate network delay
     await delay(300);
 
-    // Mock always successful
     return true;
   },
 };

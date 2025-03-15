@@ -1,17 +1,13 @@
-// Mock API service for topics
 import { mockAuthService } from './mockAuthService';
 
-// Simulate network delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Types
 export interface Topic {
   id: string;
   name: string;
   icon: string;
 }
 
-// Mock data
 const mockTopics: Topic[] = [
   { id: '1', name: 'Наука', icon: 'flask-outline' },
   { id: '2', name: 'Технологии', icon: 'hardware-chip-outline' },
@@ -26,7 +22,6 @@ const mockTopics: Topic[] = [
 ];
 
 export const mockTopicsService = {
-  // Get all topics
   async getTopics(): Promise<Topic[]> {
     await delay(600);
     const currentUser = mockAuthService.getCurrentUser();
@@ -34,7 +29,6 @@ export const mockTopicsService = {
     return mockTopics;
   },
 
-  // Search topics
   async searchTopics(query: string): Promise<Topic[]> {
     await delay(400);
     const currentUser = mockAuthService.getCurrentUser();
@@ -47,7 +41,6 @@ export const mockTopicsService = {
     );
   },
 
-  // Generate text based on topic
   async generateText(
     topicId: string | null,
     customTopic: string | null,

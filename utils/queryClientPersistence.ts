@@ -3,40 +3,35 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 
-// Create a client
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 60 * 5,
       retry: 1,
     },
   },
 });
 
-// Create a persister
 export const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
   key: 'ACTIVE_LEXICON_QUERY_CACHE',
-  throttleTime: 1000, // Default is 1000 (1 second)
+  throttleTime: 1000,
   serialize: (data) => JSON.stringify(data),
   deserialize: (data) => JSON.parse(data),
 });
 
-// Set up persistence
 export const initializeQueryClientPersistence = () => {
   persistQueryClient({
     queryClient,
     persister: asyncStoragePersister,
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    buster: process.env.APP_VERSION || '1.0.0', // Cache buster
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    buster: process.env.APP_VERSION || '1.0.0',
     dehydrateOptions: {
       shouldDehydrateQuery: (query) => {
-        // Always persist 'user' query for authentication
         if (query.queryKey[0] === 'user') {
           return true;
         }
 
-        // Persist other important data
         return (
           query.queryKey[0] === 'currentUser' ||
           query.queryKey[0] === 'userProgress' ||

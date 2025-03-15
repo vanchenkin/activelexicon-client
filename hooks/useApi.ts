@@ -9,7 +9,6 @@ import { Word } from '@/services/wordsService';
 import { mockTranslationService } from '@/services/mockTranslationService';
 import { WordDetails } from '@/services/translationService';
 
-// Hook for fetching words
 export function useWords() {
   return useQuery({
     queryKey: ['words'],
@@ -17,7 +16,6 @@ export function useWords() {
   });
 }
 
-// Hook for fetching a single word
 export function useWord(id: string) {
   return useQuery({
     queryKey: ['words', id],
@@ -26,7 +24,6 @@ export function useWord(id: string) {
   });
 }
 
-// Hook for searching words
 export function useSearchWords(query: string) {
   return useQuery({
     queryKey: ['words', 'search', query],
@@ -35,30 +32,25 @@ export function useSearchWords(query: string) {
   });
 }
 
-// Hook for toggling word learned status
 export function useToggleWordLearned() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: string) => mockWordsService.toggleWordLearned(id),
     onSuccess: (updatedWord: Word) => {
-      // Update the words list
       queryClient.setQueryData<Word[]>(['words'], (oldWords) =>
         oldWords?.map((word) =>
           word.id === updatedWord.id ? updatedWord : word
         )
       );
 
-      // Update the single word data
       queryClient.setQueryData(['words', updatedWord.id], updatedWord);
 
-      // Invalidate stats to trigger a refetch
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
   });
 }
 
-// Hook for adding a new word
 export function useAddWord() {
   const queryClient = useQueryClient();
 
@@ -77,7 +69,6 @@ export function useAddWord() {
   });
 }
 
-// Hook for deleting a word
 export function useDeleteWord() {
   const queryClient = useQueryClient();
 
@@ -90,7 +81,6 @@ export function useDeleteWord() {
   });
 }
 
-// Hook for fetching words stats
 export function useUserStats() {
   return useQuery({
     queryKey: ['wordsStats'],
@@ -98,7 +88,6 @@ export function useUserStats() {
   });
 }
 
-// Hook for fetching topics
 export function useTopics() {
   return useQuery({
     queryKey: ['topics'],
@@ -106,7 +95,6 @@ export function useTopics() {
   });
 }
 
-// Hook for searching topics
 export function useSearchTopics(query: string) {
   return useQuery({
     queryKey: ['topics', 'search', query],
@@ -115,7 +103,6 @@ export function useSearchTopics(query: string) {
   });
 }
 
-// Hook for generating text
 export function useGenerateText() {
   return useMutation({
     mutationFn: ({
@@ -130,7 +117,6 @@ export function useGenerateText() {
   });
 }
 
-// Hook for fetching chat history
 export function useChatHistory() {
   return useQuery({
     queryKey: ['chatHistory'],
@@ -138,33 +124,28 @@ export function useChatHistory() {
   });
 }
 
-// Hook for sending a message
 export function useSendMessage() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (text: string) => mockChatService.sendMessage(text),
     onSuccess: (updatedHistory) => {
-      // Update chat history in cache
       queryClient.setQueryData(['chatHistory'], updatedHistory);
     },
   });
 }
 
-// Hook for clearing chat history
 export function useClearChatHistory() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: () => mockChatService.clearHistory(),
     onSuccess: () => {
-      // Invalidate and refetch chat history
       queryClient.invalidateQueries({ queryKey: ['chatHistory'] });
     },
   });
 }
 
-// Hook for fetching exercises
 export function useExercises() {
   return useQuery({
     queryKey: ['exercises'],
@@ -172,7 +153,6 @@ export function useExercises() {
   });
 }
 
-// Hook for submitting an answer
 export function useSubmitAnswer() {
   return useMutation({
     mutationFn: ({
@@ -185,7 +165,6 @@ export function useSubmitAnswer() {
   });
 }
 
-// Hook for getting user progress
 export function useExerciseProgress() {
   return useQuery({
     queryKey: ['exerciseProgress'],
@@ -193,7 +172,6 @@ export function useExerciseProgress() {
   });
 }
 
-// Hook for updating user profile
 export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
 
@@ -202,23 +180,20 @@ export function useUpdateUserProfile() {
       mockAuthService.updateUserProfile(updates),
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['currentUser'], updatedUser);
-      // Also update user stats which might depend on profile data
+
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
   });
 }
 
-// Hook for adding experience points
 export function useAddExperience() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (points: number) => {
-      // Since mockAuthService doesn't have addExperience, we'll create a mock implementation
       const currentUser = await mockAuthService.getCurrentUser();
       if (!currentUser) throw new Error('No user logged in');
 
-      // In a real implementation, this would be a service method
       const updatedUser = {
         ...currentUser,
         profile: {
@@ -237,14 +212,12 @@ export function useAddExperience() {
   });
 }
 
-// Hook for getting word details
 export function useWordDetails() {
   return useMutation({
     mutationFn: (word: string) => mockTranslationService.getWordDetails(word),
   });
 }
 
-// Hook for adding word to vocabulary
 export function useAddWordToVocabulary() {
   return useMutation({
     mutationFn: (word: string) =>

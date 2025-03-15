@@ -5,12 +5,6 @@ export function useThemeColor(
   props: { light?: string; dark?: string },
   colorName: keyof typeof Colors.light & keyof typeof Colors.dark
 ) {
-  // TODO: make dark theme
-  /**
-   * Learn more about light and dark modes:
-   * https://docs.expo.dev/guides/color-schemes/
-   */
-  //   const theme = useColorScheme() ?? 'light';
   const theme = 'light';
   const colorFromProps = props[theme];
 

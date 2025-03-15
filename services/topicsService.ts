@@ -13,19 +13,16 @@ class TopicsService {
     this.api = new ApiService();
   }
 
-  // Get all topics
   async getTopics(): Promise<Topic[]> {
     return this.api.get<Topic[]>('/topics');
   }
 
-  // Search topics
   async searchTopics(query: string): Promise<Topic[]> {
     if (!query) return this.getTopics();
 
     return this.api.get<Topic[]>('/topics/search', { query });
   }
 
-  // Generate text based on topic
   async generateText(
     topicId: string | null,
     customTopic: string | null,

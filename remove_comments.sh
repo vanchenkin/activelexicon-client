@@ -1,1 +1,1 @@
-find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/build/*" -not -path "*/dist/*" | grep -E "\.tsx$" | while read file; do echo "Processing $file"; perl -0777 -i -pe "s|/\*[\s\S]*?\*/||g; s|//.*||g; s|<!--[\s\S]*?-->||g" "$file"; done
+find . -type f -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/build/*" -not -path "*/dist/*" | grep -E "\.ts$" | while read file; do echo "Processing $file"; perl -0777 -i -pe "s|/\*[\s\S]*?\*/||g; s|//.*||g; s|<!--[\s\S]*?-->||g" "$file"; done

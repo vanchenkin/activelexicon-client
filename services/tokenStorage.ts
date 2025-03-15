@@ -2,25 +2,13 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Key constants
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
-/**
- * Check if the app is running in a web environment
- */
 const isWeb = Platform.OS === 'web';
 
-/**
- * Service for securely storing and retrieving authentication tokens and user data
- * Uses SecureStore on native platforms and AsyncStorage on web
- */
 export class TokenStorage {
-  /**
-   * Save authentication token to secure storage
-   * @param token - JWT token or other authentication token
-   */
   static async saveToken(token: string): Promise<void> {
     try {
       if (isWeb) {
@@ -37,10 +25,6 @@ export class TokenStorage {
     }
   }
 
-  /**
-   * Retrieve authentication token from secure storage
-   * @returns The stored token or null if not found
-   */
   static async getToken(): Promise<string | null> {
     try {
       if (isWeb) {
@@ -54,10 +38,6 @@ export class TokenStorage {
     }
   }
 
-  /**
-   * Save refresh token to secure storage
-   * @param refreshToken - Refresh token for renewing authentication
-   */
   static async saveRefreshToken(refreshToken: string): Promise<void> {
     try {
       if (isWeb) {
@@ -71,10 +51,6 @@ export class TokenStorage {
     }
   }
 
-  /**
-   * Retrieve refresh token from secure storage
-   * @returns The stored refresh token or null if not found
-   */
   static async getRefreshToken(): Promise<string | null> {
     try {
       if (isWeb) {
@@ -88,10 +64,6 @@ export class TokenStorage {
     }
   }
 
-  /**
-   * Save user data to secure storage
-   * @param userData - User data object (will be JSON stringified)
-   */
   static async saveUserData(userData: any): Promise<void> {
     try {
       const userDataString = JSON.stringify(userData);
@@ -106,10 +78,6 @@ export class TokenStorage {
     }
   }
 
-  /**
-   * Retrieve user data from secure storage
-   * @returns The stored user data object or null if not found
-   */
   static async getUserData<T = any>(): Promise<T | null> {
     try {
       let userDataString;
@@ -127,9 +95,6 @@ export class TokenStorage {
     }
   }
 
-  /**
-   * Clear all authentication data from secure storage
-   */
   static async clearAuthData(): Promise<void> {
     try {
       if (isWeb) {
@@ -149,10 +114,6 @@ export class TokenStorage {
     }
   }
 
-  /**
-   * Check if user is logged in by verifying token existence
-   * @returns Boolean indicating if token exists
-   */
   static async isLoggedIn(): Promise<boolean> {
     const token = await this.getToken();
     return !!token;

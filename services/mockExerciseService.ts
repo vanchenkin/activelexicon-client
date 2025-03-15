@@ -1,8 +1,5 @@
-// Mock Exercise Service
-
 import { mockAuthService } from './mockAuthService';
 
-// Simulate network delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export type ExerciseType = 'fill-blank' | 'multiple-choice' | 'translate';
@@ -11,12 +8,11 @@ export interface Exercise {
   id: string;
   type: ExerciseType;
   text: string;
-  options?: string[]; // For multiple choice
+  options?: string[];
   correctAnswer: string;
   hint?: string;
 }
 
-// Mock exercises data
 const mockExercises: Exercise[] = [
   {
     id: 'ex1',
@@ -56,7 +52,6 @@ const mockExercises: Exercise[] = [
   },
 ];
 
-// User exercise progress
 interface UserProgress {
   completedExercises: string[];
   currentExerciseIndex: number;
@@ -72,7 +67,6 @@ let userProgress: UserProgress = {
 };
 
 export const mockExerciseService = {
-  // Get all exercises
   async getExercises(): Promise<Exercise[]> {
     await delay(800);
     const currentUser = mockAuthService.getCurrentUser();
@@ -81,7 +75,6 @@ export const mockExerciseService = {
     return [...mockExercises];
   },
 
-  // Get next exercise
   async getNextExercise(): Promise<Exercise | null> {
     await delay(500);
     const currentUser = mockAuthService.getCurrentUser();
@@ -91,10 +84,9 @@ export const mockExerciseService = {
       return mockExercises[userProgress.currentExerciseIndex];
     }
 
-    return null; // No more exercises
+    return null;
   },
 
-  // Submit answer
   async submitAnswer(exerciseId: string, answer: string): Promise<boolean> {
     await delay(700);
     const currentUser = mockAuthService.getCurrentUser();
@@ -107,14 +99,12 @@ export const mockExerciseService = {
       exercise.correctAnswer.toLowerCase() === answer.toLowerCase();
 
     if (isCorrect) {
-      // Update progress
       if (!userProgress.completedExercises.includes(exerciseId)) {
         userProgress.completedExercises.push(exerciseId);
       }
 
       userProgress.currentExerciseIndex++;
 
-      // Update streak
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -141,7 +131,6 @@ export const mockExerciseService = {
     return isCorrect;
   },
 
-  // Get user progress
   async getUserProgress(): Promise<UserProgress> {
     await delay(400);
     const currentUser = mockAuthService.getCurrentUser();
@@ -150,7 +139,6 @@ export const mockExerciseService = {
     return { ...userProgress };
   },
 
-  // Reset progress (for testing)
   async resetProgress(): Promise<void> {
     await delay(300);
     const currentUser = mockAuthService.getCurrentUser();

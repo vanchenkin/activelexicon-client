@@ -1,7 +1,3 @@
-// Flag to toggle between mock and real service implementations
-// Set to true to use real backend API calls, false to use mock data
-
-// Import service files
 import { mockAuthService } from './mockAuthService';
 import { realAuthService } from './authService';
 import { wordsService } from './wordsService';
@@ -12,7 +8,6 @@ import { topicsService } from './topicsService';
 import { notificationService } from './notificationService';
 import { setRefreshTokenFunction } from './api';
 
-// Import mock services
 import { mockWordsService } from './mockWordsService';
 import { mockChatService } from './mockChatService';
 import { mockExerciseService } from './mockExerciseService';
@@ -21,7 +16,6 @@ import { mockTopicsService } from './mockTopicsService';
 
 export const USE_REAL_BACKEND = false;
 
-// Create fresh instances or reuse existing ones based on the flag
 export const authService = USE_REAL_BACKEND ? realAuthService : mockAuthService;
 
 export const wordsServiceInstance = USE_REAL_BACKEND
@@ -44,12 +38,10 @@ export const topicsServiceInstance = USE_REAL_BACKEND
   ? topicsService
   : mockTopicsService;
 
-// Connect the AuthService's refreshToken method to the API service
 setRefreshTokenFunction(async (refreshToken: string) => {
   return authService.refreshToken(refreshToken);
 });
 
-// Re-export interfaces for ease of use
 export type { User } from './authService';
 export type { Word, UserStats } from './wordsService';
 export type { ChatMessage } from './chatService';
@@ -57,5 +49,4 @@ export type { Exercise, ExerciseType, UserProgress } from './exerciseService';
 export type { WordDetails } from './translationService';
 export type { Topic } from './topicsService';
 
-// Export notification service
 export { notificationService };

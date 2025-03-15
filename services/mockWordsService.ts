@@ -1,10 +1,7 @@
-// Mock Words Service
 import { Word, UserStats } from './wordsService';
 
-// Simulate network delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Initial mock data
 const mockWords: Word[] = [
   {
     id: '1',
@@ -12,7 +9,7 @@ const mockWords: Word[] = [
     translation: 'привет',
     examples: ['Hello, how are you?', 'Hello world!'],
     learned: true,
-    addedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+    addedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
   },
   {
     id: '2',
@@ -20,7 +17,7 @@ const mockWords: Word[] = [
     translation: 'до свидания',
     examples: ['Goodbye, see you tomorrow!', 'He said goodbye and left.'],
     learned: false,
-    addedAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000), // 25 days ago
+    addedAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
   },
   {
     id: '3',
@@ -28,7 +25,7 @@ const mockWords: Word[] = [
     translation: 'книга',
     examples: ['I read a book yesterday.', 'This book is interesting.'],
     learned: false,
-    addedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+    addedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
   },
   {
     id: '4',
@@ -36,7 +33,7 @@ const mockWords: Word[] = [
     translation: 'вода',
     examples: ['I need a glass of water.', 'The water is cold.'],
     learned: true,
-    addedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // 10 days ago
+    addedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
   },
   {
     id: '5',
@@ -44,11 +41,10 @@ const mockWords: Word[] = [
     translation: 'еда',
     examples: ['The food was delicious.', 'I need to buy some food.'],
     learned: false,
-    addedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
+    addedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
   },
 ];
 
-// Mock user statistics
 const mockUserStats: UserStats = {
   learnedWords: 2,
   totalWords: 5,
@@ -57,13 +53,11 @@ const mockUserStats: UserStats = {
 };
 
 class MockWordsService {
-  // Get all words
   async getWords(): Promise<Word[]> {
     await delay(600);
     return [...mockWords];
   }
 
-  // Get a single word by ID
   async getWord(id: string): Promise<Word> {
     await delay(400);
 
@@ -76,7 +70,6 @@ class MockWordsService {
     return { ...word };
   }
 
-  // Search words
   async searchWords(query: string): Promise<Word[]> {
     await delay(300);
 
@@ -89,7 +82,6 @@ class MockWordsService {
     );
   }
 
-  // Add a new word
   async addWord(word: string, translation: string): Promise<Word> {
     await delay(500);
 
@@ -104,14 +96,12 @@ class MockWordsService {
 
     mockWords.unshift(newWord);
 
-    // Update mock stats
     mockUserStats.totalWords += 1;
     mockUserStats.lastActiveDate = new Date();
 
     return { ...newWord };
   }
 
-  // Mark a word as learned/unlearned
   async toggleWordLearned(id: string): Promise<Word> {
     await delay(500);
 
@@ -126,35 +116,29 @@ class MockWordsService {
       learned: !mockWords[wordIndex].learned,
     };
 
-    // Update the mock data
     mockWords[wordIndex] = updatedWord;
 
-    // Update mock stats if needed
     if (updatedWord.learned) {
       mockUserStats.learnedWords += 1;
     } else {
       mockUserStats.learnedWords -= 1;
     }
 
-    // Update last active date
     mockUserStats.lastActiveDate = new Date();
 
     return { ...updatedWord };
   }
 
-  // Delete a word
   async deleteWord(id: string): Promise<boolean> {
     await delay(300);
 
     const initialLength = mockWords.length;
     const wordToDelete = mockWords.find((w) => w.id === id);
 
-    // Update the mock data array
     const updatedMockWords = mockWords.filter((word) => word.id !== id);
     mockWords.length = 0;
     mockWords.push(...updatedMockWords);
 
-    // Update mock stats if needed
     if (wordToDelete) {
       mockUserStats.totalWords -= 1;
       if (wordToDelete.learned) {
@@ -165,11 +149,9 @@ class MockWordsService {
     return mockWords.length < initialLength;
   }
 
-  // Get user statistics
   async getUserStats(): Promise<UserStats> {
     await delay(400);
 
-    // Ensure stats are accurate based on current data
     mockUserStats.learnedWords = mockWords.filter((w) => w.learned).length;
     mockUserStats.totalWords = mockWords.length;
 
