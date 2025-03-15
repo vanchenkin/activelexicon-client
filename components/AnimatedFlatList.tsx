@@ -40,12 +40,13 @@ AnimatedItem.displayName = 'AnimatedItem';
 const AnimatedFlatList = <T extends any>({
   data,
   renderItem,
-  itemAnimationDelay = 150,
+  itemAnimationDelay = 0,
   ...rest
 }: AnimatedFlatListProps<T>) => {
   const animatedRenderItem = useMemo(() => {
     if (!renderItem) return null;
-    return (info: ListRenderItemInfo<T>) => (
+
+    const AnimatedRenderItem = (info: ListRenderItemInfo<T>) => (
       <AnimatedItem
         key={`item-${info.index}`}
         delay={info.index * itemAnimationDelay}
@@ -53,6 +54,9 @@ const AnimatedFlatList = <T extends any>({
         {renderItem(info)}
       </AnimatedItem>
     );
+
+    AnimatedRenderItem.displayName = 'AnimatedRenderItem';
+    return AnimatedRenderItem;
   }, [itemAnimationDelay, renderItem]);
 
   if (!renderItem || !animatedRenderItem) {

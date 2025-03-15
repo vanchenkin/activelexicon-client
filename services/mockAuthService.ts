@@ -90,7 +90,9 @@ class MockAuthService {
           }
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error initializing from storage:', error);
+    }
   }
 
   async register(email: string, password: string): Promise<AuthResponse> {

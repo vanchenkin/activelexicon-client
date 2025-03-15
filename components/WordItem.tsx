@@ -23,13 +23,6 @@ interface WordItemProps {
 
 const WordItem = ({ item, onDelete }: WordItemProps) => {
   const translateX = useSharedValue(0);
-  const opacity = useSharedValue(1);
-
-  const handleDelete = (wordId: string) => {
-    opacity.value = withTiming(0, { duration: 300 }, () => {
-      runOnJS(onDelete)(wordId);
-    });
-  };
 
   const panGesture = Gesture.Pan()
     .onUpdate((event) => {
@@ -38,7 +31,7 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
     .onEnd((event) => {
       if (translateX.value < THRESHOLD) {
         translateX.value = withTiming(-SCREEN_WIDTH);
-        runOnJS(handleDelete)(item.id);
+        runOnJS(onDelete)(item.id);
       } else {
         translateX.value = withSpring(0);
       }
@@ -60,7 +53,7 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
               {item.translation}
             </Typography>
           </ThemedView>
-          <TouchableOpacity onPress={() => handleDelete(item.id)}>
+          <TouchableOpacity onPress={() => onDelete(item.id)}>
             <Animated.View style={styles.deleteButton}>
               <Ionicons name="trash-outline" size={24} color="#FF3B30" />
             </Animated.View>

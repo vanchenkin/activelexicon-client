@@ -29,27 +29,27 @@ const mockExercises: Exercise[] = [
     correctAnswer: 'is',
     hint: 'The subject is singular',
   },
-  {
-    id: 'ex3',
-    type: 'translate',
-    text: 'Translate this sentence to English: Он читает книгу.',
-    correctAnswer: 'He is reading a book',
-    hint: 'Present continuous tense',
-  },
-  {
-    id: 'ex4',
-    type: 'fill-blank',
-    text: 'She _____ to the store yesterday to buy groceries.',
-    correctAnswer: 'went',
-    hint: 'Past tense of "go"',
-  },
-  {
-    id: 'ex5',
-    type: 'fill-blank',
-    text: 'The weather _____ very nice today, so we decided to have a picnic.',
-    correctAnswer: 'was',
-    hint: 'Past tense of "is"',
-  },
+  //   {
+  //     id: 'ex3',
+  //     type: 'translate',
+  //     text: 'Translate this sentence to English: Он читает книгу.',
+  //     correctAnswer: 'He is reading a book',
+  //     hint: 'Present continuous tense',
+  //   },
+  //   {
+  //     id: 'ex4',
+  //     type: 'fill-blank',
+  //     text: 'She _____ to the store yesterday to buy groceries.',
+  //     correctAnswer: 'went',
+  //     hint: 'Past tense of "go"',
+  //   },
+  //   {
+  //     id: 'ex5',
+  //     type: 'fill-blank',
+  //     text: 'The weather _____ very nice today, so we decided to have a picnic.',
+  //     correctAnswer: 'was',
+  //     hint: 'Past tense of "is"',
+  //   },
 ];
 
 interface UserProgress {

@@ -3,12 +3,13 @@ import { StyleSheet, ViewStyle, Image } from 'react-native';
 import { ThemedView } from './ThemedView';
 
 interface LogoProps {
-  width?: number;
-  height?: number;
+  size?: number;
   style?: ViewStyle;
 }
 
-const Logo = ({ width = 286, height = 150, style }: LogoProps) => {
+const Logo = ({ size = 1, style }: LogoProps) => {
+  const width = 286 * size;
+  const height = 150 * size;
   return (
     <ThemedView style={[styles.container, style]}>
       <Image

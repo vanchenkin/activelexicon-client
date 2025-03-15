@@ -64,11 +64,11 @@ const Input = forwardRef<TextInput, InputProps>(
             ref={ref}
             style={[
               styles.input,
-              getVariantStyle(),
               leadingIcon ? styles.inputWithLeadingIcon : null,
               trailingIcon ? styles.inputWithTrailingIcon : null,
               error ? styles.inputError : null,
               style,
+              getVariantStyle(),
             ]}
             placeholderTextColor="#999"
             {...props}
@@ -114,8 +114,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: 'white',
     color: '#333',
-  },
-  defaultInput: {
     width: '100%',
     padding: 15,
     borderRadius: 5,

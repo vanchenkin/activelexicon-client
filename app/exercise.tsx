@@ -6,7 +6,6 @@ import {
   Platform,
   TouchableOpacity,
   ActivityIndicator,
-  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -17,9 +16,12 @@ import {
   useAddExperience,
 } from '@/hooks/useApi';
 import { ThemedView } from '@/components/ThemedView';
-import BackButton from '@/components/BackButton';
+import Header from '@/components/Header';
 import Input from '../components/Input';
 import Typography from '@/components/Typography';
+import ExerciseContent from '../components/ExerciseContent';
+import ProgressBar from '../components/ProgressBar';
+import BackButton from '@/components/BackButton';
 
 export default function ExerciseScreen() {
   const queryClient = useQueryClient();
@@ -127,30 +129,9 @@ export default function ExerciseScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <BackButton onPress={handleBack} />
-        <Typography weight="bold" style={styles.headerTitle}>
-          Упражнение
-        </Typography>
-        <ThemedView style={styles.placeholder} />
-      </ThemedView>
+      <Header title="Упражнение" onBackPress={handleBack} />
 
-      <ThemedView style={styles.progressContainer}>
-        <Typography style={styles.progressText}>
-          Выполнено {currentExerciseIndex + 1} из {exercises.length} заданий до
-          получения опыта
-        </Typography>
-        <ThemedView style={styles.progressBar}>
-          <ThemedView
-            style={[
-              styles.progressFill,
-              {
-                width: `${((currentExerciseIndex + 1) / exercises.length) * 100}%`,
-              },
-            ]}
-          />
-        </ThemedView>
-      </ThemedView>
+      <ProgressBar current={currentExerciseIndex} total={exercises.length} />
 
       <ScrollView style={styles.exerciseContainer}>
         <Typography weight="medium" style={styles.instructionText}>
@@ -160,24 +141,7 @@ export default function ExerciseScreen() {
         </Typography>
 
         {currentExercise && (
-          <ThemedView style={styles.textContainer}>
-            <Typography style={styles.exerciseText}>
-              {currentExercise.text.includes('_____')
-                ? currentExercise.text.split('_____')[0]
-                : currentExercise.text}
-              {currentExercise.text.includes('_____') && (
-                <>
-                  <View style={styles.blankLine} />
-                  {currentExercise.text.split('_____')[1]}
-                </>
-              )}
-            </Typography>
-            {currentExercise.hint && isCorrect === false && (
-              <Typography style={styles.hintText}>
-                Подсказка: {currentExercise.hint}
-              </Typography>
-            )}
-          </ThemedView>
+          <ExerciseContent exercise={currentExercise} isCorrect={isCorrect} />
         )}
       </ScrollView>
 
@@ -252,43 +216,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 16,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  placeholder: {
-    width: 40,
-  },
-  progressContainer: {
-    padding: 16,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    margin: 16,
-  },
-  progressText: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 8,
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#DDD',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#0099FF',
-    borderRadius: 4,
-  },
   exerciseContainer: {
     flex: 1,
     padding: 16,
@@ -298,52 +225,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginBottom: 16,
   },
-  textContainer: {
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#EEE',
-  },
-  exerciseText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
-  },
-  blankLine: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-    paddingHorizontal: 8,
-  },
-  hintText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#0099FF',
-    fontStyle: 'italic',
-  },
   inputContainer: {
     padding: 16,
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
     borderTopColor: '#EEE',
-  },
-  input: {
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#DDD',
-  },
-  correctInput: {
-    borderColor: '#4CAF50',
-    backgroundColor: '#E8F5E9',
-  },
-  incorrectInput: {
-    borderColor: '#F44336',
-    backgroundColor: '#FFEBEE',
   },
   checkButton: {
     backgroundColor: '#0099FF',

@@ -26,6 +26,7 @@ export default function LoginScreen() {
       await signIn(email, password);
       router.replace('/(tabs)');
     } catch (error) {
+      console.error('Login error:', error);
       setError('Ошибка входа. Пожалуйста, попробуйте снова.');
     }
   };

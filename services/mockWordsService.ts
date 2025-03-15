@@ -97,8 +97,6 @@ class MockWordsService {
   }
 
   async deleteWord(id: string): Promise<boolean> {
-    await delay(300);
-
     const initialLength = mockWords.length;
     const wordToDelete = mockWords.find((w) => w.id === id);
 

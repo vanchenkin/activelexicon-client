@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import Typography from '../../components/Typography';
 import { ThemedView } from '../../components/ThemedView';
+import Header from '../../components/Header';
 import Input from '../../components/Input';
 import { useRouter } from 'expo-router';
 import { chatServiceInstance, ChatMessage } from '../../services';
@@ -82,17 +83,18 @@ export default function ChatScreen() {
     );
   };
 
+  const settingsButton = (
+    <TouchableOpacity
+      style={styles.settingsButton}
+      onPress={handleOpenSettings}
+    >
+      <Ionicons name="settings-outline" size={24} color="#000" />
+    </TouchableOpacity>
+  );
+
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <Typography style={styles.headerTitle}>Чат</Typography>
-        <TouchableOpacity
-          style={styles.settingsButton}
-          onPress={handleOpenSettings}
-        >
-          <Ionicons name="settings-outline" size={24} color="#000" />
-        </TouchableOpacity>
-      </ThemedView>
+      <Header title="Чат" rightElement={settingsButton} />
 
       {isLoading ? (
         <ThemedView style={styles.loadingContainer}>
@@ -144,22 +146,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 16,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EFEFEF',
-  },
-  headerTitle: {
-    fontSize: 20,
-    width: '100%',
-    textAlign: 'center',
   },
   settingsButton: {
     padding: 8,

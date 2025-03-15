@@ -54,7 +54,9 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Typography style={styles.title}>Лента заданий</Typography>
+      <Typography style={styles.title} size="2xl">
+        Лента заданий
+      </Typography>
 
       <Typography style={styles.description}>
         Вам предстоит выполнять упражнения. Они будут подбираться в случайном
@@ -107,8 +109,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
     marginTop: 40,
     marginBottom: 20,
     textAlign: 'center',

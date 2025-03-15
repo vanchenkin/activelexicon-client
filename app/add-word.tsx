@@ -12,6 +12,7 @@ import { ThemedView } from '../components/ThemedView';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import BackButton from '../components/BackButton';
+import Header from '../components/Header';
 
 export default function AddWordScreen() {
   const router = useRouter();
@@ -59,11 +60,7 @@ export default function AddWordScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <BackButton onPress={handleCancel} />
-        <Typography style={styles.headerTitle}>Добавить слово</Typography>
-        <ThemedView style={styles.placeholderButton} />
-      </ThemedView>
+      <Header title="Добавить слово" onBackPress={handleCancel} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

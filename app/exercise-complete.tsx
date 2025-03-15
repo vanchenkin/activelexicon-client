@@ -24,7 +24,7 @@ export default function ExerciseCompleteScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.card} lightColor="#FFFFFF" darkColor="#1E1E1E">
-        <Logo width={80} height={80} />
+        <Logo size={0.5} />
 
         <ThemedView style={styles.congratsIconContainer}>
           <Ionicons name="star" size={80} color="#FFD700" />
@@ -87,11 +87,15 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 8,
+    width: '100%',
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 18,
     color: '#555',
     marginBottom: 40,
+    width: '100%',
+    textAlign: 'center',
   },
   rewardContainer: {
     width: '100%',

@@ -9,15 +9,12 @@ interface StreakProps {
   maxTriangles?: number;
 
   showLabel?: boolean;
-
-  style?: any;
 }
 
 export default function Streak({
   streak,
   maxTriangles = 15,
   showLabel = true,
-  style,
 }: StreakProps) {
   const getStreakText = (count: number) => {
     if (count === 1) return 'день';
@@ -36,7 +33,7 @@ export default function Streak({
           color={i < filledTriangles ? '#4096FE' : '#DDD'}
           style={styles.triangleIndicator}
         >
-          ▲
+          🔥
         </Typography>
       );
     }
@@ -57,7 +54,7 @@ export default function Streak({
   };
 
   return (
-    <ThemedView style={[styles.container, style]}>
+    <ThemedView style={[styles.container]}>
       {showLabel && (
         <Typography weight="medium" size="md" style={styles.streakLabel}>
           {streak === 0

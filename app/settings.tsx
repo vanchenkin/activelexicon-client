@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
-import BackButton from '@/components/BackButton';
+import Header from '@/components/Header';
 import { notificationService } from '@/services';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -24,7 +24,7 @@ type LanguageLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { user, logOut } = useAuth();
+  const { user } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
@@ -47,15 +47,6 @@ export default function SettingsScreen() {
 
   const handleLanguageLevelPress = (level: LanguageLevel) => {
     setSelectedLanguageLevel(level);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logOut();
-      router.replace('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
   };
 
   const appVersion = '1.0.0';
@@ -161,13 +152,7 @@ export default function SettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <BackButton onPress={handleBackPress} />
-        <Typography size="lg" style={styles.headerTitle}>
-          Настройки
-        </Typography>
-        <ThemedView style={{ width: 40 }} />
-      </ThemedView>
+      <Header title="Настройки" onBackPress={handleBackPress} />
 
       <ScrollView style={styles.scrollView}>
         <ThemedView style={styles.section}>
@@ -448,14 +433,6 @@ export default function SettingsScreen() {
             <Ionicons name="chevron-forward" size={16} color="#999" />
           </TouchableOpacity>
         </ThemedView>
-
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Typography color="#FF3B30" weight="medium" size="md">
-            Выйти из аккаунта
-          </Typography>
-        </TouchableOpacity>
-
-        <ThemedView style={styles.bottomSpacing} />
       </ScrollView>
 
       {showTimePicker && (
@@ -516,22 +493,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 16,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EFEFEF',
-  },
-  headerTitle: {
-    fontSize: 18,
-  },
   scrollView: {
     flex: 1,
+    paddingBottom: 20,
   },
   section: {
     backgroundColor: 'white',
@@ -540,7 +504,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    elevation: 2,
+    boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.1)',
   },
   sectionTitle: {
     fontSize: 16,
@@ -607,17 +571,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  logoutButton: {
-    marginTop: 24,
-    marginBottom: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginHorizontal: 16,
-    backgroundColor: 'white',
-    borderRadius: 10,
-
-    elevation: 2,
-  },
   bottomSpacing: {
     height: 40,
   },
@@ -637,11 +590,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
   },
   modalTitle: {
     fontSize: 18,

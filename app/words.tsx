@@ -123,7 +123,7 @@ export default function WordsScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.wordsList}
           ListEmptyComponent={EmptyListComponent}
-          itemAnimationDelay={80}
+          itemAnimationDelay={40}
         />
       )}
 
@@ -198,11 +198,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 16,
     right: 16,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    boxShadow: '0px 2px 3px rgba(0, 0, 0, 0.2)',
   },
   addButtonText: {
     color: 'white',

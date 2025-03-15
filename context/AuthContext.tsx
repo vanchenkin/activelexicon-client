@@ -80,6 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
     onError: (error) => {
+      console.error('Login error:', error);
       Alert.alert(
         'Login Failed',
         'Invalid email or password. Please try again.'
@@ -102,6 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
     },
     onError: (error) => {
+      console.error('Google Login error:', error);
       Alert.alert(
         'Google Login Failed',
         'Could not sign in with Google. Please try again.'
@@ -148,6 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       queryClient.setQueryData(['user'], data.user);
     },
     onError: (error) => {
+      console.error('Registration error:', error);
       Alert.alert(
         'Registration Failed',
         'Could not create account. Please try again.'
@@ -165,6 +168,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       queryClient.invalidateQueries();
     },
     onError: (error) => {
+      console.error('Logout error:', error);
       queryClient.setQueryData(['user'], null);
       queryClient.invalidateQueries();
     },
