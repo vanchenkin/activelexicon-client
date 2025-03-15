@@ -7,10 +7,9 @@ import {
   Text,
   StyleProp,
   ViewStyle,
-  TextStyle,
 } from 'react-native';
 
-export type InputVariant = 'default' | 'chat' | 'search' | 'success' | 'error';
+export type InputVariant = 'default' | 'success' | 'error';
 
 export interface InputProps extends TextInputProps {
   variant?: InputVariant;
@@ -39,10 +38,6 @@ const Input = forwardRef<TextInput, InputProps>(
   ) => {
     const getVariantStyle = () => {
       switch (variant) {
-        case 'chat':
-          return styles.chatInput;
-        case 'search':
-          return styles.searchInput;
         case 'success':
           return styles.successInput;
         case 'error':
@@ -84,7 +79,9 @@ const Input = forwardRef<TextInput, InputProps>(
           )}
         </View>
 
-        {error && <Text style={[styles.errorText]}>{error}</Text>}
+        {error !== '' && error !== undefined && (
+          <Text style={styles.errorText}>{error}</Text>
+        )}
       </View>
     );
   }
@@ -124,23 +121,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-  },
-  chatInput: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    maxHeight: 100,
-  },
-  searchInput: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 20,
-    paddingHorizontal: 40,
-    paddingVertical: 10,
-    borderWidth: 0,
-    fontSize: 16,
-    height: 50,
   },
   successInput: {
     borderColor: '#4CAF50',

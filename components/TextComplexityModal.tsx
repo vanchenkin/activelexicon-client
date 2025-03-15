@@ -35,61 +35,81 @@ export default function TextComplexityModal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <ThemedView style={styles.modalOverlay}>
-        <ThemedView style={styles.modalContent}>
-          <ThemedView style={styles.infoCard}>
-            <Ionicons
-              name="information-circle-outline"
-              size={24}
-              color="#666"
-              style={styles.infoIcon}
-            />
-            <Typography color="#666" style={styles.infoText}>
-              Если текст вам кажется слишком легким или слишком трудным, то
-              можете изменить его сложность
+      <TouchableOpacity
+        style={styles.modalOverlay}
+        activeOpacity={1}
+        onPress={onClose}
+      >
+        <ThemedView style={styles.modalContainer}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+            style={styles.modalContent}
+          >
+            <ThemedView style={styles.infoCard}>
+              <Ionicons
+                name="information-circle-outline"
+                size={24}
+                color="#666"
+                style={styles.infoIcon}
+              />
+              <Typography color="#666" style={styles.infoText}>
+                Если текст вам кажется слишком легким или слишком трудным, то
+                можете изменить его сложность
+              </Typography>
+            </ThemedView>
+
+            <Typography
+              weight="medium"
+              size="lg"
+              style={styles.complexityTitle}
+            >
+              Выберите сложность текста:
             </Typography>
-          </ThemedView>
 
-          <Typography weight="medium" size="lg" style={styles.complexityTitle}>
-            Выберите сложность текста:
-          </Typography>
+            <TouchableOpacity
+              style={[
+                styles.complexityButton,
+                selectedComplexity === 'easy' &&
+                  styles.selectedComplexityButton,
+              ]}
+              onPress={() => handleComplexitySelect('easy')}
+            >
+              <Typography style={styles.complexityButtonText}>Легче</Typography>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.complexityButton,
-              selectedComplexity === 'easy' && styles.selectedComplexityButton,
-            ]}
-            onPress={() => handleComplexitySelect('easy')}
-          >
-            <Typography style={styles.complexityButtonText}>Легче</Typography>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.complexityButton,
+                selectedComplexity === 'medium' &&
+                  styles.selectedComplexityButton,
+              ]}
+              onPress={() => handleComplexitySelect('medium')}
+            >
+              <Typography style={styles.complexityButtonText}>
+                Средняя
+              </Typography>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.complexityButton,
-              selectedComplexity === 'medium' &&
-                styles.selectedComplexityButton,
-            ]}
-            onPress={() => handleComplexitySelect('medium')}
-          >
-            <Typography style={styles.complexityButtonText}>Средняя</Typography>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.complexityButton,
+                selectedComplexity === 'hard' &&
+                  styles.selectedComplexityButton,
+              ]}
+              onPress={() => handleComplexitySelect('hard')}
+            >
+              <Typography style={styles.complexityButtonText}>
+                Сложнее
+              </Typography>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.complexityButton,
-              selectedComplexity === 'hard' && styles.selectedComplexityButton,
-            ]}
-            onPress={() => handleComplexitySelect('hard')}
-          >
-            <Typography style={styles.complexityButtonText}>Сложнее</Typography>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Ionicons name="close-circle-outline" size={35} color="#333" />
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <Ionicons name="close-circle-outline" size={35} color="#333" />
+            </TouchableOpacity>
           </TouchableOpacity>
         </ThemedView>
-      </ThemedView>
+      </TouchableOpacity>
     </Modal>
   );
 }
@@ -98,6 +118,9 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

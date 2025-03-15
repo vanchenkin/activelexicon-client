@@ -6,6 +6,7 @@ export interface WordDetails {
   partOfSpeech: string;
   gender?: string;
   example: string;
+  englishExample?: string;
 }
 
 const mockTranslations: Record<string, WordDetails> = {
@@ -15,6 +16,7 @@ const mockTranslations: Record<string, WordDetails> = {
     partOfSpeech: 'существительное',
     gender: 'муж. род',
     example: 'Я сохранил файл на рабочем столе.',
+    englishExample: 'I saved the file on the desktop.',
   },
   printing: {
     word: 'printing',
@@ -22,6 +24,7 @@ const mockTranslations: Record<string, WordDetails> = {
     partOfSpeech: 'существительное',
     gender: 'жен. род',
     example: 'Печать документов может занять некоторое время.',
+    englishExample: 'Printing documents may take some time.',
   },
   industry: {
     word: 'industry',
@@ -29,12 +32,15 @@ const mockTranslations: Record<string, WordDetails> = {
     partOfSpeech: 'существительное',
     gender: 'жен. род',
     example: 'Автомобильная промышленность играет важную роль в экономике.',
+    englishExample:
+      'The automotive industry plays an important role in the economy.',
   },
   electronic: {
     word: 'electronic',
     translation: 'электронный',
     partOfSpeech: 'прилагательное',
     example: 'Мне нужно проверить мою электронную почту.',
+    englishExample: 'I need to check my electronic mail.',
   },
   specimen: {
     word: 'specimen',
@@ -42,6 +48,7 @@ const mockTranslations: Record<string, WordDetails> = {
     partOfSpeech: 'существительное',
     gender: 'муж. род',
     example: 'Учёные изучают образец новой ткани.',
+    englishExample: 'Scientists are studying a specimen of the new fabric.',
   },
   publishing: {
     word: 'publishing',
@@ -49,6 +56,7 @@ const mockTranslations: Record<string, WordDetails> = {
     partOfSpeech: 'существительное',
     gender: 'ср. род',
     example: 'Это издательство выпускает множество научных журналов.',
+    englishExample: 'This publishing house produces many scientific journals.',
   },
   software: {
     word: 'software',
@@ -56,6 +64,7 @@ const mockTranslations: Record<string, WordDetails> = {
     partOfSpeech: 'существительное',
     gender: 'ср. род',
     example: 'Мне нужно обновить программное обеспечение на моем компьютере.',
+    englishExample: 'I need to update the software on my computer.',
   },
 };
 
@@ -63,6 +72,7 @@ const defaultWordDetails: Omit<WordDetails, 'word'> = {
   translation: 'перевод недоступен',
   partOfSpeech: 'часть речи не определена',
   example: 'Пример предложения отсутствует.',
+  englishExample: 'Example sentence not available.',
 };
 
 export const mockTranslationService = {
@@ -79,11 +89,5 @@ export const mockTranslationService = {
       word: word,
       ...defaultWordDetails,
     };
-  },
-
-  async addWordToVocabulary(word: string): Promise<boolean> {
-    await delay(300);
-
-    return true;
   },
 };

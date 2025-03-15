@@ -1,16 +1,41 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FlatList, FlatListProps, ListRenderItemInfo } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-  interpolate,
-  runOnJS,
 } from 'react-native-reanimated';
 
 interface AnimatedFlatListProps<T> extends FlatListProps<T> {
   itemAnimationDelay?: number;
 }
+
+const AnimatedItem = React.memo(
+  ({ children, delay }: { children: React.ReactNode; delay: number }) => {
+    const opacity = useSharedValue(0);
+    const translateY = useSharedValue(20);
+
+    React.useEffect(() => {
+      opacity.value = 0;
+      translateY.value = 20;
+      const timeoutId = setTimeout(() => {
+        opacity.value = withTiming(1, { duration: 400 });
+        translateY.value = withTiming(0, { duration: 400 });
+      }, delay);
+
+      return () => clearTimeout(timeoutId);
+    }, [delay, opacity, translateY]);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+      opacity: opacity.value,
+      transform: [{ translateY: translateY.value }],
+    }));
+
+    return <Animated.View style={[animatedStyle]}>{children}</Animated.View>;
+  }
+);
+
+AnimatedItem.displayName = 'AnimatedItem';
 
 const AnimatedFlatList = <T extends any>({
   data,
@@ -18,40 +43,25 @@ const AnimatedFlatList = <T extends any>({
   itemAnimationDelay = 150,
   ...rest
 }: AnimatedFlatListProps<T>) => {
-  const animatedRenderItem = (info: ListRenderItemInfo<T>) => {
-    const { item, index } = info;
+  const animatedRenderItem = useMemo(() => {
+    if (!renderItem) return null;
+    return (info: ListRenderItemInfo<T>) => (
+      <AnimatedItem
+        key={`item-${info.index}`}
+        delay={info.index * itemAnimationDelay}
+      >
+        {renderItem(info)}
+      </AnimatedItem>
+    );
+  }, [itemAnimationDelay, renderItem]);
 
-    const AnimatedItem = () => {
-      const opacity = useSharedValue(0);
-      const translateY = useSharedValue(20);
-
-      React.useEffect(() => {
-        const delay = index * itemAnimationDelay;
-
-        setTimeout(() => {
-          opacity.value = withTiming(1, { duration: 400 });
-          translateY.value = withTiming(0, { duration: 400 });
-        }, delay);
-      }, []);
-
-      const animatedStyle = useAnimatedStyle(() => {
-        return {
-          opacity: opacity.value,
-          transform: [{ translateY: translateY.value }],
-        };
-      });
-
-      return (
-        <Animated.View style={[animatedStyle]}>
-          {renderItem?.(info) || null}
-        </Animated.View>
-      );
-    };
-
-    return <AnimatedItem />;
-  };
+  if (!renderItem || !animatedRenderItem) {
+    return null;
+  }
 
   return <FlatList data={data} renderItem={animatedRenderItem} {...rest} />;
 };
+
+AnimatedFlatList.displayName = 'AnimatedFlatList';
 
 export default AnimatedFlatList;

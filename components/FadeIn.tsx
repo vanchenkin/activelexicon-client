@@ -5,8 +5,6 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
   withDelay,
-  interpolate,
-  Extrapolate,
 } from 'react-native-reanimated';
 
 interface FadeInProps extends ViewProps {
@@ -34,7 +32,7 @@ const FadeIn: React.FC<FadeInProps> = ({
     opacity.value = withDelay(delay, withTiming(1, { duration }));
 
     translateY.value = withDelay(delay, withTiming(0, { duration }));
-  }, []);
+  }, [opacity, translateY, delay, duration]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {

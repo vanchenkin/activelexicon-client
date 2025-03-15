@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useWords } from '@/hooks/useApi';
 import { ThemedView } from '../../components/ThemedView';
 import Button from '../../components/Button';
+import Typography from '../../components/Typography';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function HomeScreen() {
   if (isLoading) {
     return (
       <ThemedView style={styles.container}>
-        <Text>Загрузка...</Text>
+        <Typography>Загрузка...</Typography>
       </ThemedView>
     );
   }
@@ -40,10 +41,10 @@ export default function HomeScreen() {
             />
           </ThemedView>
 
-          <Text style={styles.emptyText}>
+          <Typography style={styles.emptyText}>
             У вас еще нет слов для изучения.{'\n'}
             Добавьте их!
-          </Text>
+          </Typography>
         </ThemedView>
 
         <Button title="Добавить слова" onPress={handleAddWords} />
@@ -53,14 +54,14 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <Text style={styles.title}>Лента заданий</Text>
+      <Typography style={styles.title}>Лента заданий</Typography>
 
-      <Text style={styles.description}>
+      <Typography style={styles.description}>
         Вам предстоит выполнять упражнения. Они будут подбираться в случайном
         порядке на основе вашего словаря и уровня английского языка
-      </Text>
+      </Typography>
 
-      <Text style={styles.sectionTitle}>Типы заданий:</Text>
+      <Typography style={styles.sectionTitle}>Типы заданий:</Typography>
 
       <ScrollView style={styles.exerciseList}>
         <ThemedView style={styles.exerciseCard}>
@@ -72,10 +73,12 @@ export default function HomeScreen() {
             />
           </ThemedView>
           <ThemedView style={styles.exerciseContent}>
-            <Text style={styles.exerciseTitle}>Составить предложение</Text>
-            <Text style={styles.exerciseDescription}>
+            <Typography style={styles.exerciseTitle}>
+              Составить предложение
+            </Typography>
+            <Typography style={styles.exerciseDescription}>
               Составьте предложение с данным словом
-            </Text>
+            </Typography>
           </ThemedView>
         </ThemedView>
 
@@ -84,10 +87,10 @@ export default function HomeScreen() {
             <Ionicons name="text-outline" size={32} color="#666" />
           </ThemedView>
           <ThemedView style={styles.exerciseContent}>
-            <Text style={styles.exerciseTitle}>Вставить слово</Text>
-            <Text style={styles.exerciseDescription}>
+            <Typography style={styles.exerciseTitle}>Вставить слово</Typography>
+            <Typography style={styles.exerciseDescription}>
               Вставьте наиболее подходящее слово в предложение
-            </Text>
+            </Typography>
           </ThemedView>
         </ThemedView>
       </ScrollView>

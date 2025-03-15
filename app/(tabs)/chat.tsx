@@ -116,7 +116,6 @@ export default function ChatScreen() {
         style={styles.inputContainer}
       >
         <Input
-          variant="chat"
           placeholder="Введите текст..."
           value={inputText}
           onChangeText={setInputText}
@@ -158,7 +157,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EFEFEF',
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     width: '100%',
     textAlign: 'center',
   },

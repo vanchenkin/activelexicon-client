@@ -1,9 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import {
-  queryClient,
-  initializeQueryClientPersistence,
-} from '@/utils/queryClientPersistence';
+import { queryClient } from '@/utils/queryClientPersistence';
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   return (

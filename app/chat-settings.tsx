@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
-  ScrollView,
-  Platform,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import BackButton from '../components/BackButton';
 import Button from '../components/Button';
+import { ThemedSwitch } from '../components/ThemedSwitch';
 import { useClearChatHistory } from '../hooks/useApi';
 import { Alert } from '../utils/crossPlatformAlert';
 
@@ -23,7 +18,6 @@ export default function ChatSettingsScreen() {
   const [sentimentAnalysisEnabled, setSentimentAnalysisEnabled] =
     useState(true);
   const [suggestionsEnabled, setSuggestionsEnabled] = useState(true);
-  const [textToSpeechEnabled, setTextToSpeechEnabled] = useState(false);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>(
     'medium'
   );
@@ -89,18 +83,9 @@ export default function ChatSettingsScreen() {
               />
               <Typography style={styles.settingText}>Автодополнение</Typography>
             </ThemedView>
-            <Switch
+            <ThemedSwitch
               value={autocompleteEnabled}
               onValueChange={setAutocompleteEnabled}
-              trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
-              thumbColor={
-                Platform.OS === 'ios'
-                  ? '#FFFFFF'
-                  : autocompleteEnabled
-                    ? '#FFFFFF'
-                    : '#F4F3F4'
-              }
-              ios_backgroundColor="#D1D1D6"
             />
           </ThemedView>
 
@@ -114,18 +99,9 @@ export default function ChatSettingsScreen() {
               />
               <Typography style={styles.settingText}>Анализ эмоций</Typography>
             </ThemedView>
-            <Switch
+            <ThemedSwitch
               value={sentimentAnalysisEnabled}
               onValueChange={setSentimentAnalysisEnabled}
-              trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
-              thumbColor={
-                Platform.OS === 'ios'
-                  ? '#FFFFFF'
-                  : sentimentAnalysisEnabled
-                    ? '#FFFFFF'
-                    : '#F4F3F4'
-              }
-              ios_backgroundColor="#D1D1D6"
             />
           </ThemedView>
 
@@ -139,45 +115,9 @@ export default function ChatSettingsScreen() {
               />
               <Typography style={styles.settingText}>Предложения</Typography>
             </ThemedView>
-            <Switch
+            <ThemedSwitch
               value={suggestionsEnabled}
               onValueChange={setSuggestionsEnabled}
-              trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
-              thumbColor={
-                Platform.OS === 'ios'
-                  ? '#FFFFFF'
-                  : suggestionsEnabled
-                    ? '#FFFFFF'
-                    : '#F4F3F4'
-              }
-              ios_backgroundColor="#D1D1D6"
-            />
-          </ThemedView>
-
-          <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfoRow}>
-              <Ionicons
-                name="volume-high-outline"
-                size={20}
-                color="#555"
-                style={styles.settingIcon}
-              />
-              <Typography style={styles.settingText}>
-                Озвучка сообщений
-              </Typography>
-            </ThemedView>
-            <Switch
-              value={textToSpeechEnabled}
-              onValueChange={setTextToSpeechEnabled}
-              trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
-              thumbColor={
-                Platform.OS === 'ios'
-                  ? '#FFFFFF'
-                  : textToSpeechEnabled
-                    ? '#FFFFFF'
-                    : '#F4F3F4'
-              }
-              ios_backgroundColor="#D1D1D6"
             />
           </ThemedView>
         </ThemedView>

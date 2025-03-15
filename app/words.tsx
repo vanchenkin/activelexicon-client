@@ -9,16 +9,11 @@ import Input from '../components/Input';
 import WordItem from '../components/WordItem';
 import AnimatedFlatList from '../components/AnimatedFlatList';
 import FadeIn from '../components/FadeIn';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+import BackButton from '../components/BackButton';
 
 export default function WordsScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const addButtonScale = useSharedValue(1);
 
   const {
     data: words = [],
@@ -50,18 +45,6 @@ export default function WordsScreen() {
     deleteWordMutation.mutate(wordId);
   };
 
-  const animatedAddButtonStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: addButtonScale.value }],
-  }));
-
-  const handleAddButtonPress = () => {
-    addButtonScale.value = withSpring(0.9, {}, () => {
-      addButtonScale.value = withSpring(1, {}, () => {
-        handleAddWord();
-      });
-    });
-  };
-
   const EmptyListComponent = () => (
     <FadeIn delay={300}>
       <ThemedView style={styles.emptyContainer}>
@@ -79,42 +62,33 @@ export default function WordsScreen() {
     <ThemedView style={styles.container}>
       <FadeIn>
         <ThemedView style={styles.header}>
-          <ThemedView style={styles.headerLeft}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Ionicons name="chevron-back" size={24} color="#007AFF" />
-            </TouchableOpacity>
-            <Typography size="lg" style={styles.headerTitle}>
-              Словарь
-            </Typography>
-          </ThemedView>
+          <BackButton onPress={() => router.back()} />
+          <Typography size="lg" style={styles.headerTitle}>
+            Словарь
+          </Typography>
         </ThemedView>
       </FadeIn>
 
-      <FadeIn delay={100}>
-        <ThemedView style={styles.searchContainer}>
-          <Input
-            variant="search"
-            placeholder="Поиск слов..."
-            value={searchQuery}
-            onChangeText={handleSearch}
-            leadingIcon={
-              <Ionicons name="search-outline" size={20} color="#999" />
-            }
-            trailingIcon={
-              searchQuery.length > 0 ? (
-                <TouchableOpacity
-                  style={styles.clearButton}
-                  onPress={() => handleSearch('')}
-                >
-                  <Ionicons name="close-circle" size={20} color="#999" />
-                </TouchableOpacity>
-              ) : null
-            }
-          />
-        </ThemedView>
+      <FadeIn delay={100} style={styles.searchInputContainer}>
+        <Input
+          placeholder="Поиск слов..."
+          value={searchQuery}
+          onChangeText={handleSearch}
+          style={styles.searchInput}
+          leadingIcon={
+            <Ionicons name="search-outline" size={20} color="#999" />
+          }
+          trailingIcon={
+            searchQuery.length > 0 ? (
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={() => handleSearch('')}
+              >
+                <Ionicons name="close-circle" size={20} color="#999" />
+              </TouchableOpacity>
+            ) : null
+          }
+        />
       </FadeIn>
 
       {isLoading ? (
@@ -153,14 +127,9 @@ export default function WordsScreen() {
         />
       )}
 
-      <Animated.View style={animatedAddButtonStyle}>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={handleAddButtonPress}
-        >
-          <Ionicons name="add" size={24} color="white" />
-        </TouchableOpacity>
-      </Animated.View>
+      <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>
+        <Ionicons name="add" size={24} color="white" />
+      </TouchableOpacity>
     </ThemedView>
   );
 }
@@ -173,39 +142,23 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingHorizontal: 16,
-    paddingTop: 60,
+    paddingTop: 36,
     paddingBottom: 16,
-    backgroundColor: '#FFF',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 8,
+    backgroundColor: 'transparent',
   },
   headerTitle: {
     fontSize: 18,
-  },
-  searchContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    margin: 16,
-    marginTop: 8,
-  },
-  searchInputContainer: {
-    flex: 1,
+    width: '100%',
+    textAlign: 'center',
   },
   searchInput: {
-    flex: 1,
-    height: 50,
-    fontSize: 16,
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
+  searchInputContainer: {
+    paddingHorizontal: 16,
   },
   clearButton: {
     padding: 6,

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
-  Text,
   StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
   ActivityIndicator,
+  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -19,6 +19,7 @@ import {
 import { ThemedView } from '@/components/ThemedView';
 import BackButton from '@/components/BackButton';
 import Input from '../components/Input';
+import Typography from '@/components/Typography';
 
 export default function ExerciseScreen() {
   const queryClient = useQueryClient();
@@ -79,7 +80,9 @@ export default function ExerciseScreen() {
     return (
       <ThemedView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0099FF" />
-        <Text style={styles.loadingText}>Загрузка упражнений...</Text>
+        <Typography style={styles.loadingText}>
+          Загрузка упражнений...
+        </Typography>
       </ThemedView>
     );
   }
@@ -88,14 +91,18 @@ export default function ExerciseScreen() {
     return (
       <ThemedView style={styles.loadingContainer}>
         <Ionicons name="alert-circle-outline" size={48} color="#FF3B30" />
-        <Text style={styles.errorText}>Ошибка загрузки упражнений</Text>
+        <Typography style={styles.errorText}>
+          Ошибка загрузки упражнений
+        </Typography>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={() =>
             queryClient.invalidateQueries({ queryKey: ['exercises'] })
           }
         >
-          <Text style={styles.retryButtonText}>Попробовать снова</Text>
+          <Typography style={styles.retryButtonText}>
+            Попробовать снова
+          </Typography>
         </TouchableOpacity>
       </ThemedView>
     );
@@ -105,10 +112,14 @@ export default function ExerciseScreen() {
     return (
       <ThemedView style={styles.loadingContainer}>
         <Ionicons name="book-outline" size={48} color="#999" />
-        <Text style={styles.loadingText}>Нет доступных упражнений</Text>
+        <Typography style={styles.loadingText}>
+          Нет доступных упражнений
+        </Typography>
         <ThemedView style={styles.backButtonWrapper}>
           <BackButton onPress={() => router.back()} />
-          <Text style={styles.retryButtonText}>Вернуться назад</Text>
+          <Typography style={styles.retryButtonText}>
+            Вернуться назад
+          </Typography>
         </ThemedView>
       </ThemedView>
     );
@@ -118,15 +129,17 @@ export default function ExerciseScreen() {
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
         <BackButton onPress={handleBack} />
-        <Text style={styles.headerTitle}>Упражнение</Text>
+        <Typography weight="bold" style={styles.headerTitle}>
+          Упражнение
+        </Typography>
         <ThemedView style={styles.placeholder} />
       </ThemedView>
 
       <ThemedView style={styles.progressContainer}>
-        <Text style={styles.progressText}>
+        <Typography style={styles.progressText}>
           Выполнено {currentExerciseIndex + 1} из {exercises.length} заданий до
           получения опыта
-        </Text>
+        </Typography>
         <ThemedView style={styles.progressBar}>
           <ThemedView
             style={[
@@ -140,29 +153,29 @@ export default function ExerciseScreen() {
       </ThemedView>
 
       <ScrollView style={styles.exerciseContainer}>
-        <Text style={styles.instructionText}>
+        <Typography weight="medium" style={styles.instructionText}>
           {currentExercise.type === 'fill-blank'
             ? 'Вставьте слово, которое лучше всего подходит:'
             : 'Переведите предложение:'}
-        </Text>
+        </Typography>
 
         {currentExercise && (
           <ThemedView style={styles.textContainer}>
-            <Text style={styles.exerciseText}>
+            <Typography style={styles.exerciseText}>
               {currentExercise.text.includes('_____')
                 ? currentExercise.text.split('_____')[0]
                 : currentExercise.text}
               {currentExercise.text.includes('_____') && (
                 <>
-                  <Text style={styles.blankLine}></Text>
+                  <View style={styles.blankLine} />
                   {currentExercise.text.split('_____')[1]}
                 </>
               )}
-            </Text>
+            </Typography>
             {currentExercise.hint && isCorrect === false && (
-              <Text style={styles.hintText}>
+              <Typography style={styles.hintText}>
                 Подсказка: {currentExercise.hint}
-              </Text>
+              </Typography>
             )}
           </ThemedView>
         )}
@@ -199,7 +212,7 @@ export default function ExerciseScreen() {
           {isChecking ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Проверить</Text>
+            <Typography style={styles.buttonText}>Проверить</Typography>
           )}
         </TouchableOpacity>
       </KeyboardAvoidingView>

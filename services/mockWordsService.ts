@@ -8,7 +8,6 @@ const mockWords: Word[] = [
     word: 'hello',
     translation: 'привет',
     examples: ['Hello, how are you?', 'Hello world!'],
-    learned: true,
     addedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
   },
   {
@@ -16,7 +15,6 @@ const mockWords: Word[] = [
     word: 'goodbye',
     translation: 'до свидания',
     examples: ['Goodbye, see you tomorrow!', 'He said goodbye and left.'],
-    learned: false,
     addedAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
   },
   {
@@ -24,7 +22,6 @@ const mockWords: Word[] = [
     word: 'book',
     translation: 'книга',
     examples: ['I read a book yesterday.', 'This book is interesting.'],
-    learned: false,
     addedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
   },
   {
@@ -32,7 +29,6 @@ const mockWords: Word[] = [
     word: 'water',
     translation: 'вода',
     examples: ['I need a glass of water.', 'The water is cold.'],
-    learned: true,
     addedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
   },
   {
@@ -40,7 +36,6 @@ const mockWords: Word[] = [
     word: 'food',
     translation: 'еда',
     examples: ['The food was delicious.', 'I need to buy some food.'],
-    learned: false,
     addedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
   },
 ];
@@ -90,7 +85,6 @@ class MockWordsService {
       word,
       translation,
       examples: [],
-      learned: false,
       addedAt: new Date(),
     };
 
@@ -100,33 +94,6 @@ class MockWordsService {
     mockUserStats.lastActiveDate = new Date();
 
     return { ...newWord };
-  }
-
-  async toggleWordLearned(id: string): Promise<Word> {
-    await delay(500);
-
-    const wordIndex = mockWords.findIndex((w) => w.id === id);
-
-    if (wordIndex === -1) {
-      throw new Error(`Word with ID ${id} not found`);
-    }
-
-    const updatedWord = {
-      ...mockWords[wordIndex],
-      learned: !mockWords[wordIndex].learned,
-    };
-
-    mockWords[wordIndex] = updatedWord;
-
-    if (updatedWord.learned) {
-      mockUserStats.learnedWords += 1;
-    } else {
-      mockUserStats.learnedWords -= 1;
-    }
-
-    mockUserStats.lastActiveDate = new Date();
-
-    return { ...updatedWord };
   }
 
   async deleteWord(id: string): Promise<boolean> {
@@ -141,9 +108,6 @@ class MockWordsService {
 
     if (wordToDelete) {
       mockUserStats.totalWords -= 1;
-      if (wordToDelete.learned) {
-        mockUserStats.learnedWords -= 1;
-      }
     }
 
     return mockWords.length < initialLength;
@@ -152,10 +116,29 @@ class MockWordsService {
   async getUserStats(): Promise<UserStats> {
     await delay(400);
 
-    mockUserStats.learnedWords = mockWords.filter((w) => w.learned).length;
+    mockUserStats.learnedWords = 0;
     mockUserStats.totalWords = mockWords.length;
 
     return { ...mockUserStats };
+  }
+
+  async addWordToVocabulary(word: string): Promise<Word> {
+    await delay(500);
+
+    // Create a new word entry for the vocabulary using the provided word
+    const newWord: Word = {
+      id: `word-${Date.now()}`,
+      word,
+      translation: '', // Will be populated from backend in real implementation
+      examples: [],
+      addedAt: new Date(),
+    };
+
+    mockWords.unshift(newWord);
+    mockUserStats.totalWords += 1;
+    mockUserStats.lastActiveDate = new Date();
+
+    return { ...newWord };
   }
 }
 

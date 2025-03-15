@@ -5,7 +5,6 @@ export interface Word {
   word: string;
   translation: string;
   examples?: string[];
-  learned: boolean;
   addedAt: Date;
 }
 
@@ -70,18 +69,6 @@ class WordsService {
     };
   }
 
-  async toggleWordLearned(id: string): Promise<Word> {
-    const response = await this.api.patch<Word>(`/words/${id}/toggle-learned`);
-
-    return {
-      ...response,
-      addedAt:
-        response.addedAt instanceof Date
-          ? response.addedAt
-          : new Date(response.addedAt),
-    };
-  }
-
   async deleteWord(wordId: string): Promise<boolean> {
     await this.api.delete(`/words/${wordId}`);
     return true;
@@ -98,6 +85,10 @@ class WordsService {
           : new Date(response.lastActiveDate)
         : null,
     };
+  }
+
+  async addWordToVocabulary(word: string): Promise<Word> {
+    return this.api.post<Word>('/words/vocabulary', { word });
   }
 }
 

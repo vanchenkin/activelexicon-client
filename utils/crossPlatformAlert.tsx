@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Alert as RNAlert,
   Platform,
@@ -75,27 +75,37 @@ const WebAlert = ({
   );
 };
 
-let webAlertState = {
-  isVisible: false,
-  title: '',
-  message: '',
-  buttons: [] as AlertButton[],
-  onClose: () => {},
-  setIsVisible: (value: boolean) => {},
-};
+// Using React state instead of a global object
+let alertInstance: {
+  show: (title: string, message?: string, buttons?: AlertButton[]) => void;
+} | null = null;
 
 export const WebAlertProvider = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
-  const [buttons, setButtons] = useState<AlertButton[]>([]);
+  const [buttons, setButtons] = useState<AlertButton[]>([{ text: 'OK' }]);
 
-  webAlertState.setIsVisible = setIsVisible;
-  webAlertState.onClose = () => setIsVisible(false);
-  webAlertState.title = title;
-  webAlertState.message = message;
-  webAlertState.buttons = buttons;
-  webAlertState.isVisible = isVisible;
+  const showAlert = useCallback(
+    (title: string, message?: string, buttons?: AlertButton[]) => {
+      setTitle(title);
+      setMessage(message || '');
+      setButtons(buttons || [{ text: 'OK' }]);
+      setIsVisible(true);
+    },
+    []
+  );
+
+  const handleClose = useCallback(() => {
+    setIsVisible(false);
+  }, []);
+
+  // Register the alert instance
+  if (Platform.OS === 'web' && alertInstance === null) {
+    alertInstance = {
+      show: showAlert,
+    };
+  }
 
   if (Platform.OS === 'web') {
     return (
@@ -104,7 +114,7 @@ export const WebAlertProvider = () => {
         title={title}
         message={message}
         buttons={buttons}
-        onClose={() => setIsVisible(false)}
+        onClose={handleClose}
       />
     );
   }
@@ -115,10 +125,11 @@ export const WebAlertProvider = () => {
 export const Alert = {
   alert: (title: string, message?: string, buttons?: AlertButton[]) => {
     if (Platform.OS === 'web') {
-      webAlertState.title = title;
-      webAlertState.message = message || '';
-      webAlertState.buttons = buttons || [{ text: 'OK' }];
-      webAlertState.setIsVisible(true);
+      if (alertInstance) {
+        alertInstance.show(title, message, buttons);
+      } else {
+        console.warn('WebAlertProvider is not mounted');
+      }
     } else {
       RNAlert.alert(title, message, buttons);
     }
