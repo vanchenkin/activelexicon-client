@@ -15,7 +15,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { QueryProvider } from '@/context/QueryContext';
 import { notificationService } from '@/services';
-import { WebAlertProvider } from '@/utils/crossPlatformAlert';
+import { WebAlertProvider } from '@/context/crossPlatformAlert';
 
 SplashScreen.preventAutoHideAsync();
 

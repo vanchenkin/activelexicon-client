@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { Config } from '../utils/config';
+import { Config } from '../configs/config';
 import { TokenStorage } from './tokenStorage';
 
 let refreshTokenFunction: (

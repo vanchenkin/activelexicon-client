@@ -8,7 +8,7 @@ import BackButton from '../components/BackButton';
 import Button from '../components/Button';
 import { ThemedSwitch } from '../components/ThemedSwitch';
 import { useClearChatHistory } from '../hooks/useApi';
-import { Alert } from '../utils/crossPlatformAlert';
+import { Alert } from '../context/crossPlatformAlert';
 
 export default function ChatSettingsScreen() {
   const router = useRouter();

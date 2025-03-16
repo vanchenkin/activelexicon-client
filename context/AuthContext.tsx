@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
-import { Config } from '@/utils/config';
+import { Config } from '@/configs/config';
 import { authService, User } from '@/services';
 import { AuthResponse } from '@/services/authService';
 
