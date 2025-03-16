@@ -59,13 +59,13 @@ export default function ExerciseScreen() {
 
             setTimeout(() => {
               addExperienceMutation.mutate(100);
+              queryClient.invalidateQueries({ queryKey: ['nextExercise'] });
 
               if (newCompletedCount >= REQUIRED_EXERCISES) {
                 router.push('/exercise-complete');
               } else {
                 setIsCorrect(null);
                 setUserAnswer('');
-                queryClient.invalidateQueries({ queryKey: ['nextExercise'] });
               }
             }, 1500);
           }
@@ -122,12 +122,13 @@ export default function ExerciseScreen() {
         <Typography style={styles.loadingText}>
           Нет доступных упражнений
         </Typography>
-        <ThemedView style={styles.backButtonWrapper}>
-          <BackButton onPress={() => router.back()} />
-          <Typography style={styles.retryButtonText}>
-            Вернуться назад
-          </Typography>
-        </ThemedView>
+        <Button
+          title="Вернуться назад"
+          onPress={handleBack}
+          variant="primary"
+          size="small"
+          style={{ marginTop: 20 }}
+        />
       </ThemedView>
     );
   }
