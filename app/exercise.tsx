@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import {
-  useExercises,
+  useNextExercise,
   useSubmitAnswer,
   useAddExperience,
 } from '@/hooks/useApi';
@@ -24,29 +24,29 @@ import ProgressBar from '../components/ProgressBar';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 
+const REQUIRED_EXERCISES = 2;
+
 export default function ExerciseScreen() {
   const queryClient = useQueryClient();
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [isChecking, setIsChecking] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [completedExercises, setCompletedExercises] = useState(0);
 
-  const { data: exercises = [], isLoading, isError } = useExercises();
+  const { data: exercise, isLoading, isError } = useNextExercise();
 
   const submitAnswerMutation = useSubmitAnswer();
 
   const addExperienceMutation = useAddExperience();
 
-  const currentExercise = exercises[currentExerciseIndex];
-
   const handleCheckAnswer = () => {
-    if (!userAnswer.trim() || isChecking || !currentExercise) return;
+    if (!userAnswer.trim() || isChecking || !exercise) return;
 
     setIsChecking(true);
 
     submitAnswerMutation.mutate(
       {
-        exerciseId: currentExercise.id,
+        exerciseId: exercise.id,
         answer: userAnswer.trim(),
       },
       {
@@ -54,14 +54,18 @@ export default function ExerciseScreen() {
           setIsCorrect(isAnswerCorrect);
 
           if (isAnswerCorrect) {
+            const newCompletedCount = completedExercises + 1;
+            setCompletedExercises(newCompletedCount);
+
             setTimeout(() => {
-              if (currentExerciseIndex < exercises.length - 1) {
-                setCurrentExerciseIndex(currentExerciseIndex + 1);
-                setUserAnswer('');
-                setIsCorrect(null);
-              } else {
-                addExperienceMutation.mutate(100);
+              addExperienceMutation.mutate(100);
+
+              if (newCompletedCount >= REQUIRED_EXERCISES) {
                 router.push('/exercise-complete');
+              } else {
+                setIsCorrect(null);
+                setUserAnswer('');
+                queryClient.invalidateQueries({ queryKey: ['nextExercise'] });
               }
             }, 1500);
           }
@@ -100,7 +104,7 @@ export default function ExerciseScreen() {
         <TouchableOpacity
           style={styles.retryButton}
           onPress={() =>
-            queryClient.invalidateQueries({ queryKey: ['exercises'] })
+            queryClient.invalidateQueries({ queryKey: ['nextExercise'] })
           }
         >
           <Typography style={styles.retryButtonText}>
@@ -111,7 +115,7 @@ export default function ExerciseScreen() {
     );
   }
 
-  if (!exercises || exercises.length === 0) {
+  if (!exercise) {
     return (
       <ThemedView style={styles.loadingContainer}>
         <Ionicons name="book-outline" size={48} color="#999" />
@@ -132,22 +136,20 @@ export default function ExerciseScreen() {
     <ThemedView style={styles.container}>
       <Header title="Упражнение" onBackPress={handleBack} />
 
-      <ProgressBar current={currentExerciseIndex} total={exercises.length} />
+      <ProgressBar current={completedExercises} total={REQUIRED_EXERCISES} />
 
       <ScrollView style={styles.exerciseContainer}>
         <Typography weight="medium" style={styles.instructionText}>
-          {currentExercise.type === 'fill-blank'
+          {exercise.type === 'fill-blank'
             ? 'Вставьте слово, которое лучше всего подходит:'
             : 'Переведите предложение:'}
         </Typography>
 
-        {currentExercise && (
-          <ExerciseContent
-            exercise={currentExercise}
-            isCorrect={isCorrect}
-            userAnswer={userAnswer}
-          />
-        )}
+        <ExerciseContent
+          exercise={exercise}
+          isCorrect={isCorrect}
+          userAnswer={userAnswer}
+        />
       </ScrollView>
 
       <KeyboardAvoidingView

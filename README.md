@@ -1,80 +1,113 @@
-# Welcome to your Expo app 👋
+# ActiveLexicon
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native Expo application for language learning and vocabulary building.
 
-## Get started
+## Getting Started
 
-1. Install dependencies
+### Prerequisites
 
+- Node.js (LTS version recommended)
+- npm
+- Expo CLI
+
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone [repository-url]
+   cd activelexicon
+   ```
+
+2. Install dependencies
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Start the development server
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+## Environment Configuration
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Copy `.env.example` to `.env` and configure the environment variables:
 
 ```bash
-npm run reset-project
+cp .env.example .env
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Edit the `.env` file with your API configuration:
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-
-## Environment Variables
-
-This project uses environment variables for configuration. To set up your environment:
-
-1. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Edit the `.env` file and update the values:
-   ```
-   API_URL=https://your-api-url.com
-   ```
-
-3. For Google authentication, uncomment and update the Google client IDs in the `.env` file.
-
-The environment variables are loaded using `react-native-dotenv` and can be accessed in your code by importing from `@env`:
-
-```typescript
-import { API_URL } from '@env';
+```
+API_URL=https://your-api-url.com
 ```
 
-Or use the config utility:
+## Project Structure
 
-```typescript
-import { Config } from './utils/config';
-
-// Use Config.apiUrl
 ```
+activelexicon/
+├── app/                   # Expo Router application routes
+│   ├── (tabs)/            # Tab-based navigation screens
+│   ├── _layout.tsx        # Root layout for navigation
+│   ├── login.tsx          # Login screen
+│   ├── register.tsx       # Registration screen
+│   ├── words.tsx          # Word management screen
+│   ├── exercise.tsx       # Exercise screen
+│   └── settings.tsx       # Settings screen
+│
+├── assets/                # Static assets like images and fonts
+│
+├── components/            # Reusable UI components
+│   ├── Button.tsx         # Custom button component
+│   ├── Input.tsx          # Custom input component
+│   ├── WordItem.tsx       # Word list item component
+│   ├── ProgressBar.tsx    # Progress indicator component
+│   └── ...                # Other UI components
+│
+├── context/               # React Context providers
+│   ├── AuthContext.tsx    # Authentication context
+│   └── QueryContext.tsx   # React Query context
+│
+├── constants/             # Application constants
+│
+├── hooks/                 # Custom React hooks
+│
+├── services/              # API and data services
+│   ├── api.ts             # API client setup
+│   ├── authService.ts     # Authentication service
+│   ├── wordsService.ts    # Words management service
+│   ├── exerciseService.ts # Exercise service
+│   ├── mock*.ts           # Mock services for development
+│   └── ...                # Other services
+│
+├── types/                 # TypeScript type definitions
+│
+├── utils/                 # Utility functions
+│   ├── config.ts          # Configuration utilities
+│   └── ...                # Other utilities
+│
+├── .env                   # Environment variables (not in git)
+├── .env.example           # Example environment variables
+├── app.json               # Expo configuration
+├── babel.config.js        # Babel configuration
+├── tsconfig.json          # TypeScript configuration
+└── package.json           # Project dependencies and scripts
+```
+
+## Development
+
+### Available Scripts
+
+- `npm start` or `yarn start`: Start the Expo development server
+- `npm run android` or `yarn android`: Start the app on Android
+- `npm run ios` or `yarn ios`: Start the app on iOS
+- `npm run web` or `yarn web`: Start the app on web
+- `npm run lint` or `yarn lint`: Run ESLint
+
+## Built With
+
+- [React Native](https://reactnative.dev/) - Mobile framework
+- [Expo](https://expo.dev/) - React Native toolchain
+- [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
+- [React Query](https://tanstack.com/query) - Data fetching and state management
+- [Axios](https://axios-http.com/) - HTTP client

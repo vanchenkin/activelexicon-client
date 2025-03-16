@@ -143,13 +143,6 @@ export function useClearChatHistory() {
   });
 }
 
-export function useExercises() {
-  return useQuery({
-    queryKey: ['exercises'],
-    queryFn: () => exerciseServiceInstance.getExercises(),
-  });
-}
-
 export function useSubmitAnswer() {
   return useMutation({
     mutationFn: ({
@@ -231,5 +224,12 @@ export function useUpdateStreak() {
       queryClient.invalidateQueries({ queryKey: ['streak'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
     },
+  });
+}
+
+export function useNextExercise() {
+  return useQuery({
+    queryKey: ['nextExercise'],
+    queryFn: () => exerciseServiceInstance.getNextExercise(),
   });
 }

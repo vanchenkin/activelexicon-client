@@ -25,17 +25,13 @@ class ExerciseService {
     this.api = new ApiService();
   }
 
-  async getExercises(): Promise<Exercise[]> {
-    return this.api.get<Exercise[]>('/tasks');
-  }
-
   async getNextExercise(): Promise<Exercise | null> {
     return this.api.get<Exercise | null>('/tasks/next');
   }
 
   async submitAnswer(exerciseId: string, answer: string): Promise<boolean> {
     const response = await this.api.post<{ isCorrect: boolean }>(
-      '/tasks/submit',
+      '/tasks/check',
       {
         exerciseId,
         answer,

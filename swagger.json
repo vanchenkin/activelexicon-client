@@ -68,6 +68,77 @@
         ]
       }
     },
+    "/chat/history": {
+      "get": {
+        "summary": "Get Chat History",
+        "operationId": "GetChatHistory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/getChatHistoryResp"
+            }
+          }
+        },
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/chat/message": {
+      "post": {
+        "summary": "Send Message To Chat",
+        "operationId": "SendMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/sendMessageResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/sendMessageReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
+    "/chat/start": {
+      "post": {
+        "summary": "Start New Chat",
+        "operationId": "StartChat",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/startChatResp"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/startChatReq"
+            }
+          }
+        ],
+        "tags": [
+          "al-api"
+        ]
+      }
+    },
     "/dictionary/word-info/{word}": {
       "get": {
         "summary": "Get Word Info",
@@ -439,6 +510,22 @@
     }
   },
   "definitions": {
+    "ChatMessage": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "title": "ChatMessage",
+      "required": [
+        "role",
+        "content"
+      ]
+    },
     "addWordToDictionaryReq": {
       "type": "object",
       "properties": {
@@ -564,6 +651,25 @@
       "title": "generateTextResp",
       "required": [
         "text"
+      ]
+    },
+    "getChatHistoryReq": {
+      "type": "object",
+      "title": "getChatHistoryReq"
+    },
+    "getChatHistoryResp": {
+      "type": "object",
+      "properties": {
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ChatMessage"
+          }
+        }
+      },
+      "title": "getChatHistoryResp",
+      "required": [
+        "history"
       ]
     },
     "getTopicsReq": {
@@ -744,6 +850,54 @@
     "removeWordFromDictionaryResp": {
       "type": "object",
       "title": "removeWordFromDictionaryResp"
+    },
+    "sendMessageReq": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "sendMessageReq",
+      "required": [
+        "message"
+      ]
+    },
+    "sendMessageResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "sendMessageResp",
+      "required": [
+        "message"
+      ]
+    },
+    "startChatReq": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string"
+        }
+      },
+      "title": "startChatReq",
+      "required": [
+        "topic"
+      ]
+    },
+    "startChatResp": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      },
+      "title": "startChatResp",
+      "required": [
+        "message"
+      ]
     },
     "writeTextTaskReq": {
       "type": "object",

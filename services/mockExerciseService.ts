@@ -67,14 +67,6 @@ let userProgress: UserProgress = {
 };
 
 export const mockExerciseService = {
-  async getExercises(): Promise<Exercise[]> {
-    await delay(800);
-    const currentUser = mockAuthService.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
-
-    return [...mockExercises];
-  },
-
   async getNextExercise(): Promise<Exercise | null> {
     await delay(500);
     const currentUser = mockAuthService.getCurrentUser();
