@@ -26,7 +26,7 @@
     "@tanstack/react-query": "^5.68.0",
     "@tanstack/react-query-persist-client": "^5.68.0",
     "axios": "^1.8.3",
-    "expo": "~52.0.39",
+    "expo": "^52.0.39",
     "expo-auth-session": "~6.0.3",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.8",
@@ -74,5 +74,6 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.2"
   },
-  "private": true
+  "private": true,
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
