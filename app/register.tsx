@@ -67,7 +67,6 @@ export default function RegisterScreen() {
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
-          keyboardType="email-address"
           fullWidth
         />
 

@@ -12,11 +12,11 @@ interface StreakProps {
   showLabel?: boolean;
 }
 
-export default function Streak({
+const Streak = ({
   streak,
   maxTriangles = 15,
   showLabel = true,
-}: StreakProps) {
+}: StreakProps) => {
   const getStreakText = (count: number) => {
     if (count === 1) return 'день';
     if (count >= 2 && count <= 4) return 'дня';
@@ -28,7 +28,7 @@ export default function Streak({
     const filledTriangles = Math.min(streak, maxTriangles);
 
     for (let i = 0; i < maxTriangles; i++) {
-      if (i < streak) {
+      if (i < filledTriangles) {
         indicators.push(
           <Typography
             key={i}
@@ -66,7 +66,7 @@ export default function Streak({
   };
 
   return (
-    <ThemedView style={[styles.container]}>
+    <ThemedView style={styles.container}>
       {showLabel && (
         <Typography weight="medium" size="md" style={styles.streakLabel}>
           {streak === 0
@@ -79,15 +79,14 @@ export default function Streak({
       </ThemedView>
     </ThemedView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    padding: 15,
     borderRadius: 12,
   },
   streakLabel: {
@@ -105,3 +104,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
 });
+
+export default Streak;

@@ -145,12 +145,6 @@ export default function SettingsScreen() {
       <ScrollView style={styles.scrollView}>
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
-            Аккаунт
-          </Typography>
-        </ThemedView>
-
-        <ThemedView style={styles.section}>
-          <Typography weight="medium" style={styles.sectionTitle}>
             Предпочтения
           </Typography>
 

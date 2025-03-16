@@ -1,5 +1,5 @@
 import { TokenStorage } from './tokenStorage';
-import { v4 as uuidv4 } from 'uuid';
+import uuid from 'react-native-uuid';
 import { User, AuthResponse } from './authService';
 
 interface MockUser extends User {
@@ -99,13 +99,13 @@ class MockAuthService {
     await delay(600);
 
     const newUser: MockUser = {
-      id: uuidv4(),
+      id: uuid.v4(),
       email,
       password,
       profile: {
-        level: 1,
+        level: 2,
         maxLevel: 10,
-        experiencePoints: 0,
+        experiencePoints: 2680,
         joinedDate: new Date(),
         lastLogin: new Date(),
       },
@@ -237,7 +237,7 @@ class MockAuthService {
 
     if (!user) {
       user = {
-        id: uuidv4(),
+        id: uuid.v4(),
         email: 'google-user@example.com',
         password: 'google-password',
         profile: {

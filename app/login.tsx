@@ -26,8 +26,7 @@ export default function LoginScreen() {
       await signIn(email, password);
       router.replace('/(tabs)');
     } catch (error) {
-      console.error('Login error:', error);
-      setError('Ошибка входа. Пожалуйста, попробуйте снова.');
+      setError('Неправильный email или пароль. Пожалуйста, попробуйте снова.');
     }
   };
 
@@ -45,7 +44,6 @@ export default function LoginScreen() {
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
-          keyboardType="email-address"
           fullWidth
         />
         <Input

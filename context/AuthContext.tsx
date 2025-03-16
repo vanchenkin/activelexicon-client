@@ -43,7 +43,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading: isLoadingUser,
     isError: isErrorUser,
     refetch,
-    error,
   } = useQuery({
     queryKey: ['user'],
     queryFn: async () => {
@@ -78,13 +77,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       queryClient.invalidateQueries({ queryKey: ['userWords'] });
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
-    },
-    onError: (error) => {
-      console.error('Login error:', error);
-      Alert.alert(
-        'Login Failed',
-        'Invalid email or password. Please try again.'
-      );
     },
   });
 

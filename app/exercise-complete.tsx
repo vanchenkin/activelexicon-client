@@ -8,7 +8,7 @@ import { ThemedView } from '../components/ThemedView';
 import Logo from '../components/Logo';
 import { useExerciseProgress } from '@/hooks/useApi';
 import { useAuth } from '../context/AuthContext';
-import Streak from '@/components/Streak';
+import Streak from '../components/Streak';
 
 export default function ExerciseCompleteScreen() {
   const router = useRouter();
