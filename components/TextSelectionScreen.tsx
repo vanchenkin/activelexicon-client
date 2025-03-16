@@ -100,9 +100,12 @@ export default function TextSelectionScreen({
     }
   };
 
-  const handleAddWordToVocabulary = async (word: string) => {
+  const handleAddWordToVocabulary = async (
+    word: string,
+    translation: string
+  ) => {
     try {
-      await addWord.mutateAsync({ word, translation: '' });
+      await addWord.mutateAsync({ word, translation });
       if (!selectedWords.includes(word)) {
         setSelectedWords([...selectedWords, word]);
       }
@@ -145,7 +148,10 @@ export default function TextSelectionScreen({
           onClose={closeModal}
           onAdd={() => {
             if (currentWordDetails?.word) {
-              handleAddWordToVocabulary(currentWordDetails.word);
+              handleAddWordToVocabulary(
+                currentWordDetails.word,
+                currentWordDetails.translation
+              );
             }
           }}
           isAlreadyAdded={

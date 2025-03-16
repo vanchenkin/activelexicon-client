@@ -16,13 +16,16 @@ type ExerciseContentProps = {
     text: string;
     hint?: string;
     type?: string;
+    correctAnswer?: string;
   };
   isCorrect: boolean | null;
+  userAnswer?: string;
 };
 
 const ExerciseContent: React.FC<ExerciseContentProps> = ({
   exercise,
   isCorrect,
+  userAnswer,
 }) => {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
@@ -83,7 +86,13 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
             : exercise.text}
           {exercise.text.includes('_____') && (
             <>
-              <View style={styles.blankLine} />
+              {isCorrect ? (
+                <Typography style={styles.correctAnswer}>
+                  {userAnswer || exercise.correctAnswer}
+                </Typography>
+              ) : (
+                <View style={styles.blankLine} />
+              )}
               {exercise.text.split('_____')[1]}
             </>
           )}
@@ -95,20 +104,16 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
         )}
       </Animated.View>
 
-      {isCorrect === true && (
-        <>
-          <View style={styles.lottieContainer}>
-            <LottieView
-              ref={confettiRef}
-              source={require('../assets/animations/confetti.json')}
-              style={styles.confettiAnimation}
-              autoPlay={true}
-              loop={false}
-              speed={1.2}
-            />
-          </View>
-        </>
-      )}
+      <View style={styles.lottieContainer}>
+        <LottieView
+          ref={confettiRef}
+          source={require('../assets/animations/confetti.json')}
+          style={styles.confettiAnimation}
+          autoPlay={false}
+          loop={false}
+          speed={1.5}
+        />
+      </View>
     </View>
   );
 };
@@ -170,6 +175,10 @@ const styles = StyleSheet.create({
   successAnimation: {
     width: 100,
     height: 100,
+  },
+  correctAnswer: {
+    fontWeight: 'bold',
+    color: '#4CD964',
   },
 });
 

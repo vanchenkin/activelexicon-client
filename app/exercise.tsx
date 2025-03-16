@@ -22,6 +22,7 @@ import Typography from '@/components/Typography';
 import ExerciseContent from '../components/ExerciseContent';
 import ProgressBar from '../components/ProgressBar';
 import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
 
 export default function ExerciseScreen() {
   const queryClient = useQueryClient();
@@ -141,7 +142,11 @@ export default function ExerciseScreen() {
         </Typography>
 
         {currentExercise && (
-          <ExerciseContent exercise={currentExercise} isCorrect={isCorrect} />
+          <ExerciseContent
+            exercise={currentExercise}
+            isCorrect={isCorrect}
+            userAnswer={userAnswer}
+          />
         )}
       </ScrollView>
 
@@ -165,20 +170,13 @@ export default function ExerciseScreen() {
           editable={isChecking === false && isCorrect !== true}
         />
 
-        <TouchableOpacity
-          style={[
-            styles.checkButton,
-            !userAnswer.trim() || isChecking ? styles.disabledButton : null,
-          ]}
+        <Button
+          title="Проверить"
           onPress={handleCheckAnswer}
           disabled={!userAnswer.trim() || isChecking || isCorrect === true}
-        >
-          {isChecking ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Typography style={styles.buttonText}>Проверить</Typography>
-          )}
-        </TouchableOpacity>
+          isLoading={isChecking}
+          fullWidth
+        />
       </KeyboardAvoidingView>
     </ThemedView>
   );
@@ -230,20 +228,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
     borderTopColor: '#EEE',
-  },
-  checkButton: {
-    backgroundColor: '#0099FF',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  disabledButton: {
-    backgroundColor: '#A0D4F7',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
   },
   backButtonWrapper: {
     flexDirection: 'row',

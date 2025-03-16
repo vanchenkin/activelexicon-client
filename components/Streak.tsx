@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
+import { FontAwesome } from '@expo/vector-icons';
 
 interface StreakProps {
   streak: number;
@@ -27,17 +28,28 @@ export default function Streak({
     const filledTriangles = Math.min(streak, maxTriangles);
 
     for (let i = 0; i < maxTriangles; i++) {
-      indicators.push(
-        <Typography
-          key={i}
-          color={i < filledTriangles ? '#4096FE' : '#DDD'}
-          style={styles.triangleIndicator}
-        >
-          🔥
-        </Typography>
-      );
+      if (i < streak) {
+        indicators.push(
+          <Typography
+            key={i}
+            color={i < filledTriangles ? '#4096FE' : '#DDD'}
+            style={styles.triangleIndicator}
+          >
+            <FontAwesome
+              name="fire"
+              size={16}
+              color={i < filledTriangles ? '#4096FE' : '#DDD'}
+            />
+          </Typography>
+        );
+      } else {
+        indicators.push(
+          <Typography key={i} style={styles.triangleIndicator}>
+            <FontAwesome name="circle-thin" size={16} color="#DDD" />
+          </Typography>
+        );
+      }
     }
-
     const rows = [];
     const rowSize = 5;
     const numRows = Math.ceil(maxTriangles / rowSize);
@@ -71,7 +83,11 @@ export default function Streak({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
     borderRadius: 12,
   },
   streakLabel: {

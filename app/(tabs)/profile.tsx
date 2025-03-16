@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
+    paddingVertical: 5,
   },
   avatarPlaceholder: {
     width: 80,
