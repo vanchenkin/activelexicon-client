@@ -1,6 +1,6 @@
 import { ApiService } from './api';
 
-export type ExerciseType = 'fill-blank' | 'multiple-choice' | 'translate';
+export type ExerciseType = 'make-text' | 'question-answer' | 'fill-word';
 
 export interface Exercise {
   id: string;

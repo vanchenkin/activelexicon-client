@@ -34,11 +34,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.container}>
         <ThemedView style={styles.emptyContainer}>
           <ThemedView style={styles.emptyIconContainer}>
-            <Ionicons
-              name="chatbubble-ellipses-outline"
-              size={40}
-              color="#666"
-            />
+            <Ionicons name="library-outline" size={40} color="#666" />
           </ThemedView>
 
           <Typography style={styles.emptyText}>
@@ -68,25 +64,35 @@ export default function HomeScreen() {
       <ScrollView style={styles.exerciseList}>
         <ThemedView style={styles.exerciseCard}>
           <ThemedView style={styles.iconContainer}>
-            <Ionicons
-              name="chatbubble-ellipses-outline"
-              size={32}
-              color="#666"
-            />
+            <Ionicons name="document-text-outline" size={32} color="#666" />
           </ThemedView>
           <ThemedView style={styles.exerciseContent}>
             <Typography style={styles.exerciseTitle}>
-              Составить предложение
+              Составить текст
             </Typography>
             <Typography style={styles.exerciseDescription}>
-              Составьте предложение с данным словом
+              Составьте небольшой текст с данным словом
             </Typography>
           </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.exerciseCard}>
           <ThemedView style={styles.iconContainer}>
-            <Ionicons name="text-outline" size={32} color="#666" />
+            <Ionicons name="help-circle-outline" size={32} color="#666" />
+          </ThemedView>
+          <ThemedView style={styles.exerciseContent}>
+            <Typography style={styles.exerciseTitle}>
+              Ответьте на вопрос
+            </Typography>
+            <Typography style={styles.exerciseDescription}>
+              Дайте развернутый ответ на вопрос
+            </Typography>
+          </ThemedView>
+        </ThemedView>
+
+        <ThemedView style={styles.exerciseCard}>
+          <ThemedView style={styles.iconContainer}>
+            <Ionicons name="pencil-outline" size={32} color="#666" />
           </ThemedView>
           <ThemedView style={styles.exerciseContent}>
             <Typography style={styles.exerciseTitle}>Вставить слово</Typography>

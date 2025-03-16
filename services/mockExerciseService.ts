@@ -1,8 +1,7 @@
+import { ExerciseType } from './exerciseService';
 import { mockAuthService } from './mockAuthService';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-export type ExerciseType = 'fill-blank' | 'multiple-choice' | 'translate';
 
 export interface Exercise {
   id: string;
@@ -16,40 +15,19 @@ export interface Exercise {
 const mockExercises: Exercise[] = [
   {
     id: 'ex1',
-    type: 'fill-blank',
-    text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not _____ five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    correctAnswer: 'only',
-    hint: 'This word emphasizes exclusivity',
-  },
-  {
-    id: 'ex2',
-    type: 'multiple-choice',
-    text: 'Choose the correct word to complete the sentence: The student _____ studying for their exam.',
+    type: 'fill-word',
+    text: 'The student _____ studying for their exam.',
     options: ['is', 'are', 'were', 'was'],
     correctAnswer: 'is',
     hint: 'The subject is singular',
   },
-  //   {
-  //     id: 'ex3',
-  //     type: 'translate',
-  //     text: 'Translate this sentence to English: Он читает книгу.',
-  //     correctAnswer: 'He is reading a book',
-  //     hint: 'Present continuous tense',
-  //   },
-  //   {
-  //     id: 'ex4',
-  //     type: 'fill-blank',
-  //     text: 'She _____ to the store yesterday to buy groceries.',
-  //     correctAnswer: 'went',
-  //     hint: 'Past tense of "go"',
-  //   },
-  //   {
-  //     id: 'ex5',
-  //     type: 'fill-blank',
-  //     text: 'The weather _____ very nice today, so we decided to have a picnic.',
-  //     correctAnswer: 'was',
-  //     hint: 'Past tense of "is"',
-  //   },
+  {
+    id: 'ex3',
+    type: 'make-text',
+    text: 'Write a sentence describing your daily routine using present simple tense.',
+    correctAnswer: 'I wake up early',
+    hint: 'Use present simple for habitual actions',
+  },
 ];
 
 interface UserProgress {

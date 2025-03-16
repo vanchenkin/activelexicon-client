@@ -43,7 +43,7 @@ export default function LanguageLevelSelect({
     {
       value: 'B1',
       label: 'B1 - Средний',
-      description: 'Независимое владение языком',
+      description: 'Хорошее владение языком',
     },
     {
       value: 'B2',

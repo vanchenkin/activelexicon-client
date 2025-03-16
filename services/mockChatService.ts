@@ -59,7 +59,7 @@ export const mockChatService = {
 
     mockChatHistory.push(userMessage);
 
-    await delay(1000);
+    await delay(2000);
 
     let responseType = 'default';
     if (

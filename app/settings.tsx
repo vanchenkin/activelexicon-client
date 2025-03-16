@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
-  Switch,
   TouchableOpacity,
   ScrollView,
-  Platform,
   View,
   Modal,
   Button,
@@ -13,25 +11,19 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '@/context/AuthContext';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
+import { ThemedSwitch } from '@/components/ThemedSwitch';
 import Header from '@/components/Header';
 import { notificationService } from '@/services';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-type LanguageLevel = 'beginner' | 'intermediate' | 'advanced';
-
 export default function SettingsScreen() {
   const router = useRouter();
-  const { user } = useAuth();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [autoCorrectEnabled, setAutoCorrectEnabled] = useState(true);
-  const [selectedLanguageLevel, setSelectedLanguageLevel] =
-    useState<LanguageLevel>('intermediate');
 
   const [notificationTime, setNotificationTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -43,10 +35,6 @@ export default function SettingsScreen() {
 
   const handleBackPress = () => {
     router.back();
-  };
-
-  const handleLanguageLevelPress = (level: LanguageLevel) => {
-    setSelectedLanguageLevel(level);
   };
 
   const appVersion = '1.0.0';
@@ -159,30 +147,6 @@ export default function SettingsScreen() {
           <Typography weight="medium" style={styles.sectionTitle}>
             Аккаунт
           </Typography>
-
-          <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfo}>
-              <Typography style={styles.settingText}>Email</Typography>
-              <Typography color="#666" style={styles.settingValue}>
-                {user?.email || 'Не указан'}
-              </Typography>
-            </ThemedView>
-            <TouchableOpacity style={styles.editButton}>
-              <Ionicons name="pencil-outline" size={18} color="#0099FF" />
-            </TouchableOpacity>
-          </ThemedView>
-
-          <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfo}>
-              <Typography style={styles.settingText}>Пароль</Typography>
-              <Typography color="#666" style={styles.settingValue}>
-                ••••••••
-              </Typography>
-            </ThemedView>
-            <TouchableOpacity style={styles.editButton}>
-              <Ionicons name="pencil-outline" size={18} color="#0099FF" />
-            </TouchableOpacity>
-          </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.section}>
@@ -200,18 +164,9 @@ export default function SettingsScreen() {
               />
               <Typography style={styles.settingText}>Уведомления</Typography>
             </ThemedView>
-            <Switch
+            <ThemedSwitch
               value={notificationsEnabled}
               onValueChange={handleNotificationToggle}
-              trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
-              thumbColor={
-                Platform.OS === 'ios'
-                  ? '#FFFFFF'
-                  : notificationsEnabled
-                    ? '#FFFFFF'
-                    : '#F4F3F4'
-              }
-              ios_backgroundColor="#D1D1D6"
             />
           </ThemedView>
 
@@ -267,18 +222,9 @@ export default function SettingsScreen() {
               />
               <Typography style={styles.settingText}>Темная тема</Typography>
             </ThemedView>
-            <Switch
+            <ThemedSwitch
               value={darkModeEnabled}
               onValueChange={setDarkModeEnabled}
-              trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
-              thumbColor={
-                Platform.OS === 'ios'
-                  ? '#FFFFFF'
-                  : darkModeEnabled
-                    ? '#FFFFFF'
-                    : '#F4F3F4'
-              }
-              ios_backgroundColor="#D1D1D6"
             />
           </ThemedView>
 
@@ -292,116 +238,10 @@ export default function SettingsScreen() {
               />
               <Typography style={styles.settingText}>Звук</Typography>
             </ThemedView>
-            <Switch
+            <ThemedSwitch
               value={soundEnabled}
               onValueChange={setSoundEnabled}
-              trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
-              thumbColor={
-                Platform.OS === 'ios'
-                  ? '#FFFFFF'
-                  : soundEnabled
-                    ? '#FFFFFF'
-                    : '#F4F3F4'
-              }
-              ios_backgroundColor="#D1D1D6"
             />
-          </ThemedView>
-
-          <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfoRow}>
-              <Ionicons
-                name="checkmark-done-outline"
-                size={20}
-                color="#555"
-                style={styles.settingIcon}
-              />
-              <Typography style={styles.settingText}>
-                Автоисправление
-              </Typography>
-            </ThemedView>
-            <Switch
-              value={autoCorrectEnabled}
-              onValueChange={setAutoCorrectEnabled}
-              trackColor={{ false: '#D1D1D6', true: '#4CD964' }}
-              thumbColor={
-                Platform.OS === 'ios'
-                  ? '#FFFFFF'
-                  : autoCorrectEnabled
-                    ? '#FFFFFF'
-                    : '#F4F3F4'
-              }
-              ios_backgroundColor="#D1D1D6"
-            />
-          </ThemedView>
-        </ThemedView>
-
-        <ThemedView style={styles.section}>
-          <Typography weight="medium" style={styles.sectionTitle}>
-            Уровень языка
-          </Typography>
-
-          <ThemedView style={styles.languageLevelContainer}>
-            <TouchableOpacity
-              style={[
-                styles.levelButton,
-                selectedLanguageLevel === 'beginner' &&
-                  styles.selectedLevelButton,
-              ]}
-              onPress={() => handleLanguageLevelPress('beginner')}
-            >
-              <Typography
-                color={
-                  selectedLanguageLevel === 'beginner' ? '#0099FF' : '#333'
-                }
-                weight={
-                  selectedLanguageLevel === 'beginner' ? 'medium' : 'regular'
-                }
-              >
-                Начинающий
-              </Typography>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.levelButton,
-                selectedLanguageLevel === 'intermediate' &&
-                  styles.selectedLevelButton,
-              ]}
-              onPress={() => handleLanguageLevelPress('intermediate')}
-            >
-              <Typography
-                color={
-                  selectedLanguageLevel === 'intermediate' ? '#0099FF' : '#333'
-                }
-                weight={
-                  selectedLanguageLevel === 'intermediate'
-                    ? 'medium'
-                    : 'regular'
-                }
-              >
-                Средний
-              </Typography>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.levelButton,
-                selectedLanguageLevel === 'advanced' &&
-                  styles.selectedLevelButton,
-              ]}
-              onPress={() => handleLanguageLevelPress('advanced')}
-            >
-              <Typography
-                color={
-                  selectedLanguageLevel === 'advanced' ? '#0099FF' : '#333'
-                }
-                weight={
-                  selectedLanguageLevel === 'advanced' ? 'medium' : 'regular'
-                }
-              >
-                Продвинутый
-              </Typography>
-            </TouchableOpacity>
           </ThemedView>
         </ThemedView>
 

@@ -179,9 +179,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     paddingHorizontal: 10,
     paddingBottom: 20,
+    flex: 1,
   },
   settingsButton: {
-    padding: 8,
+    paddingHorizontal: 24,
   },
   card: {
     backgroundColor: 'white',

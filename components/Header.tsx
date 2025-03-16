@@ -17,13 +17,9 @@ export default function Header({
 }: HeaderProps) {
   return (
     <ThemedView style={styles.header}>
-      {onBackPress ? (
-        <BackButton onPress={onBackPress} />
-      ) : (
-        <View style={styles.placeholder} />
-      )}
+      {onBackPress && <BackButton onPress={onBackPress} />}
       <Typography style={styles.headerTitle}>{title}</Typography>
-      {rightElement}
+      <ThemedView style={styles.rightElement}>{rightElement}</ThemedView>
     </ThemedView>
   );
 }
@@ -47,5 +43,10 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 36,
     height: 36,
+  },
+  rightElement: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    right: 0,
   },
 });

@@ -120,7 +120,7 @@ export default function ExerciseScreen() {
       <ThemedView style={styles.loadingContainer}>
         <Ionicons name="book-outline" size={48} color="#999" />
         <Typography style={styles.loadingText}>
-          Нет доступных упражнений
+          На сегодня упражнения закончились
         </Typography>
         <Button
           title="Вернуться назад"
@@ -141,9 +141,11 @@ export default function ExerciseScreen() {
 
       <ScrollView style={styles.exerciseContainer}>
         <Typography weight="medium" style={styles.instructionText}>
-          {exercise.type === 'fill-blank'
+          {exercise.type === 'fill-word'
             ? 'Вставьте слово, которое лучше всего подходит:'
-            : 'Переведите предложение:'}
+            : exercise.type === 'make-text'
+              ? 'Составьте текст с данным словом:'
+              : 'Ответьте на вопрос:'}
         </Typography>
 
         <ExerciseContent

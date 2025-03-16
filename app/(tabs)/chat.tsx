@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyleSheet,
   FlatList,
@@ -13,31 +13,16 @@ import { ThemedView } from '../../components/ThemedView';
 import Header from '../../components/Header';
 import Input from '../../components/Input';
 import { useRouter } from 'expo-router';
-import { chatServiceInstance, ChatMessage } from '../../services';
+import { ChatMessage } from '../../services';
+import { useChatHistory, useSendMessage } from '../../hooks/useApi';
 
 export default function ChatScreen() {
   const router = useRouter();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSending, setIsSending] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
-  useEffect(() => {
-    loadChatHistory();
-  }, []);
-
-  const loadChatHistory = async () => {
-    try {
-      setIsLoading(true);
-      const history = await chatServiceInstance.getChatHistory();
-      setMessages(history);
-    } catch (error) {
-      console.error('Failed to load chat history:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data: messages = [], isLoading } = useChatHistory();
+  const { mutate: sendMessage, isPending: isSending } = useSendMessage();
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || isSending) return;
@@ -45,19 +30,13 @@ export default function ChatScreen() {
     const userInput = inputText.trim();
     setInputText('');
 
-    try {
-      setIsSending(true);
-      const updatedHistory = await chatServiceInstance.sendMessage(userInput);
-      setMessages(updatedHistory);
-
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    } catch (error) {
-      console.error('Failed to send message:', error);
-    } finally {
-      setIsSending(false);
-    }
+    sendMessage(userInput, {
+      onSuccess: () => {
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+      },
+    });
   };
 
   const handleOpenSettings = () => {
@@ -148,7 +127,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   settingsButton: {
-    padding: 8,
+    paddingHorizontal: 24,
   },
   loadingContainer: {
     flex: 1,

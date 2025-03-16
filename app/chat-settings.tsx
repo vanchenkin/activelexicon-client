@@ -14,10 +14,6 @@ export default function ChatSettingsScreen() {
   const router = useRouter();
   const clearChatHistory = useClearChatHistory();
 
-  const [autocompleteEnabled, setAutocompleteEnabled] = useState(true);
-  const [sentimentAnalysisEnabled, setSentimentAnalysisEnabled] =
-    useState(true);
-  const [suggestionsEnabled, setSuggestionsEnabled] = useState(true);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>(
     'medium'
   );
@@ -68,60 +64,6 @@ export default function ChatSettingsScreen() {
       </ThemedView>
 
       <ScrollView style={styles.scrollView}>
-        <ThemedView style={styles.section}>
-          <Typography weight="medium" style={styles.sectionTitle}>
-            Общие настройки
-          </Typography>
-
-          <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfoRow}>
-              <Ionicons
-                name="text-outline"
-                size={20}
-                color="#555"
-                style={styles.settingIcon}
-              />
-              <Typography style={styles.settingText}>Автодополнение</Typography>
-            </ThemedView>
-            <ThemedSwitch
-              value={autocompleteEnabled}
-              onValueChange={setAutocompleteEnabled}
-            />
-          </ThemedView>
-
-          <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfoRow}>
-              <Ionicons
-                name="happy-outline"
-                size={20}
-                color="#555"
-                style={styles.settingIcon}
-              />
-              <Typography style={styles.settingText}>Анализ эмоций</Typography>
-            </ThemedView>
-            <ThemedSwitch
-              value={sentimentAnalysisEnabled}
-              onValueChange={setSentimentAnalysisEnabled}
-            />
-          </ThemedView>
-
-          <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfoRow}>
-              <Ionicons
-                name="bulb-outline"
-                size={20}
-                color="#555"
-                style={styles.settingIcon}
-              />
-              <Typography style={styles.settingText}>Предложения</Typography>
-            </ThemedView>
-            <ThemedSwitch
-              value={suggestionsEnabled}
-              onValueChange={setSuggestionsEnabled}
-            />
-          </ThemedView>
-        </ThemedView>
-
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             Отображение текста
