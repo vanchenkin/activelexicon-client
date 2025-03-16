@@ -46,3 +46,10 @@ app-example
 
 
 API_ROUTES.md
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/screenshots/
