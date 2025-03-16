@@ -5,7 +5,7 @@ import {
   exerciseServiceInstance,
   authService,
   topicsServiceInstance,
-  translationServiceInstance,
+  statsServiceInstance,
   type User,
 } from '@/services/index';
 
@@ -37,7 +37,7 @@ export function useSearchWords(query: string) {
           word.translation.toLowerCase().includes(searchLower)
       );
     },
-    enabled: query.length > 0,
+    enabled: true,
   });
 }
 
@@ -73,8 +73,8 @@ export function useDeleteWord() {
 
 export function useUserStats() {
   return useQuery({
-    queryKey: ['wordsStats'],
-    queryFn: () => wordsServiceInstance.getUserStats(),
+    queryKey: ['stats'],
+    queryFn: () => statsServiceInstance.getUserStats(),
   });
 }
 
@@ -86,10 +86,17 @@ export function useTopics() {
 }
 
 export function useSearchTopics(query: string) {
+  const { data: topics = [] } = useTopics();
+
   return useQuery({
     queryKey: ['topics', 'search', query],
-    queryFn: () => topicsServiceInstance.searchTopics(query),
-    enabled: query.length > 0,
+    queryFn: () => {
+      const searchLower = query.toLowerCase();
+      return topics.filter((topic) =>
+        topic.name.toLowerCase().includes(searchLower)
+      );
+    },
+    enabled: true,
   });
 }
 
@@ -202,10 +209,9 @@ export function useAddExperience() {
   });
 }
 
-export function useWordDetails() {
+export function useGetWord() {
   return useMutation({
-    mutationFn: (word: string) =>
-      translationServiceInstance.getWordDetails(word),
+    mutationFn: (word: string) => wordsServiceInstance.getWord(word),
   });
 }
 
@@ -218,6 +224,37 @@ export function useAddWordToVocabulary() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['words'] });
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
+    },
+  });
+}
+
+export function useStreak() {
+  return useQuery({
+    queryKey: ['streak'],
+    queryFn: () => statsServiceInstance.getStreak(),
+  });
+}
+
+export function useUpdateStreak() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => statsServiceInstance.updateStreak(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['streak'] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
+    },
+  });
+}
+
+export function useResetStreak() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => statsServiceInstance.resetStreak(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['streak'] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
     },
   });
 }

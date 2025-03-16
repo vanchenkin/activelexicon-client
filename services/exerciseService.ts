@@ -26,16 +26,16 @@ class ExerciseService {
   }
 
   async getExercises(): Promise<Exercise[]> {
-    return this.api.get<Exercise[]>('/exercises');
+    return this.api.get<Exercise[]>('/tasks');
   }
 
   async getNextExercise(): Promise<Exercise | null> {
-    return this.api.get<Exercise | null>('/exercises/next');
+    return this.api.get<Exercise | null>('/tasks/next');
   }
 
   async submitAnswer(exerciseId: string, answer: string): Promise<boolean> {
     const response = await this.api.post<{ isCorrect: boolean }>(
-      '/exercises/submit',
+      '/tasks/submit',
       {
         exerciseId,
         answer,
@@ -46,7 +46,7 @@ class ExerciseService {
   }
 
   async getUserProgress(): Promise<UserProgress> {
-    const response = await this.api.get<UserProgress>('/exercises/progress');
+    const response = await this.api.get<UserProgress>('/tasks/progress');
 
     return {
       ...response,
@@ -57,7 +57,7 @@ class ExerciseService {
   }
 
   async resetProgress(): Promise<void> {
-    await this.api.post('/exercises/reset');
+    await this.api.post('/tasks/reset');
   }
 }
 

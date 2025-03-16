@@ -35,7 +35,7 @@ class ChatService {
   }
 
   async clearHistory(): Promise<boolean> {
-    await this.api.delete('/chat/history');
+    await this.api.post('/chat/start');
     return true;
   }
 }

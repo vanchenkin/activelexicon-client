@@ -17,12 +17,6 @@ class TopicsService {
     return this.api.get<Topic[]>('/topics');
   }
 
-  async searchTopics(query: string): Promise<Topic[]> {
-    if (!query) return this.getTopics();
-
-    return this.api.get<Topic[]>('/topics/search', { query });
-  }
-
   async generateText(
     topicId: string | null,
     customTopic: string | null,
@@ -39,7 +33,7 @@ class TopicsService {
     }
 
     const response = await this.api.post<{ text: string }>(
-      '/topics/generate-text',
+      '/generate-text',
       payload
     );
     return response.text;

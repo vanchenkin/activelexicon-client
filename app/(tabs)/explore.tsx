@@ -75,6 +75,11 @@ export default function ExploreScreen() {
     setIsSettingsModalVisible(!isSettingsModalVisible);
   };
 
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSelectedTopic(null);
+  };
+
   const isLoading = isLoadingTopics || isSearchLoading;
 
   return (
@@ -104,19 +109,26 @@ export default function ExploreScreen() {
       </ThemedView>
 
       <Input
-        variant="search"
+        variant="default"
         placeholder="Поиск темы или введите свою тему..."
         value={searchQuery}
         onChangeText={setSearchQuery}
         style={styles.searchInput}
         leadingIcon={<Ionicons name="search" size={20} color="#999" />}
+        trailingIcon={
+          searchQuery ? (
+            <TouchableOpacity onPress={clearSearch}>
+              <Ionicons name="close-circle" size={20} color="#999" />
+            </TouchableOpacity>
+          ) : null
+        }
       />
 
       {isLoading ? (
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
         </ThemedView>
-      ) : (
+      ) : displayedTopics.length > 0 ? (
         <ScrollView style={styles.topicsContainer}>
           <ThemedView style={styles.topicsGrid}>
             {displayedTopics.map((topic, index) => (
@@ -131,6 +143,14 @@ export default function ExploreScreen() {
             ))}
           </ThemedView>
         </ScrollView>
+      ) : (
+        <ThemedView style={styles.noResultsContainer}>
+          <Ionicons name="search-outline" size={48} color="#999" />
+          <Typography color="#666" size="md" style={styles.noResultsText}>
+            Не найдено тем по запросу. Вы можете использовать этот запрос как
+            свою тему.
+          </Typography>
+        </ThemedView>
       )}
 
       <ThemedView style={styles.bottomContainerFullWidth}>
@@ -216,6 +236,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  noResultsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  noResultsText: {
+    textAlign: 'center',
+    marginTop: 16,
   },
   topicsContainer: {
     flex: 1,

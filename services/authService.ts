@@ -61,7 +61,7 @@ export class AuthService {
       const token = await TokenStorage.getToken();
       if (!token) return null;
 
-      const user = await this.api.get<User>('/auth/me');
+      const user = await this.api.get<User>('/user');
 
       this.parseUserDates(user);
 
@@ -95,7 +95,7 @@ export class AuthService {
   }
 
   async updateUserProfile(updates: Partial<User['profile']>): Promise<User> {
-    const response = await this.api.patch<User>('/auth/profile', updates);
+    const response = await this.api.patch<User>('/user', updates);
 
     this.parseUserDates(response);
 

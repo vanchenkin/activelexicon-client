@@ -1,13 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Modal, Pressable, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { WordDetails } from '@/services/translationService';
+
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 
+// Direct interface definition without Omit
+interface WordWithDetails {
+  word: string;
+  translation: string;
+  partOfSpeech: string;
+  gender?: string;
+  example: string;
+  examples?: string[];
+  addedAt: Date;
+}
+
 interface WordDetailsModalProps {
   visible: boolean;
-  word: WordDetails | null;
+  word: WordWithDetails | null;
   onClose: () => void;
   onAdd: () => void;
   isAlreadyAdded?: boolean;

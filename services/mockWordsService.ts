@@ -4,35 +4,30 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const mockWords: Word[] = [
   {
-    id: '1',
     word: 'hello',
     translation: 'привет',
     examples: ['Hello, how are you?', 'Hello world!'],
     addedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
   },
   {
-    id: '2',
     word: 'goodbye',
     translation: 'до свидания',
     examples: ['Goodbye, see you tomorrow!', 'He said goodbye and left.'],
     addedAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
   },
   {
-    id: '3',
     word: 'book',
     translation: 'книга',
     examples: ['I read a book yesterday.', 'This book is interesting.'],
     addedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
   },
   {
-    id: '4',
     word: 'water',
     translation: 'вода',
     examples: ['I need a glass of water.', 'The water is cold.'],
     addedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
   },
   {
-    id: '5',
     word: 'food',
     translation: 'еда',
     examples: ['The food was delicious.', 'I need to buy some food.'],
@@ -53,35 +48,22 @@ class MockWordsService {
     return [...mockWords];
   }
 
-  async getWord(id: string): Promise<Word> {
+  async getWord(word: string): Promise<Word> {
     await delay(400);
 
-    const word = mockWords.find((w) => w.id === id);
+    const foundWord = mockWords.find((w) => w.word === word);
 
-    if (!word) {
-      throw new Error(`Word with ID ${id} not found`);
+    if (!foundWord) {
+      throw new Error(`Word not found: ${word}`);
     }
 
-    return { ...word };
-  }
-
-  async searchWords(query: string): Promise<Word[]> {
-    await delay(300);
-
-    if (!query) return [...mockWords];
-
-    return mockWords.filter(
-      (word) =>
-        word.word.toLowerCase().includes(query.toLowerCase()) ||
-        word.translation.toLowerCase().includes(query.toLowerCase())
-    );
+    return foundWord;
   }
 
   async addWord(word: string, translation: string): Promise<Word> {
     await delay(500);
 
     const newWord: Word = {
-      id: `word-${Date.now()}`,
       word,
       translation,
       examples: [],
@@ -96,11 +78,11 @@ class MockWordsService {
     return { ...newWord };
   }
 
-  async deleteWord(id: string): Promise<boolean> {
+  async deleteWord(word: string): Promise<boolean> {
     const initialLength = mockWords.length;
-    const wordToDelete = mockWords.find((w) => w.id === id);
+    const wordToDelete = mockWords.find((w) => w.word === word);
 
-    const updatedMockWords = mockWords.filter((word) => word.id !== id);
+    const updatedMockWords = mockWords.filter((w) => w.word !== word);
     mockWords.length = 0;
     mockWords.push(...updatedMockWords);
 
@@ -125,7 +107,6 @@ class MockWordsService {
 
     // Create a new word entry for the vocabulary using the provided word
     const newWord: Word = {
-      id: `word-${Date.now()}`,
       word,
       translation: '', // Will be populated from backend in real implementation
       examples: [],

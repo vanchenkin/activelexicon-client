@@ -31,7 +31,7 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
     .onEnd((event) => {
       if (translateX.value < THRESHOLD) {
         translateX.value = withTiming(-SCREEN_WIDTH);
-        runOnJS(onDelete)(item.id);
+        runOnJS(onDelete)(item.word);
       } else {
         translateX.value = withSpring(0);
       }
@@ -53,7 +53,7 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
               {item.translation}
             </Typography>
           </ThemedView>
-          <TouchableOpacity onPress={() => onDelete(item.id)}>
+          <TouchableOpacity onPress={() => onDelete(item.word)}>
             <Animated.View style={styles.deleteButton}>
               <Ionicons name="trash-outline" size={24} color="#FF3B30" />
             </Animated.View>

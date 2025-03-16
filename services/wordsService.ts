@@ -1,7 +1,6 @@
 import { ApiService } from './api';
 
 export interface Word {
-  id: string;
   word: string;
   translation: string;
   examples?: string[];
@@ -23,7 +22,7 @@ class WordsService {
   }
 
   async getWords(): Promise<Word[]> {
-    const response = await this.api.get<Word[]>('/words');
+    const response = await this.api.get<Word[]>('/dictionary/words');
 
     return response.map((word) => ({
       ...word,
@@ -32,26 +31,18 @@ class WordsService {
     }));
   }
 
-  async getWord(id: string): Promise<Word> {
-    const word = await this.api.get<Word>(`/words/${id}`);
+  async getWord(word: string): Promise<Word> {
+    const response = await this.api.get<Word>(
+      `/dictionary/word-info/${encodeURIComponent(word)}`
+    );
 
     return {
-      ...word,
+      ...response,
       addedAt:
-        word.addedAt instanceof Date ? word.addedAt : new Date(word.addedAt),
+        response.addedAt instanceof Date
+          ? response.addedAt
+          : new Date(response.addedAt),
     };
-  }
-
-  async searchWords(query: string): Promise<Word[]> {
-    if (!query) return this.getWords();
-
-    const response = await this.api.get<Word[]>(`/words/search`, { query });
-
-    return response.map((word) => ({
-      ...word,
-      addedAt:
-        word.addedAt instanceof Date ? word.addedAt : new Date(word.addedAt),
-    }));
   }
 
   async addWord(word: string, translation: string): Promise<Word> {

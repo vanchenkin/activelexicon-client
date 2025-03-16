@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { WordDetails } from '@/services/translationService';
-import { useWordDetails, useAddWordToVocabulary } from '@/hooks/useApi';
+import { useAddWord, useGetWord } from '@/hooks/useApi';
 import WordDetailsModal from '@/components/WordDetailsModal';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 import Button from './Button';
+
+// Interface to match what WordDetailsModal expects
+interface WordDetails {
+  word: string;
+  translation: string;
+  partOfSpeech: string;
+  gender?: string;
+  example: string;
+  examples?: string[];
+  addedAt: Date;
+}
 
 interface TextSelectionScreenProps {
   generatedText: string;
@@ -30,8 +40,8 @@ export default function TextSelectionScreen({
     useState<WordDetails | null>(null);
   const [loadingWord, setLoadingWord] = useState(false);
 
-  const getWordDetails = useWordDetails();
-  const addWordToVocabulary = useAddWordToVocabulary();
+  const addWord = useAddWord();
+  const getWord = useGetWord();
 
   useEffect(() => {
     if (generatedText) {
@@ -54,8 +64,16 @@ export default function TextSelectionScreen({
 
     try {
       setLoadingWord(true);
-      const details = await getWordDetails.mutateAsync(word);
-      setCurrentWordDetails(details);
+      const details = await getWord.mutateAsync(word);
+
+      const wordWithDetails: WordDetails = {
+        word: details.word,
+        translation: details.translation,
+        partOfSpeech: '',
+        example: details.examples?.[0] || '',
+        addedAt: details.addedAt,
+      };
+      setCurrentWordDetails(wordWithDetails);
       setIsModalVisible(true);
 
       if (onWordSelected) {
@@ -63,6 +81,20 @@ export default function TextSelectionScreen({
       }
     } catch (error) {
       console.error('Failed to get word details:', error);
+      // Create fallback word details
+      const fallbackDetails: WordDetails = {
+        word: word,
+        translation: 'Translation not available',
+        partOfSpeech: '',
+        example: '',
+        addedAt: new Date(),
+      };
+      setCurrentWordDetails(fallbackDetails);
+      setIsModalVisible(true);
+
+      if (onWordSelected) {
+        onWordSelected(word);
+      }
     } finally {
       setLoadingWord(false);
     }
@@ -70,7 +102,7 @@ export default function TextSelectionScreen({
 
   const handleAddWordToVocabulary = async (word: string) => {
     try {
-      await addWordToVocabulary.mutateAsync(word);
+      await addWord.mutateAsync({ word, translation: '' });
       if (!selectedWords.includes(word)) {
         setSelectedWords([...selectedWords, word]);
       }

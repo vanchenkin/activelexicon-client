@@ -42,8 +42,6 @@ const Input = forwardRef<TextInput, InputProps>(
           return styles.successInput;
         case 'error':
           return styles.errorInput;
-        default:
-          return styles.defaultInput;
       }
     };
 

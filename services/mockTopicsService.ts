@@ -29,18 +29,6 @@ export const mockTopicsService = {
     return mockTopics;
   },
 
-  async searchTopics(query: string): Promise<Topic[]> {
-    await delay(400);
-    const currentUser = mockAuthService.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
-
-    if (!query) return mockTopics;
-
-    return mockTopics.filter((topic) =>
-      topic.name.toLowerCase().includes(query.toLowerCase())
-    );
-  },
-
   async generateText(
     topicId: string | null,
     customTopic: string | null,

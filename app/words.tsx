@@ -120,7 +120,7 @@ export default function WordsScreen() {
           renderItem={({ item }) => (
             <WordItem item={item} onDelete={handleDeleteWord} />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.word}
           contentContainerStyle={styles.wordsList}
           ListEmptyComponent={EmptyListComponent}
           itemAnimationDelay={40}
