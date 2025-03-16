@@ -31,7 +31,6 @@ export const TopicItem: React.FC<TopicItemProps> = ({
 
   return (
     <TouchableOpacity
-      key={topic.id}
       style={[
         styles.topicButton,
         isSelected && styles.selectedTopicButton,

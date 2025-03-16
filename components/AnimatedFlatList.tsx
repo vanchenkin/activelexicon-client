@@ -48,7 +48,7 @@ const AnimatedFlatList = <T extends any>({
 
     const AnimatedRenderItem = (info: ListRenderItemInfo<T>) => (
       <AnimatedItem
-        key={`item-${info.index}`}
+        key={`÷item-${info.index}`}
         delay={info.index * itemAnimationDelay}
       >
         {renderItem(info)}

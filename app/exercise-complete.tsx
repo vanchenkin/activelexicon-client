@@ -64,7 +64,7 @@ export default function ExerciseCompleteScreen() {
           <Streak streak={progress?.streak || 0} />
         </ThemedView>
 
-        <Button title="Продолжить" onPress={handleContinue} size="large" />
+        <Button title="Продолжить" onPress={handleContinue} />
       </ThemedView>
     </ThemedView>
   );

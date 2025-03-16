@@ -77,10 +77,6 @@ class WordsService {
         : null,
     };
   }
-
-  async addWordToVocabulary(word: string): Promise<Word> {
-    return this.api.post<Word>('/words/vocabulary', { word });
-  }
 }
 
 export const wordsService = new WordsService();

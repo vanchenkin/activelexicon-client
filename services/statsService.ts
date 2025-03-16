@@ -32,10 +32,6 @@ export class StatsService {
   async updateStreak(): Promise<UserStreak> {
     return this.api.post<UserStreak>('/stats/streak/update', {});
   }
-
-  async resetStreak(): Promise<UserStreak> {
-    return this.api.post<UserStreak>('/stats/streak/reset', {});
-  }
 }
 
 export const statsService = new StatsService();

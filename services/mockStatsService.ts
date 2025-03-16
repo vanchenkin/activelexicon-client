@@ -37,18 +37,6 @@ class MockStatsService {
 
     return Promise.resolve({ ...updatedStreak });
   }
-
-  async resetStreak(): Promise<UserStreak> {
-    const resetStreak = {
-      ...this.mockStats.streak,
-      currentStreak: 0,
-      lastActiveDate: new Date().toISOString(),
-    };
-
-    this.mockStats.streak = resetStreak;
-
-    return Promise.resolve({ ...resetStreak });
-  }
 }
 
 export const mockStatsService = new MockStatsService();

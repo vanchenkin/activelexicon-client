@@ -27,10 +27,9 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="myapp"/>
+        <data android:scheme="activelexicon"/>
         <data android:scheme="com.hse.activelexicon"/>
         <data android:scheme="exp+activelexicon"/>
-        <data android:scheme="activelexicon"/>
       </intent-filter>
     </activity>
   </application>

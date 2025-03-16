@@ -215,19 +215,6 @@ export function useGetWord() {
   });
 }
 
-export function useAddWordToVocabulary() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (word: string) =>
-      wordsServiceInstance.addWordToVocabulary(word),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['words'] });
-      queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
-    },
-  });
-}
-
 export function useStreak() {
   return useQuery({
     queryKey: ['streak'],
@@ -240,18 +227,6 @@ export function useUpdateStreak() {
 
   return useMutation({
     mutationFn: () => statsServiceInstance.updateStreak(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['streak'] });
-      queryClient.invalidateQueries({ queryKey: ['stats'] });
-    },
-  });
-}
-
-export function useResetStreak() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: () => statsServiceInstance.resetStreak(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['streak'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });

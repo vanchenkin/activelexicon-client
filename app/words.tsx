@@ -10,6 +10,7 @@ import WordItem from '../components/WordItem';
 import AnimatedFlatList from '../components/AnimatedFlatList';
 import FadeIn from '../components/FadeIn';
 import BackButton from '../components/BackButton';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function WordsScreen() {
   const router = useRouter();
@@ -115,16 +116,18 @@ export default function WordsScreen() {
           </ThemedView>
         </FadeIn>
       ) : (
-        <AnimatedFlatList
-          data={displayWords}
-          renderItem={({ item }) => (
-            <WordItem item={item} onDelete={handleDeleteWord} />
-          )}
-          keyExtractor={(item) => item.word}
-          contentContainerStyle={styles.wordsList}
-          ListEmptyComponent={EmptyListComponent}
-          itemAnimationDelay={40}
-        />
+        <GestureHandlerRootView>
+          <AnimatedFlatList
+            data={displayWords}
+            renderItem={({ item }) => (
+              <WordItem item={item} onDelete={handleDeleteWord} />
+            )}
+            keyExtractor={(item) => item.word}
+            contentContainerStyle={styles.wordsList}
+            ListEmptyComponent={EmptyListComponent}
+            itemAnimationDelay={40}
+          />
+        </GestureHandlerRootView>
       )}
 
       <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>

@@ -1,0 +1,122 @@
+[
+  {
+    "word": "hello",
+    "translation": "привет",
+    "examples": ["Hello, how are you?", "Hello world!"],
+    "addedAt": "2023-05-16T12:00:00.000Z"
+  },
+  {
+    "word": "goodbye",
+    "translation": "до свидания",
+    "examples": ["Goodbye, see you tomorrow!", "He said goodbye and left."],
+    "addedAt": "2023-05-21T12:00:00.000Z"
+  },
+  {
+    "word": "book",
+    "translation": "книга",
+    "examples": ["I read a book yesterday.", "This book is interesting."],
+    "addedAt": "2023-05-31T12:00:00.000Z"
+  },
+  {
+    "word": "water",
+    "translation": "вода",
+    "examples": ["I need a glass of water.", "The water is cold."],
+    "addedAt": "2023-06-05T12:00:00.000Z"
+  },
+  {
+    "word": "food",
+    "translation": "еда",
+    "examples": ["The food was delicious.", "I need to buy some food."],
+    "addedAt": "2023-06-10T12:00:00.000Z"
+  },
+  {
+    "word": "generated",
+    "translation": "сгенерированный",
+    "examples": ["This is a generated text.", "The computer generated a response."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "text",
+    "translation": "текст",
+    "examples": ["The text contains important information.", "I need to read this text carefully."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "topic",
+    "translation": "тема",
+    "examples": ["The topic of our discussion is important.", "This topic interests many people."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "complexity",
+    "translation": "сложность",
+    "examples": ["The complexity of the problem surprised me.", "Understanding the complexity takes time."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "paragraphs",
+    "translation": "абзацы",
+    "examples": ["The essay contains several paragraphs.", "Each paragraph explores a different idea."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "content",
+    "translation": "содержание",
+    "examples": ["The content of the book is fascinating.", "We need to review this content carefully."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "vocabulary",
+    "translation": "словарный запас",
+    "examples": ["Learning new vocabulary is important.", "His vocabulary is impressive."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "learning",
+    "translation": "обучение",
+    "examples": ["Learning a language takes time.", "I enjoy learning new things."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "phrases",
+    "translation": "фразы",
+    "examples": ["These phrases are commonly used.", "I learned some new phrases today."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "selected",
+    "translation": "выбранный",
+    "examples": ["I selected the best option.", "The selected items will be delivered tomorrow."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "contain",
+    "translation": "содержать",
+    "examples": ["This box contains important documents.", "Foods that contain sugar should be avoided."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "various",
+    "translation": "различные",
+    "examples": ["We discussed various topics.", "The store sells various products."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "related",
+    "translation": "связанный",
+    "examples": ["These issues are related to each other.", "The book is related to our discussion."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "longer",
+    "translation": "длиннее",
+    "examples": ["The meeting was longer than expected.", "I need a longer time to finish this."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  },
+  {
+    "word": "useful",
+    "translation": "полезный",
+    "examples": ["This information is very useful.", "The tool proved to be useful."],
+    "addedAt": "2023-06-15T12:00:00.000Z"
+  }
+] 

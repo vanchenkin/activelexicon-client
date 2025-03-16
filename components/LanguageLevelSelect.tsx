@@ -87,47 +87,49 @@ export default function LanguageLevelSelect({
         <Ionicons name="chevron-down" size={20} color="#666" />
       </TouchableOpacity>
 
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setModalVisible(false)}
+      <ThemedView>
+        <Modal
+          visible={modalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}
         >
-          <ThemedView
-            style={styles.modalContent}
-            onStartShouldSetResponder={() => true}
-            onTouchEnd={(e) => e.stopPropagation()}
+          <Pressable
+            style={styles.modalOverlay}
+            onPress={() => setModalVisible(false)}
           >
-            <Typography style={styles.modalTitle}>
-              Выберите уровень языка
-            </Typography>
+            <ThemedView
+              style={styles.modalContent}
+              onStartShouldSetResponder={() => true}
+              onTouchEnd={(e) => e.stopPropagation()}
+            >
+              <Typography style={styles.modalTitle}>
+                Выберите уровень языка
+              </Typography>
 
-            {languageLevels.map((level) => (
-              <TouchableOpacity
-                key={level.value}
-                style={styles.levelOption}
-                onPress={() => handleSelect(level.value)}
-              >
-                <View style={styles.levelHeader}>
-                  <Typography style={styles.levelLabel}>
-                    {level.label}
+              {languageLevels.map((level) => (
+                <TouchableOpacity
+                  key={level.value}
+                  style={styles.levelOption}
+                  onPress={() => handleSelect(level.value)}
+                >
+                  <View style={styles.levelHeader}>
+                    <Typography style={styles.levelLabel}>
+                      {level.label}
+                    </Typography>
+                    {value === level.value && (
+                      <Ionicons name="checkmark" size={20} color="#0099FF" />
+                    )}
+                  </View>
+                  <Typography style={styles.levelDescription}>
+                    {level.description}
                   </Typography>
-                  {value === level.value && (
-                    <Ionicons name="checkmark" size={20} color="#0099FF" />
-                  )}
-                </View>
-                <Typography style={styles.levelDescription}>
-                  {level.description}
-                </Typography>
-              </TouchableOpacity>
-            ))}
-          </ThemedView>
-        </Pressable>
-      </Modal>
+                </TouchableOpacity>
+              ))}
+            </ThemedView>
+          </Pressable>
+        </Modal>
+      </ThemedView>
     </>
   );
 }
