@@ -12,7 +12,7 @@ export interface ChatMessage {
 let mockChatHistory: ChatMessage[] = [
   {
     id: '1',
-    text: 'Привет! Я AI-помощник для изучения английского языка. Чем я могу помочь?',
+    text: 'Hello! I am AI-assistant for learning English. How can I help you?',
     isUser: false,
     timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
   },
@@ -20,19 +20,18 @@ let mockChatHistory: ChatMessage[] = [
 
 const mockAIResponses: Record<string, string[]> = {
   default: [
-    'Интересный вопрос! Давайте разберемся.',
-    'Я могу помочь вам с этим.',
-    'Хороший вопрос! Вот что я знаю по этой теме.',
+    "Interesting question! Let's figure it out.",
+    'I can help you with this.',
+    "Good question! Here's what I know about this topic.",
   ],
   greeting: [
-    'Привет! Как у вас дела с изучением английского?',
-    'Здравствуйте! Чем я могу помочь сегодня?',
-    'Добрый день! Готов помочь с английским языком.',
+    'Hello! How are you doing with English learning?',
+    "Good day! I'm ready to help with English.",
   ],
   translation: [
-    'Вот перевод этого слова: ',
-    'На русском это означает: ',
-    'Это слово переводится как: ',
+    'Here is the translation of this word: ',
+    'In Russian, it means: ',
+    'This word translates as: ',
   ],
 };
 
@@ -62,11 +61,9 @@ export const mockChatService = {
     await delay(2000);
 
     let responseType = 'default';
-    if (
-      text.toLowerCase().match(/привет|здравствуй|добрый день|добрый вечер/)
-    ) {
+    if (text.toLowerCase().match(/hello|hi|good day|good evening/)) {
       responseType = 'greeting';
-    } else if (text.toLowerCase().match(/перевод|перевести|как будет/)) {
+    } else if (text.toLowerCase().match(/translation|translate|how to say/)) {
       responseType = 'translation';
     }
 

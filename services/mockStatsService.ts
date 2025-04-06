@@ -2,8 +2,8 @@ import { StatsData, UserStreak } from './statsService';
 
 class MockStatsService {
   private mockStats: StatsData = {
-    totalWords: 120,
-    learnedWords: 85,
+    totalWords: 5,
+    learnedWords: 2,
     practiceCompleted: 42,
     lastActiveDate: new Date().toISOString(),
     streak: {

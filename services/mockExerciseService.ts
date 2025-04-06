@@ -24,9 +24,9 @@ const mockExercises: Exercise[] = [
   {
     id: 'ex3',
     type: 'make-text',
-    text: 'Write a sentence describing your daily routine using present simple tense.',
+    text: 'wake',
     correctAnswer: 'I wake up early',
-    hint: 'Use present simple for habitual actions',
+    hint: 'I ___ up early',
   },
 ];
 
