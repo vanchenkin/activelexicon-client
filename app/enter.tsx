@@ -6,11 +6,8 @@ import Typography from '../components/Typography';
 import DescriptionTitle from '../components/DescriptionTitle';
 import { ThemedView } from '../components/ThemedView';
 import { router } from 'expo-router';
-import { useAuth } from '../context/AuthContext';
 
 export default function EnterScreen() {
-  const { signInWithGoogle } = useAuth();
-
   return (
     <ThemedView style={styles.container}>
       <Typography size="2xl" style={styles.welcomeText}>

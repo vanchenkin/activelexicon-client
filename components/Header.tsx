@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 import BackButton from './BackButton';

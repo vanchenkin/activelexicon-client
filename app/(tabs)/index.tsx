@@ -11,7 +11,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { data: words, isLoading } = useWords();
 
-  const hasWords = words && words.length > 0;
+  const hasWords = words && words.items.length > 0;
 
   const handleStartExercises = () => {
     router.push('/exercise');

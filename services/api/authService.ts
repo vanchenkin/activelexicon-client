@@ -7,6 +7,8 @@ export interface User {
     level: number;
     maxLevel: number;
     experiencePoints: number;
+    avatarId: number;
+    languageLevel: string;
   };
 }
 
@@ -22,10 +24,15 @@ export class AuthService {
     this.api = new ApiService();
   }
 
-  async register(email: string, password: string): Promise<AuthResponse> {
+  async register(
+    email: string,
+    password: string,
+    languageLevel: string
+  ): Promise<AuthResponse> {
     const response = await this.api.post<AuthResponse>('/auth/register', {
       email,
       password,
+      languageLevel,
     });
 
     await this.saveTokens(response);
@@ -48,25 +55,6 @@ export class AuthService {
     await TokenStorage.clearAuthData();
   }
 
-  async getCurrentUser(): Promise<User | null> {
-    try {
-      const accessToken = await TokenStorage.getAccessToken();
-      if (!accessToken) return null;
-
-      const user = await this.api.get<User>('/user');
-
-      return user;
-    } catch (error: any) {
-      console.error('Error getting current user:', error);
-
-      if (error.response && error.response.status === 401) {
-        await TokenStorage.clearAuthData();
-      }
-
-      return null;
-    }
-  }
-
   async refreshToken(refreshToken: string): Promise<boolean> {
     try {
       const response = await this.api.post<{
@@ -74,20 +62,13 @@ export class AuthService {
         refreshToken: string;
       }>('/auth/refresh', { refreshToken });
 
-      await TokenStorage.saveAccessToken(response.accessToken);
-      await TokenStorage.saveRefreshToken(response.refreshToken);
+      await this.saveTokens(response);
 
       return true;
     } catch (error: any) {
       console.error('Error refreshing token:', error);
       return false;
     }
-  }
-
-  async updateUserProfile(updates: Partial<User['profile']>): Promise<User> {
-    const response = await this.api.patch<User>('/user', updates);
-
-    return response;
   }
 
   private async saveTokens(authResponse: AuthResponse): Promise<void> {

@@ -7,11 +7,9 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAddWord } from '@/hooks/useApi';
-import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import Button from '../components/Button';
 import Input from '../components/Input';
-import BackButton from '../components/BackButton';
 import Header from '../components/Header';
 
 export default function AddWordScreen() {

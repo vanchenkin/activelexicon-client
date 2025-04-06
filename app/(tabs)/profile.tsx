@@ -8,24 +8,29 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
-import { useUserStats, useExerciseProgress } from '@/hooks/useApi';
+import { useUserStats, useProfileStats } from '@/hooks/useApi';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 import Streak from '@/components/Streak';
 import Button from '@/components/Button';
 import Header from '../../components/Header';
+import Avatar from '@/components/Avatar';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, logOut } = useAuth();
 
   const { data: userStats, isLoading: isLoadingStats } = useUserStats();
-  const { data: exerciseProgress, isLoading: isLoadingProgress } =
-    useExerciseProgress();
+  const { data: profileStats, isLoading: isLoadingProfileStats } =
+    useProfileStats();
   const { user: currentUser, isLoading: isLoadingUser } = useAuth();
 
   const handleOpenWords = () => {
     router.push('/words');
+  };
+
+  const handleOpenFrequencyWords = () => {
+    router.push('/frequency-words');
   };
 
   const handleOpenSettings = () => {
@@ -56,9 +61,11 @@ export default function ProfileScreen() {
       />
       <ThemedView style={styles.card}>
         <ThemedView style={styles.userInfoContainer}>
-          <ThemedView style={styles.avatarPlaceholder}>
-            <Ionicons name="person-outline" size={40} color="#888" />
-          </ThemedView>
+          <Avatar
+            avatarId={currentUser?.profile?.avatarId ?? 0}
+            size={80}
+            style={styles.avatar}
+          />
           <Typography style={styles.emailText}>
             {user?.email || 'E-mail'}
           </Typography>
@@ -100,21 +107,6 @@ export default function ProfileScreen() {
                     {userStats.totalWords}
                   </Typography>
                 </ThemedView>
-
-                <ThemedView style={styles.statRow}>
-                  <Typography color="#666" size="sm" style={styles.statLabel}>
-                    Последняя активность:
-                  </Typography>
-                  <Typography
-                    weight="medium"
-                    size="sm"
-                    style={styles.statValue}
-                  >
-                    {userStats.lastActiveDate
-                      ? new Date(userStats.lastActiveDate).toLocaleDateString()
-                      : 'Никогда'}
-                  </Typography>
-                </ThemedView>
               </>
             )}
           </ThemedView>
@@ -152,17 +144,23 @@ export default function ProfileScreen() {
       </ThemedView>
 
       <ThemedView style={styles.card}>
-        {isLoadingProgress ? (
+        {isLoadingStats || isLoadingProfileStats ? (
           <ActivityIndicator size="small" color="#4096FE" />
         ) : (
-          <Streak streak={exerciseProgress?.streak || 0} />
+          <Streak streak={profileStats?.streak?.currentStreak || 0} />
         )}
       </ThemedView>
 
       <Button
-        title="Мой словарь используемых слов"
+        title="Мой словарь"
         onPress={handleOpenWords}
         style={styles.wordsButton}
+      />
+
+      <Button
+        title="Частотный словарь"
+        onPress={handleOpenFrequencyWords}
+        style={styles.frequencyButton}
       />
 
       <Button
@@ -179,7 +177,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     paddingHorizontal: 10,
     paddingBottom: 20,
-    flex: 1,
   },
   settingsButton: {
     paddingHorizontal: 24,
@@ -196,16 +193,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 5,
   },
-  avatarPlaceholder: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#F0F0F0',
-    justifyContent: 'center',
-    alignItems: 'center',
+  avatar: {
     marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
   },
   emailText: {
     color: '#333',
@@ -245,5 +234,8 @@ const styles = StyleSheet.create({
   levelValue: {},
   wordsButton: {
     marginVertical: 16,
+  },
+  frequencyButton: {
+    marginBottom: 16,
   },
 });

@@ -6,16 +6,14 @@ import Button from '../components/Button';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import Logo from '../components/Logo';
-import { useExerciseProgress } from '@/hooks/useApi';
+import { useProfileStats } from '@/hooks/useApi';
 import { useAuth } from '../context/AuthContext';
 import Streak from '../components/Streak';
 
 export default function ExerciseCompleteScreen() {
   const router = useRouter();
-
-  const { data: progress } = useExerciseProgress();
-
   const { user } = useAuth();
+  const { data: profileStats } = useProfileStats();
 
   const handleContinue = () => {
     router.replace('/(tabs)');
@@ -61,7 +59,7 @@ export default function ExerciseCompleteScreen() {
         </ThemedView>
 
         <ThemedView style={styles.streakContainer}>
-          <Streak streak={progress?.streak || 0} />
+          <Streak streak={profileStats?.streak?.currentStreak || 0} />
         </ThemedView>
 
         <Button title="Продолжить" onPress={handleContinue} />

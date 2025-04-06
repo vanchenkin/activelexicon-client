@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from './ThemedView';
 import Typography from './Typography';
-import { Word } from '../services/api/wordsService';
+import { Word } from '../services/api/dictionaryService';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,

@@ -66,11 +66,11 @@ export default function TextSelectionScreen({
       const details = await getWord.mutateAsync(word);
 
       const wordWithDetails: WordDetails = {
-        word: details.word,
-        translation: details.translation,
+        word: details?.word || '',
+        translation: details?.translation || '',
         partOfSpeech: '',
-        example: details.examples?.[0] || '',
-        addedAt: details.addedAt,
+        example: '',
+        addedAt: new Date(),
       };
       setCurrentWordDetails(wordWithDetails);
       setIsModalVisible(true);

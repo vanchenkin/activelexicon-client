@@ -33,7 +33,7 @@ export default function RegisterScreen() {
     }
 
     try {
-      await signUp(email, password);
+      await signUp(email, password, languageLevel);
       router.replace('/(tabs)');
     } catch (error) {
       console.error('Registration error:', error);

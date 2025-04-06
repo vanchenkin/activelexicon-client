@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  View,
-  Modal,
-  Button,
-  TextInput,
-  Alert,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Typography from '@/components/Typography';
@@ -17,17 +8,12 @@ import { ThemedSwitch } from '@/components/ThemedSwitch';
 import Header from '@/components/Header';
 import { notificationService } from '@/services/api';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import LanguageLevelSelect, {
-  LanguageLevel,
-} from '@/components/LanguageLevelSelect';
 
 export default function SettingsScreen() {
   const router = useRouter();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [languageLevel, setLanguageLevel] = useState<LanguageLevel>('B1');
 
   const [notificationTime, setNotificationTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -35,7 +21,6 @@ export default function SettingsScreen() {
   const [notificationBody, setNotificationBody] = useState(
     'Время для изучения новых слов'
   );
-  const [showCustomization, setShowCustomization] = useState(false);
 
   const handleBackPress = () => {
     router.back();
@@ -124,28 +109,6 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleCustomizationSave = async () => {
-    setShowCustomization(false);
-
-    if (notificationsEnabled) {
-      try {
-        await notificationService.scheduleDailyNotification(
-          notificationTitle,
-          notificationBody,
-          notificationTime.getHours(),
-          notificationTime.getMinutes()
-        );
-      } catch (error) {
-        console.error('Error updating notification content:', error);
-        Alert.alert('Ошибка', 'Не удалось обновить содержание уведомлений');
-      }
-    }
-  };
-
-  const handleLanguageLevelChange = (level: string) => {
-    setLanguageLevel(level as LanguageLevel);
-  };
-
   return (
     <ThemedView style={styles.container}>
       <Header title="Настройки" onBackPress={handleBackPress} />
@@ -194,23 +157,6 @@ export default function SettingsScreen() {
                   </Typography>
                 </TouchableOpacity>
               </ThemedView>
-
-              <ThemedView style={styles.settingItem}>
-                <ThemedView style={styles.settingInfoRow}>
-                  <Ionicons
-                    name="create-outline"
-                    size={20}
-                    color="#555"
-                    style={styles.settingIcon}
-                  />
-                  <Typography style={styles.settingText}>
-                    Настроить сообщение
-                  </Typography>
-                </ThemedView>
-                <TouchableOpacity onPress={() => setShowCustomization(true)}>
-                  <Ionicons name="chevron-forward" size={20} color="#555" />
-                </TouchableOpacity>
-              </ThemedView>
             </>
           )}
 
@@ -229,51 +175,48 @@ export default function SettingsScreen() {
               onValueChange={setDarkModeEnabled}
             />
           </ThemedView>
-
-          <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfoRow}>
-              <Ionicons
-                name="volume-medium-outline"
-                size={20}
-                color="#555"
-                style={styles.settingIcon}
-              />
-              <Typography style={styles.settingText}>Звук</Typography>
-            </ThemedView>
-            <ThemedSwitch
-              value={soundEnabled}
-              onValueChange={setSoundEnabled}
-            />
-          </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
-            Обучение
+            Учетная запись
           </Typography>
 
-          <ThemedView style={styles.settingItem}>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/change-language-level')}
+          >
             <ThemedView style={styles.settingInfoRow}>
               <Ionicons
-                name="school-outline"
+                name="language-outline"
                 size={20}
                 color="#555"
                 style={styles.settingIcon}
               />
-              <Typography style={styles.settingText}>Уровень языка</Typography>
+              <Typography style={styles.settingText}>
+                Изменить уровень языка
+              </Typography>
             </ThemedView>
-            <TouchableOpacity>
-              <Typography style={styles.timeText}>{languageLevel}</Typography>
-            </TouchableOpacity>
-          </ThemedView>
+            <Ionicons name="chevron-forward" size={20} color="#555" />
+          </TouchableOpacity>
 
-          <View style={styles.languageLevelContainer}>
-            <LanguageLevelSelect
-              value={languageLevel}
-              onChange={handleLanguageLevelChange}
-              style={styles.languageLevelSelect}
-            />
-          </View>
+          <TouchableOpacity
+            style={styles.settingItem}
+            onPress={() => router.push('/change-password')}
+          >
+            <ThemedView style={styles.settingInfoRow}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color="#555"
+                style={styles.settingIcon}
+              />
+              <Typography style={styles.settingText}>
+                Изменить пароль
+              </Typography>
+            </ThemedView>
+            <Ionicons name="chevron-forward" size={20} color="#555" />
+          </TouchableOpacity>
         </ThemedView>
 
         <ThemedView style={styles.section}>
@@ -315,46 +258,6 @@ export default function SettingsScreen() {
           onChange={handleTimeChange}
         />
       )}
-
-      <Modal
-        visible={showCustomization}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowCustomization(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Typography style={styles.modalTitle}>
-              Настройка уведомления
-            </Typography>
-
-            <Typography style={styles.label}>Заголовок</Typography>
-            <TextInput
-              style={styles.input}
-              value={notificationTitle}
-              onChangeText={setNotificationTitle}
-              placeholder="Введите заголовок"
-            />
-
-            <Typography style={styles.label}>Сообщение</Typography>
-            <TextInput
-              style={[styles.input, styles.multilineInput]}
-              value={notificationBody}
-              onChangeText={setNotificationBody}
-              placeholder="Введите текст сообщения"
-              multiline
-            />
-
-            <View style={styles.modalButtons}>
-              <Button
-                title="Отмена"
-                onPress={() => setShowCustomization(false)}
-              />
-              <Button title="Сохранить" onPress={handleCustomizationSave} />
-            </View>
-          </View>
-        </View>
-      </Modal>
     </ThemedView>
   );
 }

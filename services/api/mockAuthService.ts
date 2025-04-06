@@ -12,8 +12,8 @@ interface MockUser extends ExtendedUser {
     level: number;
     maxLevel: number;
     experiencePoints: number;
-    lastLogin?: Date;
-    joinedDate?: Date;
+    languageLevel: string;
+    avatarId: number;
   };
 }
 
@@ -26,6 +26,8 @@ const users: MockUser[] = [
       level: 26,
       maxLevel: 27,
       experiencePoints: 2680,
+      languageLevel: 'B2',
+      avatarId: 3,
     },
   },
 ];
@@ -91,8 +93,14 @@ class MockAuthService {
     }
   }
 
-  async register(email: string, password: string): Promise<AuthResponse> {
+  async register(
+    email: string,
+    password: string,
+    languageLevel: string
+  ): Promise<AuthResponse> {
     await delay(600);
+
+    const randomAvatarId = Math.floor(Math.random() * 11);
 
     const newUser: MockUser = {
       id: String(uuid.v4()),
@@ -102,6 +110,8 @@ class MockAuthService {
         level: 2,
         maxLevel: 10,
         experiencePoints: 2680,
+        languageLevel,
+        avatarId: randomAvatarId,
       },
     };
 
@@ -125,10 +135,6 @@ class MockAuthService {
       throw new Error('Invalid credentials');
     }
 
-    if (user.profile) {
-      user.profile.lastLogin = new Date();
-    }
-
     const authResponse = this.generateTokens(user);
 
     await this.saveTokens(authResponse);
@@ -138,12 +144,6 @@ class MockAuthService {
 
   async logout(): Promise<void> {
     await TokenStorage.clearAuthData();
-  }
-
-  async pingAuth(ping?: string): Promise<{ pong: string }> {
-    return {
-      pong: ping || 'auth-pong',
-    };
   }
 
   async refreshToken(refreshToken: string): Promise<boolean> {
@@ -207,29 +207,6 @@ class MockAuthService {
     return this.getPublicUserData(user);
   }
 
-  async updateUserProfile(
-    updates: Partial<User['profile']>
-  ): Promise<ExtendedUser> {
-    await delay(500);
-
-    const user = await this.getCurrentUser();
-    if (!user) {
-      throw new Error('Not authenticated');
-    }
-
-    const originalUser = users.find((u) => u.id === user.id);
-    if (!originalUser) {
-      throw new Error('User not found');
-    }
-
-    originalUser.profile = {
-      ...originalUser.profile,
-      ...updates,
-    };
-
-    return this.getPublicUserData(originalUser);
-  }
-
   async loginWithGoogle(token: string): Promise<AuthResponse> {
     await delay(800);
 
@@ -244,16 +221,12 @@ class MockAuthService {
           level: 5,
           maxLevel: 27,
           experiencePoints: 450,
-          joinedDate: new Date(),
-          lastLogin: new Date(),
+          languageLevel: 'B1',
+          avatarId: 7,
         },
       };
 
       users.push(user);
-    }
-
-    if (user && user.profile) {
-      user.profile.lastLogin = new Date();
     }
 
     const authResponse = this.generateTokens(user);

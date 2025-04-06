@@ -15,12 +15,15 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export default function WordsScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   const {
-    data: words = [],
+    data: paginatedWords,
     isLoading: isWordsLoading,
     isError: isWordsError,
-  } = useWords();
+    pagination,
+  } = useWords(page, pageSize);
 
   const {
     data: searchResults = [],
@@ -28,7 +31,9 @@ export default function WordsScreen() {
     isError: isSearchError,
   } = useSearchWords(searchQuery);
 
-  const displayWords = searchQuery.trim() ? searchResults : words;
+  const displayWords = searchQuery.trim()
+    ? searchResults
+    : paginatedWords?.items || [];
   const isLoading = searchQuery.trim() ? isSearchLoading : isWordsLoading;
   const isError = searchQuery.trim() ? isSearchError : isWordsError;
 
@@ -39,15 +44,23 @@ export default function WordsScreen() {
   };
 
   const handleAddWord = () => {
-    router.push('/add-word' as any);
+    router.push('/add-word');
   };
 
   const handleDeleteWord = (wordId: string) => {
     deleteWordMutation.mutate(wordId);
   };
 
+  const handleNextPage = () => {
+    pagination.nextPage();
+  };
+
+  const handlePrevPage = () => {
+    pagination.prevPage();
+  };
+
   const EmptyListComponent = () => (
-    <FadeIn delay={300}>
+    <FadeIn delay={100}>
       <ThemedView style={styles.emptyContainer}>
         <Ionicons name="book-outline" size={50} color="#CCC" />
         <Typography color="#666" style={styles.emptyText}>
@@ -61,16 +74,14 @@ export default function WordsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <FadeIn>
-        <ThemedView style={styles.header}>
-          <BackButton onPress={() => router.back()} />
-          <Typography size="lg" style={styles.headerTitle}>
-            Словарь
-          </Typography>
-        </ThemedView>
-      </FadeIn>
+      <ThemedView style={styles.header}>
+        <BackButton onPress={() => router.back()} />
+        <Typography size="lg" style={styles.headerTitle}>
+          Словарь
+        </Typography>
+      </ThemedView>
 
-      <FadeIn delay={100} style={styles.searchInputContainer}>
+      <FadeIn style={styles.searchInputContainer}>
         <Input
           placeholder="Поиск слов..."
           value={searchQuery}
@@ -93,13 +104,13 @@ export default function WordsScreen() {
       </FadeIn>
 
       {isLoading ? (
-        <FadeIn delay={200}>
+        <FadeIn delay={100}>
           <ThemedView style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#0099FF" />
           </ThemedView>
         </FadeIn>
       ) : isError ? (
-        <FadeIn delay={200}>
+        <FadeIn delay={100}>
           <ThemedView style={styles.errorContainer}>
             <Typography color="#FF3B30" size="md" style={styles.errorText}>
               Не удалось загрузить слова
@@ -116,7 +127,7 @@ export default function WordsScreen() {
           </ThemedView>
         </FadeIn>
       ) : (
-        <GestureHandlerRootView>
+        <GestureHandlerRootView style={styles.listContainer}>
           <AnimatedFlatList
             data={displayWords}
             renderItem={({ item }) => (
@@ -125,8 +136,44 @@ export default function WordsScreen() {
             keyExtractor={(item) => item.word}
             contentContainerStyle={styles.wordsList}
             ListEmptyComponent={EmptyListComponent}
-            itemAnimationDelay={40}
+            itemAnimationDelay={20}
           />
+
+          {!searchQuery && paginatedWords && (
+            <ThemedView style={styles.paginationContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.paginationButton,
+                  !pagination.hasPrevPage && styles.paginationButtonDisabled,
+                ]}
+                onPress={handlePrevPage}
+                disabled={!pagination.hasPrevPage}
+              >
+                <Ionicons
+                  name="chevron-back"
+                  size={18}
+                  color={pagination.hasPrevPage ? '#0099FF' : '#CCCCCC'}
+                />
+              </TouchableOpacity>
+              <Typography style={styles.paginationText}>
+                {pagination.page} / {pagination.totalPages || 1}
+              </Typography>
+              <TouchableOpacity
+                style={[
+                  styles.paginationButton,
+                  !pagination.hasNextPage && styles.paginationButtonDisabled,
+                ]}
+                onPress={handleNextPage}
+                disabled={!pagination.hasNextPage}
+              >
+                <Ionicons
+                  name="chevron-forward"
+                  size={18}
+                  color={pagination.hasNextPage ? '#0099FF' : '#CCCCCC'}
+                />
+              </TouchableOpacity>
+            </ThemedView>
+          )}
         </GestureHandlerRootView>
       )}
 
@@ -190,6 +237,32 @@ const styles = StyleSheet.create({
   emptyListContent: {
     flexGrow: 1,
     justifyContent: 'center',
+  },
+  listContainer: {
+    flex: 1,
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#EEEEEE',
+  },
+  paginationButton: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 18,
+    backgroundColor: '#F5F5F5',
+  },
+  paginationButtonDisabled: {
+    opacity: 0.5,
+  },
+  paginationText: {
+    marginHorizontal: 12,
+    color: '#666666',
   },
   addButton: {
     backgroundColor: '#0099FF',

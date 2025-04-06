@@ -21,8 +21,8 @@ import Input from '../components/Input';
 import Typography from '@/components/Typography';
 import ExerciseContent from '../components/ExerciseContent';
 import ProgressBar from '../components/ProgressBar';
-import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
+import { ExerciseType } from '../services/api/tasksService';
 
 const REQUIRED_EXERCISES = 2;
 
@@ -141,11 +141,11 @@ export default function ExerciseScreen() {
 
       <ScrollView style={styles.exerciseContainer}>
         <Typography weight="medium" style={styles.instructionText}>
-          {exercise.type === 'fill-word'
+          {exercise.type === ExerciseType.FillWord
             ? 'Вставьте слово, которое лучше всего подходит:'
-            : exercise.type === 'make-text'
-              ? 'Составьте текст с данным словом:'
-              : 'Ответьте на вопрос:'}
+            : exercise.type === ExerciseType.AnswerQuestion
+              ? 'Ответьте на вопрос:'
+              : 'Составьте текст с данным словом:'}
         </Typography>
 
         <ExerciseContent

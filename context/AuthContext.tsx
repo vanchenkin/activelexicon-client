@@ -3,14 +3,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import { Config } from '@/configs/config';
-import { authService, User } from '@/services/api';
+import { authService, profileServiceInstance, User } from '@/services/api';
 import { AuthResponse } from '@/services/api/authService';
 
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   isError: boolean;
-  signUp: (email: string, password: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    languageLevel: string
+  ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logOut: () => Promise<void>;
@@ -47,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     queryKey: ['user'],
     queryFn: async () => {
       try {
-        const userData = await authService.getCurrentUser();
+        const userData = await profileServiceInstance.getProfile();
         return userData;
       } catch (err) {
         throw err;
@@ -71,9 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }) => {
       return authService.login(email, password);
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data.user);
-
+    onSuccess: () => {
+      refetch();
       queryClient.invalidateQueries({ queryKey: ['userWords'] });
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
@@ -83,13 +86,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogleMutation = useMutation({
     mutationFn: (token: string) => {
       if ('loginWithGoogle' in authService) {
-        return (authService as any).loginWithGoogle(token);
+        return authService.loginWithGoogle(token);
       } else {
         return authService.login('google-user@example.com', 'google-password');
       }
     },
-    onSuccess: (data: AuthResponse) => {
-      queryClient.setQueryData(['user'], data.user);
+    onSuccess: () => {
+      refetch();
       queryClient.invalidateQueries({ queryKey: ['userWords'] });
       queryClient.invalidateQueries({ queryKey: ['exercises'] });
       queryClient.invalidateQueries({ queryKey: ['userStats'] });
@@ -114,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await loginWithGoogleMutation.mutateAsync(
             response.authentication.accessToken
           );
-        } catch (error) {
+        } catch {
           Alert.alert(
             'Google Sign-In Error',
             'Could not sign in with Google. Please try again.'
@@ -133,13 +136,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const registerMutation = useMutation<
     AuthResponse,
     Error,
-    { email: string; password: string }
+    { email: string; password: string; languageLevel: string }
   >({
-    mutationFn: ({ email, password }: { email: string; password: string }) => {
-      return authService.register(email, password);
+    mutationFn: ({
+      email,
+      password,
+      languageLevel,
+    }: {
+      email: string;
+      password: string;
+      languageLevel: string;
+    }) => {
+      return authService.register(email, password, languageLevel);
     },
-    onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data.user);
+    onSuccess: () => {
+      refetch();
     },
     onError: (error) => {
       console.error('Registration error:', error);
@@ -178,8 +189,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await promptAsync();
   };
 
-  const signUp = async (email: string, password: string) => {
-    await registerMutation.mutateAsync({ email, password });
+  const signUp = async (
+    email: string,
+    password: string,
+    languageLevel: string
+  ) => {
+    await registerMutation.mutateAsync({ email, password, languageLevel });
   };
 
   const logOut = async () => {

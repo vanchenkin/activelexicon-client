@@ -1,52 +1,59 @@
 import { mockAuthService } from './mockAuthService';
 import { realAuthService } from './authService';
-import { wordsService } from './wordsService';
+import { dictionaryService } from './dictionaryService';
 import { chatService } from './chatService';
-import { exerciseService } from './exerciseService';
+import { tasksService } from './tasksService';
 import { topicsService } from './topicsService';
+import { exploreService } from './exploreService';
 import { notificationService } from '../notificationService';
-import { statsService } from './statsService';
 import { setRefreshTokenFunction } from './api';
+import { profileService } from './profileService';
+import { mockProfileService } from './mockProfileService';
 
-import { mockWordsService } from './mockWordsService';
+import { mockDictionaryService } from './mockDictionaryService';
 import { mockChatService } from './mockChatService';
-import { mockExerciseService } from './mockExerciseService';
+import { mockTasksService } from './mockTasksService';
 import { mockTopicsService } from './mockTopicsService';
-import { mockStatsService } from './mockStatsService';
+import { mockExploreService } from './mockExploreService';
 
 export const USE_REAL_BACKEND = false;
 
 export const authService = USE_REAL_BACKEND ? realAuthService : mockAuthService;
 
-export const wordsServiceInstance = USE_REAL_BACKEND
-  ? wordsService
-  : mockWordsService;
+export const profileServiceInstance = USE_REAL_BACKEND
+  ? profileService
+  : mockProfileService;
+
+export const dictionaryServiceInstance = USE_REAL_BACKEND
+  ? dictionaryService
+  : mockDictionaryService;
 
 export const chatServiceInstance = USE_REAL_BACKEND
   ? chatService
   : mockChatService;
 
-export const exerciseServiceInstance = USE_REAL_BACKEND
-  ? exerciseService
-  : mockExerciseService;
+export const tasksServiceInstance = USE_REAL_BACKEND
+  ? tasksService
+  : mockTasksService;
 
 export const topicsServiceInstance = USE_REAL_BACKEND
   ? topicsService
   : mockTopicsService;
 
-export const statsServiceInstance = USE_REAL_BACKEND
-  ? statsService
-  : mockStatsService;
+export const exploreServiceInstance = USE_REAL_BACKEND
+  ? exploreService
+  : mockExploreService;
 
 setRefreshTokenFunction(async (refreshToken: string) => {
   return authService.refreshToken(refreshToken);
 });
 
 export type { User } from './authService';
-export type { Word, UserStats } from './wordsService';
+export type { ProfileUpdateResponse } from './profileService';
+export type { Word } from './dictionaryService';
 export type { ChatMessage } from './chatService';
-export type { Exercise, ExerciseType, UserProgress } from './exerciseService';
+export type { Exercise, ExerciseType } from './tasksService';
 export type { Topic } from './topicsService';
-export type { StatsData, UserStreak } from './statsService';
+export type { StatsData, UserStreak } from './profileService';
 
 export { notificationService };

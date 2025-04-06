@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import BackButton from '../components/BackButton';
 import Button from '../components/Button';
-import { ThemedSwitch } from '../components/ThemedSwitch';
 import { useClearChatHistory } from '../hooks/useApi';
 import { Alert } from '../context/crossPlatformAlert';
 

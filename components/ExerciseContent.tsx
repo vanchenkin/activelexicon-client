@@ -10,14 +10,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 import Typography from './Typography';
+import { Exercise, ExerciseType } from '../services/api/tasksService';
 
 type ExerciseContentProps = {
-  exercise: {
-    text: string;
-    hint?: string;
-    type?: string;
-    correctAnswer?: string;
-  };
+  exercise: Exercise;
   isCorrect: boolean | null;
   userAnswer?: string;
 };
@@ -64,6 +60,8 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
         confettiRef.current.reset();
         confettiRef.current.play();
       }
+    } else if (isCorrect === false) {
+      borderColor.value = '#FF3B30';
     } else {
       borderColor.value = '#EEE';
     }
@@ -77,27 +75,43 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
     };
   });
 
-  return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.textContainer, animatedStyle]}>
-        <Typography style={styles.exerciseText}>
-          {exercise.text.includes('_____')
-            ? exercise.text.split('_____')[0]
-            : exercise.text}
-          {exercise.text.includes('_____') && (
+  const renderContent = () => {
+    switch (exercise.type) {
+      case ExerciseType.FillWord:
+        const parts = exercise.content.split('_____');
+        if (parts.length > 1) {
+          return (
             <>
+              {parts[0]}
               {isCorrect ? (
                 <Typography style={styles.correctAnswer}>
-                  {userAnswer || exercise.correctAnswer}
+                  {userAnswer || exercise.solution}
                 </Typography>
               ) : (
                 <View style={styles.blankLine} />
               )}
-              {exercise.text.split('_____')[1]}
+              {parts[1] || ''}
             </>
-          )}
-        </Typography>
-        {exercise.hint && isCorrect === false && (
+          );
+        }
+        return exercise.content;
+
+      case ExerciseType.AnswerQuestion:
+      case ExerciseType.WriteText:
+        return exercise.content;
+    }
+
+    return exercise.content;
+  };
+
+  const showHintText = isCorrect === false;
+
+  return (
+    <View style={styles.container}>
+      <Animated.View style={[styles.textContainer, animatedStyle]}>
+        <Typography style={styles.exerciseText}>{renderContent()}</Typography>
+
+        {showHintText && exercise.hint && (
           <Typography style={styles.hintText}>
             Подсказка: {exercise.hint}
           </Typography>
@@ -160,21 +174,6 @@ const styles = StyleSheet.create({
   confettiAnimation: {
     width: 300,
     height: 300,
-  },
-  successContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 20,
-    pointerEvents: 'none',
-  },
-  successAnimation: {
-    width: 100,
-    height: 100,
   },
   correctAnswer: {
     fontWeight: 'bold',
