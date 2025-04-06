@@ -1,5 +1,5 @@
+import { TokenStorage } from '../tokenStorage';
 import { ApiService } from './api';
-import { TokenStorage } from './tokenStorage';
 
 export interface User {
   email: string;

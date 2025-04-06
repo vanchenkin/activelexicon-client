@@ -4,7 +4,7 @@ import { wordsService } from './wordsService';
 import { chatService } from './chatService';
 import { exerciseService } from './exerciseService';
 import { topicsService } from './topicsService';
-import { notificationService } from './notificationService';
+import { notificationService } from '../notificationService';
 import { statsService } from './statsService';
 import { setRefreshTokenFunction } from './api';
 

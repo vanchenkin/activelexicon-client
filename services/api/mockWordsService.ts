@@ -1,5 +1,5 @@
 import { Word, UserStats } from './wordsService';
-import wordsData from '../words.json';
+import wordsData from '../../words.json';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

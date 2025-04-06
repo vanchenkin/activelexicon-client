@@ -7,7 +7,7 @@ import {
   topicsServiceInstance,
   statsServiceInstance,
   type User,
-} from '@/services/index';
+} from '@/services/api/index';
 
 export function useWords() {
   return useQuery({

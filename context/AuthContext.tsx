@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import { Config } from '@/configs/config';
-import { authService, User } from '@/services';
-import { AuthResponse } from '@/services/authService';
+import { authService, User } from '@/services/api';
+import { AuthResponse } from '@/services/api/authService';
 
 type AuthContextType = {
   user: User | null;

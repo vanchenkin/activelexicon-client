@@ -15,7 +15,7 @@ import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedSwitch } from '@/components/ThemedSwitch';
 import Header from '@/components/Header';
-import { notificationService } from '@/services';
+import { notificationService } from '@/services/api';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import LanguageLevelSelect, {
   LanguageLevel,

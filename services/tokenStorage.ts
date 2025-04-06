@@ -6,7 +6,8 @@ const ACCESS_TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
-const isWeb = Platform.OS === 'web';
+// Check if running on web AND in a browser environment (not server-side rendering)
+const isWeb = Platform.OS === 'web' && typeof window !== 'undefined';
 
 export class TokenStorage {
   static async saveAccessToken(accessToken: string): Promise<void> {

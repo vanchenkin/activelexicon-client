@@ -13,7 +13,7 @@ import { ThemedView } from '../../components/ThemedView';
 import Header from '../../components/Header';
 import Input from '../../components/Input';
 import { useRouter } from 'expo-router';
-import { ChatMessage } from '../../services';
+import { ChatMessage } from '../../services/api';
 import { useChatHistory, useSendMessage } from '../../hooks/useApi';
 
 export default function ChatScreen() {

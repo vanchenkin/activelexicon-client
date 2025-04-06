@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { Config } from '../configs/config';
-import { TokenStorage } from './tokenStorage';
+import { Config } from '../../configs/config';
+import { TokenStorage } from '../tokenStorage';
 
 let refreshTokenFunction: (
   refreshToken: string

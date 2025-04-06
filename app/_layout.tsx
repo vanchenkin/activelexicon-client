@@ -14,7 +14,7 @@ import { StyleSheet } from 'react-native';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { QueryProvider } from '@/context/QueryContext';
-import { notificationService } from '@/services';
+import { notificationService } from '@/services/api';
 import { WebAlertProvider } from '@/context/crossPlatformAlert';
 
 SplashScreen.preventAutoHideAsync();

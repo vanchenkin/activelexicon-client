@@ -1,8 +1,7 @@
-import { TokenStorage } from './tokenStorage';
+import { TokenStorage } from '../tokenStorage';
 import uuid from 'react-native-uuid';
 import { User, AuthResponse } from './authService';
 
-// Extend the User interface to include id
 interface ExtendedUser extends User {
   id: string;
 }
