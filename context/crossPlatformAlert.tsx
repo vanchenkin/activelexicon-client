@@ -75,7 +75,6 @@ const WebAlert = ({
   );
 };
 
-// Using React state instead of a global object
 let alertInstance: {
   show: (title: string, message?: string, buttons?: AlertButton[]) => void;
 } | null = null;
@@ -100,7 +99,6 @@ export const WebAlertProvider = () => {
     setIsVisible(false);
   }, []);
 
-  // Register the alert instance
   if (Platform.OS === 'web' && alertInstance === null) {
     alertInstance = {
       show: showAlert,

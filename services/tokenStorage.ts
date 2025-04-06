@@ -2,38 +2,38 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const TOKEN_KEY = 'auth_token';
+const ACCESS_TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 
 const isWeb = Platform.OS === 'web';
 
 export class TokenStorage {
-  static async saveToken(token: string): Promise<void> {
+  static async saveAccessToken(accessToken: string): Promise<void> {
     try {
       if (isWeb) {
-        await AsyncStorage.setItem(TOKEN_KEY, token);
+        await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
         console.warn(
           'Running on web - tokens are stored in AsyncStorage which is not secure. Do not store sensitive information in production.'
         );
       } else {
-        await SecureStore.setItemAsync(TOKEN_KEY, token);
+        await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
       }
     } catch (error) {
-      console.error('Error saving token to storage:', error);
+      console.error('Error saving access token to storage:', error);
       throw error;
     }
   }
 
-  static async getToken(): Promise<string | null> {
+  static async getAccessToken(): Promise<string | null> {
     try {
       if (isWeb) {
-        return await AsyncStorage.getItem(TOKEN_KEY);
+        return await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
       } else {
-        return await SecureStore.getItemAsync(TOKEN_KEY);
+        return await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
       }
     } catch (error) {
-      console.error('Error retrieving token from storage:', error);
+      console.error('Error retrieving access token from storage:', error);
       return null;
     }
   }
@@ -99,12 +99,12 @@ export class TokenStorage {
     try {
       if (isWeb) {
         await AsyncStorage.multiRemove([
-          TOKEN_KEY,
+          ACCESS_TOKEN_KEY,
           REFRESH_TOKEN_KEY,
           USER_KEY,
         ]);
       } else {
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
+        await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
         await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
         await SecureStore.deleteItemAsync(USER_KEY);
       }
@@ -115,7 +115,7 @@ export class TokenStorage {
   }
 
   static async isLoggedIn(): Promise<boolean> {
-    const token = await this.getToken();
-    return !!token;
+    const accessToken = await this.getAccessToken();
+    return !!accessToken;
   }
 }

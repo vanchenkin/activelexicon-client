@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 
-export type LanguageLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+export type LanguageLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
 
 interface LanguageLevelSelectProps {
   value: string;
@@ -54,11 +54,6 @@ export default function LanguageLevelSelect({
       value: 'C1',
       label: 'C1 - Продвинутый',
       description: 'Профессиональное владение',
-    },
-    {
-      value: 'C2',
-      label: 'C2 - Свободный',
-      description: 'Владение на уровне носителя',
     },
   ];
 

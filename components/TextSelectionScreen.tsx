@@ -7,7 +7,6 @@ import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 import Button from './Button';
 
-// Interface to match what WordDetailsModal expects
 interface WordDetails {
   word: string;
   translation: string;
@@ -81,7 +80,6 @@ export default function TextSelectionScreen({
       }
     } catch (error) {
       console.error('Failed to get word details:', error);
-      // Create fallback word details
       const fallbackDetails: WordDetails = {
         word: word,
         translation: 'Translation not available',

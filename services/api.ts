@@ -27,10 +27,10 @@ export class ApiService {
 
     this.axiosInstance.interceptors.request.use(
       async (config) => {
-        const token = await TokenStorage.getToken();
+        const accessToken = await TokenStorage.getAccessToken();
 
-        if (token && config.headers) {
-          config.headers.Authorization = `Bearer ${token}`;
+        if (accessToken && config.headers) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
         }
 
         return config;

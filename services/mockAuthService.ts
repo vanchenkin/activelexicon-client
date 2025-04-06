@@ -2,8 +2,20 @@ import { TokenStorage } from './tokenStorage';
 import uuid from 'react-native-uuid';
 import { User, AuthResponse } from './authService';
 
-interface MockUser extends User {
+// Extend the User interface to include id
+interface ExtendedUser extends User {
+  id: string;
+}
+
+interface MockUser extends ExtendedUser {
   password: string;
+  profile: {
+    level: number;
+    maxLevel: number;
+    experiencePoints: number;
+    lastLogin?: Date;
+    joinedDate?: Date;
+  };
 }
 
 const users: MockUser[] = [
@@ -15,15 +27,13 @@ const users: MockUser[] = [
       level: 26,
       maxLevel: 27,
       experiencePoints: 2680,
-      joinedDate: new Date('2023-01-15'),
-      lastLogin: new Date(),
     },
   },
 ];
 
 interface TokenData {
   userId: string;
-  token: string;
+  accessToken: string;
   refreshToken: string;
   expires: Date;
 }
@@ -32,8 +42,8 @@ const tokens: TokenData[] = [];
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const findTokenInMemory = (token: string): TokenData | undefined => {
-  return tokens.find((t) => t.token === token);
+const findTokenInMemory = (accessToken: string): TokenData | undefined => {
+  return tokens.find((t) => t.accessToken === accessToken);
 };
 
 const findTokenByRefreshToken = (
@@ -43,20 +53,7 @@ const findTokenByRefreshToken = (
 };
 
 class MockAuthService {
-  private mockUser: MockUser = {
-    id: 'mock-user-id',
-    email: 'mock@example.com',
-    password: 'mock-password',
-    profile: {
-      level: 1,
-      maxLevel: 10,
-      experiencePoints: 0,
-      joinedDate: new Date(),
-      lastLogin: new Date(),
-    },
-  };
-
-  private mockToken = 'mock-jwt-token';
+  private mockAccessToken = 'mock-jwt-token';
 
   constructor() {
     this.initializeFromStorage();
@@ -64,19 +61,19 @@ class MockAuthService {
 
   private async initializeFromStorage(): Promise<void> {
     try {
-      const token = await TokenStorage.getToken();
+      const accessToken = await TokenStorage.getAccessToken();
       const refreshToken = await TokenStorage.getRefreshToken();
-      const userData = await TokenStorage.getUserData<User>();
+      const userData = await TokenStorage.getUserData<ExtendedUser>();
 
-      if (token && refreshToken && userData) {
-        const existingToken = findTokenInMemory(token);
+      if (accessToken && refreshToken && userData) {
+        const existingToken = findTokenInMemory(accessToken);
         if (!existingToken) {
           const expires = new Date();
           expires.setHours(expires.getHours() + 1);
 
           tokens.push({
             userId: userData.id,
-            token,
+            accessToken,
             refreshToken,
             expires,
           });
@@ -86,7 +83,7 @@ class MockAuthService {
               ...userData,
               password: 'restored-from-storage',
             };
-            users.push(userWithPassword);
+            users.push(userWithPassword as MockUser);
           }
         }
       }
@@ -99,15 +96,13 @@ class MockAuthService {
     await delay(600);
 
     const newUser: MockUser = {
-      id: uuid.v4(),
+      id: String(uuid.v4()),
       email,
       password,
       profile: {
         level: 2,
         maxLevel: 10,
         experiencePoints: 2680,
-        joinedDate: new Date(),
-        lastLogin: new Date(),
       },
     };
 
@@ -131,7 +126,9 @@ class MockAuthService {
       throw new Error('Invalid credentials');
     }
 
-    user.profile.lastLogin = new Date();
+    if (user.profile) {
+      user.profile.lastLogin = new Date();
+    }
 
     const authResponse = this.generateTokens(user);
 
@@ -151,22 +148,22 @@ class MockAuthService {
   }
 
   async refreshToken(refreshToken: string): Promise<boolean> {
-    await TokenStorage.saveToken(this.mockToken);
+    await TokenStorage.saveAccessToken(this.mockAccessToken);
     return true;
   }
 
-  async getCurrentUser(): Promise<User | null> {
-    const token = await TokenStorage.getToken();
+  async getCurrentUser(): Promise<ExtendedUser | null> {
+    const accessToken = await TokenStorage.getAccessToken();
 
-    if (!token) {
+    if (!accessToken) {
       return null;
     }
 
-    const tokenData = findTokenInMemory(token);
+    const tokenData = findTokenInMemory(accessToken);
     if (!tokenData) {
       await this.initializeFromStorage();
 
-      const restoredToken = findTokenInMemory(token);
+      const restoredToken = findTokenInMemory(accessToken);
       if (!restoredToken) {
         return null;
       }
@@ -177,7 +174,9 @@ class MockAuthService {
     return this.handleTokenData(tokenData);
   }
 
-  private async handleTokenData(tokenData: TokenData): Promise<User | null> {
+  private async handleTokenData(
+    tokenData: TokenData
+  ): Promise<ExtendedUser | null> {
     if (new Date() > tokenData.expires) {
       const refreshed = await this.refreshToken(tokenData.refreshToken);
       if (!refreshed) {
@@ -209,7 +208,9 @@ class MockAuthService {
     return this.getPublicUserData(user);
   }
 
-  async updateUserProfile(updates: Partial<User['profile']>): Promise<User> {
+  async updateUserProfile(
+    updates: Partial<User['profile']>
+  ): Promise<ExtendedUser> {
     await delay(500);
 
     const user = await this.getCurrentUser();
@@ -237,7 +238,7 @@ class MockAuthService {
 
     if (!user) {
       user = {
-        id: uuid.v4(),
+        id: String(uuid.v4()),
         email: 'google-user@example.com',
         password: 'google-password',
         profile: {
@@ -252,11 +253,9 @@ class MockAuthService {
       users.push(user);
     }
 
-    if (!user) {
-      throw new Error('Failed to create or find Google user');
+    if (user && user.profile) {
+      user.profile.lastLogin = new Date();
     }
-
-    user.profile.lastLogin = new Date();
 
     const authResponse = this.generateTokens(user);
 
@@ -265,24 +264,28 @@ class MockAuthService {
     return authResponse;
   }
 
-  private getPublicUserData(user: MockUser): User {
+  private getPublicUserData(user: MockUser): ExtendedUser {
     const { password, ...publicUser } = user;
-    return publicUser;
+    return publicUser as ExtendedUser;
   }
 
-  private generateTokens(user: MockUser): AuthResponse {
-    const token = `mock-token-${user.id}-${Date.now()}`;
+  private generateTokens(
+    user: MockUser
+  ): AuthResponse & { user: ExtendedUser } {
+    const accessToken = `mock-token-${user.id}-${Date.now()}`;
     const refreshToken = `mock-refresh-${user.id}-${Date.now()}`;
 
     return {
       user: this.getPublicUserData(user),
-      token,
+      accessToken,
       refreshToken,
     };
   }
 
-  private async saveTokens(authResponse: AuthResponse): Promise<void> {
-    await TokenStorage.saveToken(authResponse.token);
+  private async saveTokens(
+    authResponse: AuthResponse & { user: ExtendedUser }
+  ): Promise<void> {
+    await TokenStorage.saveAccessToken(authResponse.accessToken);
     await TokenStorage.saveRefreshToken(authResponse.refreshToken);
     await TokenStorage.saveUserData(authResponse.user);
   }

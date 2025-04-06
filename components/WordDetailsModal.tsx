@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 
-// Direct interface definition without Omit
 interface WordWithDetails {
   word: string;
   translation: string;

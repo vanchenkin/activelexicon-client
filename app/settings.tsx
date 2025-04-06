@@ -17,6 +17,9 @@ import { ThemedSwitch } from '@/components/ThemedSwitch';
 import Header from '@/components/Header';
 import { notificationService } from '@/services';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import LanguageLevelSelect, {
+  LanguageLevel,
+} from '@/components/LanguageLevelSelect';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -24,6 +27,7 @@ export default function SettingsScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [languageLevel, setLanguageLevel] = useState<LanguageLevel>('B1');
 
   const [notificationTime, setNotificationTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -138,6 +142,10 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleLanguageLevelChange = (level: string) => {
+    setLanguageLevel(level as LanguageLevel);
+  };
+
   return (
     <ThemedView style={styles.container}>
       <Header title="Настройки" onBackPress={handleBackPress} />
@@ -237,6 +245,35 @@ export default function SettingsScreen() {
               onValueChange={setSoundEnabled}
             />
           </ThemedView>
+        </ThemedView>
+
+        <ThemedView style={styles.section}>
+          <Typography weight="medium" style={styles.sectionTitle}>
+            Обучение
+          </Typography>
+
+          <ThemedView style={styles.settingItem}>
+            <ThemedView style={styles.settingInfoRow}>
+              <Ionicons
+                name="school-outline"
+                size={20}
+                color="#555"
+                style={styles.settingIcon}
+              />
+              <Typography style={styles.settingText}>Уровень языка</Typography>
+            </ThemedView>
+            <TouchableOpacity>
+              <Typography style={styles.timeText}>{languageLevel}</Typography>
+            </TouchableOpacity>
+          </ThemedView>
+
+          <View style={styles.languageLevelContainer}>
+            <LanguageLevelSelect
+              value={languageLevel}
+              onChange={handleLanguageLevelChange}
+              style={styles.languageLevelSelect}
+            />
+          </View>
         </ThemedView>
 
         <ThemedView style={styles.section}>
@@ -375,9 +412,11 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   languageLevelContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 8,
+    padding: 12,
+  },
+  languageLevelSelect: {
+    padding: 12,
+    borderRadius: 6,
   },
   levelButton: {
     flex: 1,
