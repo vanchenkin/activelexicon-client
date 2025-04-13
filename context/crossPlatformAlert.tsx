@@ -3,12 +3,12 @@ import {
   Alert as RNAlert,
   Platform,
   Modal,
-  View,
   StyleSheet,
   TouchableOpacity,
   TextStyle,
 } from 'react-native';
 import Typography from '../components/Typography';
+import { ThemedView } from '../components/ThemedView';
 
 type AlertButton = {
   text: string;
@@ -36,14 +36,14 @@ const WebAlert = ({
       visible={isVisible}
       onRequestClose={onClose}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
+      <ThemedView style={styles.centeredView}>
+        <ThemedView style={styles.modalView}>
           <Typography weight="bold" style={styles.title}>
             {title}
           </Typography>
           {message && <Typography style={styles.message}>{message}</Typography>}
 
-          <View style={styles.buttonContainer}>
+          <ThemedView style={styles.buttonContainer}>
             {buttons.map((button, index) => (
               <TouchableOpacity
                 key={index}
@@ -68,9 +68,9 @@ const WebAlert = ({
                 </Typography>
               </TouchableOpacity>
             ))}
-          </View>
-        </View>
-      </View>
+          </ThemedView>
+        </ThemedView>
+      </ThemedView>
     </Modal>
   );
 };

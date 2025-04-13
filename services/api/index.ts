@@ -48,12 +48,15 @@ setRefreshTokenFunction(async (refreshToken: string) => {
   return authService.refreshToken(refreshToken);
 });
 
-export type { User } from './authService';
-export type { ProfileUpdateResponse } from './profileService';
-export type { Word } from './dictionaryService';
+export type { User, AuthResponse } from './authService';
+export type { ProfileUpdateResponse, StatsData } from './profileService';
+export type {
+  DictionaryWord,
+  WordFrequencyItem,
+  Translation,
+} from './dictionaryService';
 export type { ChatMessage } from './chatService';
-export type { Exercise, ExerciseType } from './tasksService';
+export { Exercise, ExerciseType } from './tasksService';
 export type { Topic } from './topicsService';
-export type { StatsData, UserStreak } from './profileService';
 
 export { notificationService };

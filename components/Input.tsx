@@ -3,11 +3,12 @@ import {
   TextInput,
   TextInputProps,
   StyleSheet,
-  View,
   Text,
   StyleProp,
   ViewStyle,
+  Platform,
 } from 'react-native';
+import { ThemedView } from './ThemedView';
 
 export type InputVariant = 'default' | 'success' | 'error';
 
@@ -46,7 +47,7 @@ const Input = forwardRef<TextInput, InputProps>(
     };
 
     return (
-      <View
+      <ThemedView
         style={[
           styles.container,
           fullWidth && styles.fullWidth,
@@ -55,8 +56,10 @@ const Input = forwardRef<TextInput, InputProps>(
       >
         {label && <Text style={[styles.label]}>{label}</Text>}
 
-        <View style={styles.inputWrapper}>
-          {leadingIcon && <View style={styles.leadingIcon}>{leadingIcon}</View>}
+        <ThemedView style={styles.inputWrapper}>
+          {leadingIcon && (
+            <ThemedView style={styles.leadingIcon}>{leadingIcon}</ThemedView>
+          )}
 
           <TextInput
             ref={ref}
@@ -67,20 +70,21 @@ const Input = forwardRef<TextInput, InputProps>(
               error ? styles.inputError : null,
               style,
               getVariantStyle(),
+              Platform.OS === 'web' ? { outlineColor: '#0099FF' } : null,
             ]}
             placeholderTextColor="#999"
             {...props}
           />
 
           {trailingIcon && (
-            <View style={styles.trailingIcon}>{trailingIcon}</View>
+            <ThemedView style={styles.trailingIcon}>{trailingIcon}</ThemedView>
           )}
-        </View>
+        </ThemedView>
 
         {error !== '' && error !== undefined && (
           <Text style={styles.errorText}>{error}</Text>
         )}
-      </View>
+      </ThemedView>
     );
   }
 );
@@ -106,6 +110,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
+    backgroundColor: 'white',
+    borderRadius: 10,
   },
   input: {
     fontFamily: 'Inter-Regular',
@@ -114,7 +120,7 @@ const styles = StyleSheet.create({
     color: '#333',
     width: '100%',
     padding: 15,
-    borderRadius: 5,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
@@ -139,11 +145,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 12,
     zIndex: 1,
+    top: '50%',
+    transform: [{ translateY: '-50%' }],
   },
   trailingIcon: {
     position: 'absolute',
     right: 12,
     zIndex: 1,
+    top: '50%',
+    transform: [{ translateY: '-50%' }],
   },
   errorText: {
     color: '#F44336',

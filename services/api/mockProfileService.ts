@@ -6,12 +6,36 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 class MockProfileService {
   private mockStats: StatsData = {
-    totalWords: 5,
-    learnedWords: 2,
-    practiceCompleted: 42,
+    general: {
+      level: 10,
+      points: 1200,
+      totalWordsWritten: 150,
+      maxLevelPoints: 2000,
+    },
+    dictionary: {
+      totalWordsAdded: 5,
+      totalIntervalRepeats: 25,
+      totalWordsLearned: 2,
+      currentWordCount: 5,
+    },
+    search: {
+      totalTextsRead: 8,
+    },
+    chat: {
+      totalChatsStarted: 3,
+      totalMessagesSent: 15,
+      totalPerfectMessages: 10,
+    },
+    tasks: {
+      totalInsertWordTasks: 12,
+      totalQuestionAnswerTasks: 18,
+      totalWriteTextTasks: 12,
+    },
     streak: {
-      currentStreak: 5,
-      maxStreak: 15,
+      tasksDoneToday: 3,
+      currentStreakDays: 5,
+      maxTasksPerDay: 10,
+      maxStreakDays: 15,
     },
   };
 

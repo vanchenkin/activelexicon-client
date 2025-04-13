@@ -3,27 +3,25 @@ import { StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useDeleteWord, useSearchWords, useWords } from '../hooks/useApi';
-import { ThemedView } from '../components/ThemedView';
-import Typography from '../components/Typography';
-import Input from '../components/Input';
-import WordItem from '../components/WordItem';
-import AnimatedFlatList from '../components/AnimatedFlatList';
-import FadeIn from '../components/FadeIn';
-import BackButton from '../components/BackButton';
+import { ThemedView } from '@/components/ThemedView';
+import Typography from '@/components/Typography';
+import Input from '@/components/Input';
+import WordItem from '@/components/WordItem';
+import AnimatedFlatList from '@/components/AnimatedFlatList';
+import FadeIn from '@/components/FadeIn';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Header from '@/components/Header';
 
 export default function WordsScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
 
   const {
     data: paginatedWords,
     isLoading: isWordsLoading,
     isError: isWordsError,
     pagination,
-  } = useWords(page, pageSize);
+  } = useWords(1, 10);
 
   const {
     data: searchResults = [],
@@ -74,18 +72,14 @@ export default function WordsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <BackButton onPress={() => router.back()} />
-        <Typography size="lg" style={styles.headerTitle}>
-          Словарь
-        </Typography>
-      </ThemedView>
+      <Header title="Словарь" onBackPress={() => router.back()} />
 
-      <FadeIn style={styles.searchInputContainer}>
+      <FadeIn style={styles.searchInputBox}>
         <Input
           placeholder="Поиск слов..."
           value={searchQuery}
           onChangeText={handleSearch}
+          containerStyle={styles.searchInputContainer}
           style={styles.searchInput}
           leadingIcon={
             <Ionicons name="search-outline" size={20} color="#999" />
@@ -189,26 +183,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 36,
-    paddingBottom: 16,
+  searchInput: {
+    borderRadius: 10,
     backgroundColor: 'transparent',
   },
-  headerTitle: {
-    fontSize: 18,
-    width: '100%',
-    textAlign: 'center',
-  },
-  searchInput: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-  },
   searchInputContainer: {
+    borderRadius: 10,
+    backgroundColor: 'transparent',
+  },
+  searchInputBox: {
+    borderRadius: 10,
     paddingHorizontal: 16,
+    backgroundColor: 'transparent',
   },
   clearButton: {
     padding: 6,
@@ -272,8 +258,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: 16,
-    right: 16,
+    bottom: 32,
+    right: 32,
     boxShadow: '0px 2px 3px rgba(0, 0, 0, 0.2)',
   },
   addButtonText: {

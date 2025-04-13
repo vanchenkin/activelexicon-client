@@ -1,67 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useTopics, useSearchTopics } from '@/hooks/useApi';
 import { useRouter } from 'expo-router';
 import TextComplexityModal from '@/components/TextComplexityModal';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
-import Input from '../../components/Input';
-import TopicItem, { Topic } from '@/components/TopicItem';
-import Button from '@/components/Button';
+import Button from '../../components/Button';
+import TopicSelector from '@/components/TopicSelector';
 
 type TextComplexity = 'easy' | 'medium' | 'hard';
 
 export default function ExploreScreen() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [displayedTopics, setDisplayedTopics] = useState<Topic[]>([]);
   const [textComplexity, setTextComplexity] =
     useState<TextComplexity>('medium');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
-  const { data: allTopics, isLoading: isLoadingTopics } = useTopics();
-  const { data: searchResults, isLoading: isSearchLoading } =
-    useSearchTopics(debouncedQuery);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  useEffect(() => {
-    if (!debouncedQuery) {
-      if (allTopics) {
-        setDisplayedTopics(allTopics);
-      }
-      return;
-    }
-
-    if (searchResults) {
-      setDisplayedTopics(searchResults);
-    }
-  }, [debouncedQuery, allTopics, searchResults]);
-
-  const handleTopicSelect = (topicId: string) => {
-    setSelectedTopic(topicId === selectedTopic ? null : topicId);
+  const handleTopicSelect = (topicName: string) => {
+    setSelectedTopic(topicName === selectedTopic ? null : topicName);
   };
 
   const handleGenerate = () => {
+    if (!selectedTopic) return;
+
     router.push({
       pathname: '/generated-text',
       params: {
-        topicId: selectedTopic || '',
-        customTopic: searchQuery && !selectedTopic ? searchQuery : '',
+        topic: selectedTopic,
         complexity: textComplexity,
       },
     });
@@ -74,13 +40,6 @@ export default function ExploreScreen() {
   const toggleSettingsModal = () => {
     setIsSettingsModalVisible(!isSettingsModalVisible);
   };
-
-  const clearSearch = () => {
-    setSearchQuery('');
-    setSelectedTopic(null);
-  };
-
-  const isLoading = isLoadingTopics || isSearchLoading;
 
   return (
     <ThemedView style={styles.container}>
@@ -108,50 +67,11 @@ export default function ExploreScreen() {
         </Typography>
       </ThemedView>
 
-      <Input
-        variant="default"
-        placeholder="Поиск темы или введите свою тему..."
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        style={styles.searchInput}
-        leadingIcon={<Ionicons name="search" size={20} color="#999" />}
-        trailingIcon={
-          searchQuery ? (
-            <TouchableOpacity onPress={clearSearch}>
-              <Ionicons name="close-circle" size={20} color="#999" />
-            </TouchableOpacity>
-          ) : null
-        }
+      <TopicSelector
+        selectedTopic={selectedTopic}
+        onTopicSelect={handleTopicSelect}
+        containerStyle={styles.topicSelectorContainer}
       />
-
-      {isLoading ? (
-        <ThemedView style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0099FF" />
-        </ThemedView>
-      ) : displayedTopics.length > 0 ? (
-        <ScrollView style={styles.topicsContainer}>
-          <ThemedView style={styles.topicsGrid}>
-            {displayedTopics.map((topic, index) => (
-              <TopicItem
-                key={topic.id}
-                topic={topic}
-                index={index}
-                isSelected={topic.id === selectedTopic}
-                totalItems={displayedTopics.length}
-                onPress={handleTopicSelect}
-              />
-            ))}
-          </ThemedView>
-        </ScrollView>
-      ) : (
-        <ThemedView style={styles.noResultsContainer}>
-          <Ionicons name="search-outline" size={48} color="#999" />
-          <Typography color="#666" size="md" style={styles.noResultsText}>
-            Не найдено тем по запросу. Вы можете использовать этот запрос как
-            свою тему.
-          </Typography>
-        </ThemedView>
-      )}
 
       <ThemedView style={styles.bottomContainerFullWidth}>
         <ThemedView style={styles.bottomContainer}>
@@ -200,20 +120,10 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'left',
   },
-  wordsButton: {
-    padding: 8,
-  },
   infoCard: {
     borderRadius: 10,
     padding: 16,
     marginBottom: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  generatedTextInfoCard: {
-    borderRadius: 10,
-    padding: 16,
-    marginVertical: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -224,39 +134,11 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  searchInput: {
-    flex: 1,
+  topicSelectorContainer: {
     backgroundColor: 'white',
     borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noResultsContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  noResultsText: {
-    textAlign: 'center',
-    marginTop: 16,
-  },
-  topicsContainer: {
-    flex: 1,
+    padding: 16,
     marginBottom: 16,
-    backgroundColor: 'transparent',
-  },
-  topicsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    backgroundColor: 'transparent',
   },
   bottomContainer: {
     flexDirection: 'row',
@@ -273,24 +155,5 @@ const styles = StyleSheet.create({
     padding: 14,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  regenerateButton: {
-    backgroundColor: '#0099FF',
-    borderRadius: 10,
-    padding: 16,
-    alignItems: 'center',
-    marginTop: 40,
-  },
-  regenerateButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  generatedTextScrollView: {
-    flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 16,
   },
 });

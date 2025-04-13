@@ -1,7 +1,6 @@
 import { ApiService } from './api';
 
 export interface Topic {
-  id: string;
   name: string;
   icon: string;
 }
@@ -14,7 +13,12 @@ class TopicsService {
   }
 
   async getTopics(): Promise<Topic[]> {
-    return this.api.get<Topic[]>('/topics');
+    const response = await this.api.get<{ topics: Topic[] }>('/search/topics');
+
+    return response.topics.map((topic) => ({
+      name: topic.name,
+      icon: topic.icon,
+    }));
   }
 }
 

@@ -6,49 +6,48 @@ import {
   ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAddWord } from '@/hooks/useApi';
+import { useAddWord, useGetWord } from '@/hooks/useApi';
 import { ThemedView } from '../components/ThemedView';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import Header from '../components/Header';
+import { Alert } from '../context/crossPlatformAlert';
 
 export default function AddWordScreen() {
   const router = useRouter();
   const [word, setWord] = useState('');
-  const [translation, setTranslation] = useState('');
-  const [example, setExample] = useState('');
   const [wordError, setWordError] = useState('');
-  const [translationError, setTranslationError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const addWordMutation = useAddWord();
+  const { data: wordData, isFetching } = useGetWord(word.trim());
 
   const handleAddWord = async () => {
     setWordError('');
-    setTranslationError('');
-
-    let isValid = true;
+    setIsLoading(true);
 
     if (!word.trim()) {
       setWordError('Пожалуйста, введите слово');
-      isValid = false;
+      setIsLoading(false);
+      return;
     }
-
-    if (!translation.trim()) {
-      setTranslationError('Пожалуйста, введите перевод');
-      isValid = false;
-    }
-
-    if (!isValid) return;
 
     try {
+      if (!wordData || !wordData.translations) {
+        Alert.alert('Ошибка', 'Не удалось получить перевод для этого слова');
+        setIsLoading(false);
+        return;
+      }
+
       await addWordMutation.mutateAsync({
         word: word.trim(),
-        translation: translation.trim(),
       });
 
       router.back();
     } catch (error) {
       console.error('Failed to add word:', error);
+      Alert.alert('Ошибка', 'Не удалось добавить слово');
+      setIsLoading(false);
     }
   };
 
@@ -76,34 +75,14 @@ export default function AddWordScreen() {
               error={wordError}
             />
 
-            <Input
-              label="Перевод"
-              placeholder="Введите перевод на русском"
-              value={translation}
-              onChangeText={setTranslation}
-              autoCapitalize="none"
-              fullWidth
-              error={translationError}
-            />
-
-            <Input
-              label="Пример использования (необязательно)"
-              placeholder="Введите пример предложения с этим словом"
-              value={example}
-              onChangeText={setExample}
-              multiline
-              numberOfLines={3}
-              fullWidth
-            />
-
             <ThemedView style={styles.buttonContainer}>
               <Button
                 title="Добавить"
                 onPress={handleAddWord}
                 variant="primary"
                 fullWidth
-                isLoading={addWordMutation.isPending}
-                disabled={addWordMutation.isPending}
+                isLoading={isLoading || addWordMutation.isPending || isFetching}
+                disabled={isLoading || addWordMutation.isPending || isFetching}
               />
             </ThemedView>
           </ThemedView>

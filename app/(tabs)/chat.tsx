@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   StyleSheet,
   FlatList,
@@ -6,23 +6,78 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  ScrollView,
+  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Typography from '../../components/Typography';
-import { ThemedView } from '../../components/ThemedView';
-import Header from '../../components/Header';
-import Input from '../../components/Input';
-import { useRouter } from 'expo-router';
-import { ChatMessage } from '../../services/api';
-import { useChatHistory, useSendMessage } from '../../hooks/useApi';
+import Typography from '@/components/Typography';
+import { ThemedView } from '@/components/ThemedView';
+import Header from '@/components/Header';
+import Input from '@/components/Input';
+import { ChatMessage as ChatMessageType, DictionaryWord } from '@/services/api';
+import {
+  useChatHistory,
+  useSendMessage,
+  useWords,
+  useStartNewChat,
+  useAddWord,
+  useCheckMessageCorrectness,
+} from '@/hooks/useApi';
+import Button from '@/components/Button';
+import ChatMessage from '../../components/ChatMessage';
+import TopicSelector from '@/components/TopicSelector';
+import CorrectionModal from '@/components/CorrectionModal';
 
 export default function ChatScreen() {
-  const router = useRouter();
   const [inputText, setInputText] = useState('');
+  const [checkingMessage, setCheckingMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [correctionResult, setCorrectionResult] = useState<{
+    isCorrect: boolean;
+    suggestions?: string[];
+  } | null>(null);
+
   const flatListRef = useRef<FlatList>(null);
 
-  const { data: messages = [], isLoading } = useChatHistory();
+  const [chatStarted, setChatStarted] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+
+  const { data: messages = [], isLoading: isMessagesLoading } =
+    useChatHistory();
   const { mutate: sendMessage, isPending: isSending } = useSendMessage();
+  const { data: wordsData, refetch: refetchWords } = useWords();
+  const startNewChatMutation = useStartNewChat();
+  const addWordMutation = useAddWord();
+  const checkMessageCorrectnessMutation = useCheckMessageCorrectness();
+
+  const wordMap = useMemo(() => {
+    return wordsData?.items.reduce(
+      (acc, item) => {
+        acc[item.word.toLowerCase()] = item;
+        return acc;
+      },
+      {} as Record<string, DictionaryWord>
+    );
+  }, [wordsData]);
+
+  const handleTopicSelect = (topicName: string) => {
+    setSelectedTopic(topicName);
+  };
+
+  const startNewChat = () => {
+    if (!selectedTopic) {
+      return;
+    }
+
+    startNewChatMutation.mutate(selectedTopic, {
+      onSuccess: () => {
+        setChatStarted(true);
+      },
+      onError: (error) => {
+        console.error('Failed to start new chat:', error);
+      },
+    });
+  };
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || isSending) return;
@@ -39,43 +94,92 @@ export default function ChatScreen() {
     });
   };
 
-  const handleOpenSettings = () => {
-    router.push('/chat-settings');
+  const handleStartNewChat = () => {
+    setChatStarted(false);
+    setSelectedTopic(null);
   };
 
-  const renderMessageItem = ({ item }: { item: ChatMessage }) => {
-    const formattedTime = new Date(item.timestamp).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const handleCheckCorrectness = (messageText: string) => {
+    setCheckingMessage(messageText);
+    setIsLoading(true);
 
+    checkMessageCorrectnessMutation.mutate(messageText, {
+      onSuccess: (result) => {
+        setCorrectionResult({
+          isCorrect: result.isCorrect,
+          suggestions: result.suggestions,
+        });
+        setIsLoading(false);
+      },
+      onError: (error) => {
+        console.error('Error checking message correctness:', error);
+        setIsLoading(false);
+      },
+    });
+  };
+
+  const handleWordSelected = (word: string) => {
+    if (word && /[a-zA-Z]/.test(word)) {
+      addWordMutation.mutate({ word });
+      refetchWords();
+    }
+  };
+
+  const closeModal = () => {
+    setCheckingMessage(null);
+    setCorrectionResult(null);
+  };
+
+  const renderMessageItem = ({ item }: { item: ChatMessageType }) => {
     return (
-      <ThemedView
-        style={[
-          styles.messageBubble,
-          item.isUser ? styles.userMessage : styles.aiMessage,
-        ]}
-      >
-        <Typography style={styles.messageText}>{item.text}</Typography>
-        <Typography style={styles.messageTime}>{formattedTime}</Typography>
-      </ThemedView>
+      <ChatMessage
+        id={item.id}
+        text={item.text}
+        timestamp={item.timestamp}
+        isUser={item.isUser}
+        dictionaryWords={wordMap || {}}
+        onCheckCorrectness={handleCheckCorrectness}
+        onWordSelected={handleWordSelected}
+      />
     );
   };
 
-  const settingsButton = (
-    <TouchableOpacity
-      style={styles.settingsButton}
-      onPress={handleOpenSettings}
-    >
-      <Ionicons name="settings-outline" size={24} color="#000" />
-    </TouchableOpacity>
+  const headerButtons = (
+    <View style={styles.headerButtonsContainer}>
+      <TouchableOpacity
+        style={styles.headerButton}
+        onPress={handleStartNewChat}
+      >
+        <Ionicons name="add" size={24} color="#000" />
+      </TouchableOpacity>
+    </View>
   );
 
-  return (
-    <ThemedView style={styles.container}>
-      <Header title="Чат" rightElement={settingsButton} />
+  const renderTopicSelector = () => (
+    <ThemedView style={styles.topicContainer}>
+      <Typography style={styles.topicTitle}>Выберите тему для чата</Typography>
+      <ScrollView style={styles.topicScrollView}>
+        <ThemedView style={styles.topicSection}>
+          <TopicSelector
+            selectedTopic={selectedTopic}
+            onTopicSelect={handleTopicSelect}
+          />
 
-      {isLoading ? (
+          <Button
+            title="Начать чат"
+            onPress={startNewChat}
+            isLoading={startNewChatMutation.isPending}
+            disabled={startNewChatMutation.isPending || !selectedTopic}
+            style={styles.startChatButton}
+          />
+        </ThemedView>
+      </ScrollView>
+    </ThemedView>
+  );
+
+  const renderChat = () => (
+    <>
+      {isMessagesLoading ? (
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#0099FF" />
         </ThemedView>
@@ -117,6 +221,24 @@ export default function ChatScreen() {
           }
         />
       </KeyboardAvoidingView>
+    </>
+  );
+
+  return (
+    <ThemedView style={styles.container}>
+      <Header title="Чат" rightElement={headerButtons} />
+
+      {!chatStarted ? renderTopicSelector() : renderChat()}
+
+      <CorrectionModal
+        visible={
+          isLoading || (correctionResult !== null && checkingMessage !== null)
+        }
+        isLoading={isLoading}
+        correctionResult={correctionResult}
+        checkingMessage={checkingMessage}
+        onClose={closeModal}
+      />
     </ThemedView>
   );
 }
@@ -125,9 +247,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
-  },
-  settingsButton: {
-    paddingHorizontal: 24,
   },
   loadingContainer: {
     flex: 1,
@@ -140,33 +259,6 @@ const styles = StyleSheet.create({
   messagesContainer: {
     padding: 16,
     paddingBottom: 24,
-  },
-  messageBubble: {
-    maxWidth: '80%',
-    padding: 12,
-    borderRadius: 16,
-    marginBottom: 8,
-    elevation: 1,
-  },
-  userMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#DCF8C6',
-    borderBottomRightRadius: 0,
-  },
-  aiMessage: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#FFFFFF',
-    borderBottomLeftRadius: 0,
-  },
-  messageText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  messageTime: {
-    fontSize: 12,
-    color: '#999',
-    alignSelf: 'flex-end',
-    marginTop: 4,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -186,5 +278,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+  },
+  topicContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  topicTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  topicScrollView: {
+    flex: 1,
+  },
+  topicSection: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 16,
+  },
+  startChatButton: {
+    marginTop: 8,
+  },
+  headerButtonsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerButton: {
+    paddingHorizontal: 12,
   },
 });

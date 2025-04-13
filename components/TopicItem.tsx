@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 import Typography from './Typography';
 
 export interface Topic {
-  id: string;
   name: string;
   icon: string;
 }
@@ -15,7 +14,7 @@ interface TopicItemProps {
   isSelected: boolean;
   itemsPerRow?: number;
   totalItems: number;
-  onPress: (topicId: string) => void;
+  onPress: (topicName: string) => void;
 }
 
 export const TopicItem: React.FC<TopicItemProps> = ({
@@ -37,10 +36,10 @@ export const TopicItem: React.FC<TopicItemProps> = ({
         isLastInRow && { marginRight: 0 },
         isLastRow && { marginBottom: 0 },
       ]}
-      onPress={() => onPress(topic.id)}
+      onPress={() => onPress(topic.name)}
     >
       <Ionicons
-        name={topic.icon as any}
+        name={topic.icon as keyof typeof Ionicons.glyphMap}
         size={16}
         color="#0066CC"
         style={styles.topicIcon}

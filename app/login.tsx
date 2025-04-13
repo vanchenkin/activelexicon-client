@@ -24,7 +24,7 @@ export default function LoginScreen() {
 
     try {
       await signIn(email, password);
-      router.replace('/(tabs)');
+      router.replace('/');
     } catch {
       setError('Неправильный email или пароль. Пожалуйста, попробуйте снова.');
     }

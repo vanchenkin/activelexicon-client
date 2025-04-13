@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Typography from '@/components/Typography';
@@ -7,13 +7,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { ThemedSwitch } from '@/components/ThemedSwitch';
 import Header from '@/components/Header';
 import { notificationService } from '@/services/api';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import NotificationTimePickerModal from '@/components/NotificationTimePickerModal';
+import { Alert } from '../context/crossPlatformAlert';
 
 export default function SettingsScreen() {
   const router = useRouter();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
   const [notificationTime, setNotificationTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -82,7 +83,10 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleTimeChange = async (event: any, selectedDate?: Date) => {
+  const handleTimeChange = async (
+    _event: DateTimePickerEvent,
+    selectedDate?: Date
+  ) => {
     setShowTimePicker(false);
 
     if (selectedDate) {
@@ -160,7 +164,7 @@ export default function SettingsScreen() {
             </>
           )}
 
-          <ThemedView style={styles.settingItem}>
+          {/* <ThemedView style={styles.settingItem}>
             <ThemedView style={styles.settingInfoRow}>
               <Ionicons
                 name="moon-outline"
@@ -174,7 +178,7 @@ export default function SettingsScreen() {
               value={darkModeEnabled}
               onValueChange={setDarkModeEnabled}
             />
-          </ThemedView>
+          </ThemedView> */}
         </ThemedView>
 
         <ThemedView style={styles.section}>
@@ -249,15 +253,11 @@ export default function SettingsScreen() {
         </ThemedView>
       </ScrollView>
 
-      {showTimePicker && (
-        <DateTimePicker
-          value={notificationTime}
-          mode="time"
-          is24Hour={true}
-          display="default"
-          onChange={handleTimeChange}
-        />
-      )}
+      <NotificationTimePickerModal
+        visible={showTimePicker}
+        currentTime={notificationTime}
+        onChange={handleTimeChange}
+      />
     </ThemedView>
   );
 }
@@ -354,44 +354,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: '#0A84FF',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    boxShadow: '0px 2px 3.84px rgba(0, 0, 0, 0.25)',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
-  },
-  multilineInput: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 10,
   },
 });

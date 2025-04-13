@@ -18,7 +18,7 @@ export default function HomeScreen() {
   };
 
   const handleAddWords = () => {
-    router.push('/(tabs)/explore');
+    router.push('/explore');
   };
 
   if (isLoading) {

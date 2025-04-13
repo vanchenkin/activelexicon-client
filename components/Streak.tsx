@@ -15,7 +15,7 @@ interface StreakProps {
 const Streak = ({
   streak,
   maxTriangles = 15,
-  showLabel = true,
+  showLabel = false,
 }: StreakProps) => {
   const getStreakText = (count: number) => {
     if (count === 1) return 'день';
@@ -84,7 +84,7 @@ const Streak = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignItems: 'center',
     padding: 15,
     borderRadius: 12,

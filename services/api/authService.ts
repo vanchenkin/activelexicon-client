@@ -4,17 +4,15 @@ import { ApiService } from './api';
 export interface User {
   email: string;
   profile: {
-    level: number;
-    maxLevel: number;
-    experiencePoints: number;
     avatarId: number;
     languageLevel: string;
+    calculatedLanguageLevel?: string;
   };
 }
 
 export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
+  access_token: string;
+  refresh_token: string;
 }
 
 export class AuthService {
@@ -32,7 +30,7 @@ export class AuthService {
     const response = await this.api.post<AuthResponse>('/auth/register', {
       email,
       password,
-      languageLevel,
+      language_level: languageLevel,
     });
 
     await this.saveTokens(response);
@@ -58,22 +56,22 @@ export class AuthService {
   async refreshToken(refreshToken: string): Promise<boolean> {
     try {
       const response = await this.api.post<{
-        accessToken: string;
-        refreshToken: string;
-      }>('/auth/refresh', { refreshToken });
+        access_token: string;
+        refresh_token: string;
+      }>('/auth/refresh', { refresh_token: refreshToken });
 
       await this.saveTokens(response);
 
       return true;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error refreshing token:', error);
       return false;
     }
   }
 
   private async saveTokens(authResponse: AuthResponse): Promise<void> {
-    await TokenStorage.saveAccessToken(authResponse.accessToken);
-    await TokenStorage.saveRefreshToken(authResponse.refreshToken);
+    await TokenStorage.saveAccessToken(authResponse.access_token);
+    await TokenStorage.saveRefreshToken(authResponse.refresh_token);
   }
 }
 

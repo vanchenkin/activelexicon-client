@@ -18,7 +18,7 @@ import Animated, {
 interface ButtonProps extends TouchableOpacityProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'primary' | 'secondary' | 'outline' | 'red' | 'red-outline';
   size?: 'small' | 'medium' | 'large';
   isLoading?: boolean;
   disabled?: boolean;
@@ -81,7 +81,13 @@ const Button = ({
       <Animated.View style={[buttonStyles, animatedStyle]}>
         {isLoading ? (
           <ActivityIndicator
-            color={variant === 'outline' ? '#3498db' : '#fff'}
+            color={
+              variant === 'outline' || variant === 'red-outline'
+                ? variant === 'outline'
+                  ? '#3498db'
+                  : '#FF3B30'
+                : '#fff'
+            }
             size="small"
           />
         ) : (
@@ -108,11 +114,21 @@ const styles = StyleSheet.create({
   },
   secondary: {
     backgroundColor: 'grey',
+    boxShadow: '0px 2px 0px 0px #5a5a5a',
   },
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: '#3498db',
+  },
+  red: {
+    backgroundColor: '#FF3B30',
+    boxShadow: '0px 2px 0px 0px #CC2F26',
+  },
+  'red-outline': {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#FF3B30',
   },
   small: {
     paddingVertical: 10,
@@ -145,6 +161,12 @@ const styles = StyleSheet.create({
   },
   outlineText: {
     color: '#3498db',
+  },
+  redText: {
+    color: '#ffffff',
+  },
+  'red-outlineText': {
+    color: '#FF3B30',
   },
   smallText: {
     fontSize: 14,

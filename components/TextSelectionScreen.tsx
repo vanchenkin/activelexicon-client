@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useAddWord, useGetWord } from '@/hooks/useApi';
-import WordDetailsModal from '@/components/WordDetailsModal';
+import { useAddWord } from '@/hooks/useApi';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
 import Button from './Button';
-
-interface WordDetails {
-  word: string;
-  translation: string;
-  partOfSpeech: string;
-  gender?: string;
-  example: string;
-  examples?: string[];
-  addedAt: Date;
-}
+import SelectableWord from './SelectableWord';
+import WordSelectionModal from './WordSelectionModal';
 
 interface TextSelectionScreenProps {
   generatedText: string;
@@ -35,12 +26,10 @@ export default function TextSelectionScreen({
     { text: string; isWord: boolean }[]
   >([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentWordDetails, setCurrentWordDetails] =
-    useState<WordDetails | null>(null);
+  const [currentWord, setCurrentWord] = useState<string | null>(null);
   const [loadingWord, setLoadingWord] = useState(false);
 
   const addWord = useAddWord();
-  const getWord = useGetWord();
 
   useEffect(() => {
     if (generatedText) {
@@ -63,16 +52,8 @@ export default function TextSelectionScreen({
 
     try {
       setLoadingWord(true);
-      const details = await getWord.mutateAsync(word);
 
-      const wordWithDetails: WordDetails = {
-        word: details?.word || '',
-        translation: details?.translation || '',
-        partOfSpeech: '',
-        example: '',
-        addedAt: new Date(),
-      };
-      setCurrentWordDetails(wordWithDetails);
+      setCurrentWord(word);
       setIsModalVisible(true);
 
       if (onWordSelected) {
@@ -80,14 +61,7 @@ export default function TextSelectionScreen({
       }
     } catch (error) {
       console.error('Failed to get word details:', error);
-      const fallbackDetails: WordDetails = {
-        word: word,
-        translation: 'Translation not available',
-        partOfSpeech: '',
-        example: '',
-        addedAt: new Date(),
-      };
-      setCurrentWordDetails(fallbackDetails);
+      setCurrentWord(word);
       setIsModalVisible(true);
 
       if (onWordSelected) {
@@ -98,12 +72,9 @@ export default function TextSelectionScreen({
     }
   };
 
-  const handleAddWordToVocabulary = async (
-    word: string,
-    translation: string
-  ) => {
+  const handleAddWordToVocabulary = async (word: string) => {
     try {
-      await addWord.mutateAsync({ word, translation });
+      await addWord.mutateAsync({ word });
       if (!selectedWords.includes(word)) {
         setSelectedWords([...selectedWords, word]);
       }
@@ -121,44 +92,32 @@ export default function TextSelectionScreen({
       const isSelected = selectedWords.includes(part.text);
 
       return (
-        <TouchableOpacity
+        <SelectableWord
           key={index}
-          onPress={() => handleWordPress(part.text)}
-          style={[styles.wordTouchable, isSelected && styles.selectedWord]}
-        >
-          <Typography>{part.text}</Typography>
-        </TouchableOpacity>
+          word={part.text}
+          isSelected={isSelected}
+          onPress={handleWordPress}
+        />
       );
     });
   };
 
   const closeModal = () => {
     setIsModalVisible(false);
-    setCurrentWordDetails(null);
+    setCurrentWord(null);
   };
 
   return (
     <ThemedView style={styles.container}>
-      {currentWordDetails && (
-        <WordDetailsModal
-          visible={isModalVisible}
-          word={currentWordDetails}
-          onClose={closeModal}
-          onAdd={() => {
-            if (currentWordDetails?.word) {
-              handleAddWordToVocabulary(
-                currentWordDetails.word,
-                currentWordDetails.translation
-              );
-            }
-          }}
-          isAlreadyAdded={
-            currentWordDetails?.word
-              ? selectedWords.includes(currentWordDetails.word)
-              : false
-          }
-        />
-      )}
+      <WordSelectionModal
+        visible={isModalVisible}
+        selectedWord={currentWord}
+        onClose={closeModal}
+        onAddToDictionary={handleAddWordToVocabulary}
+        isAlreadyAdded={
+          currentWord ? selectedWords.includes(currentWord) : false
+        }
+      />
 
       <ThemedView style={styles.generatedTextInfoCard}>
         <Ionicons
@@ -232,13 +191,6 @@ const styles = StyleSheet.create({
   generatedText: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-  },
-  wordTouchable: {
-    borderRadius: 4,
-    marginVertical: 2,
-  },
-  selectedWord: {
-    backgroundColor: '#E3F2FD',
   },
   selectedWordsContainer: {
     marginBottom: 16,

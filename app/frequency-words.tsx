@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -7,57 +7,38 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useWordFrequency } from '../hooks/useApi';
-import { ThemedView } from '../components/ThemedView';
-import Typography from '../components/Typography';
-import BackButton from '../components/BackButton';
+import { useWordFrequency } from '@/hooks/useApi';
+import { ThemedView } from '@/components/ThemedView';
+import Typography from '@/components/Typography';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { WordFrequency } from '../services/api/dictionaryService';
+import { WordFrequencyItem } from '../services/api/dictionaryService';
+import Header from '@/components/Header';
 
 export default function FrequencyWordsScreen() {
   const router = useRouter();
-  const [page, setPage] = useState(1);
   const pageSize = 10;
 
   const {
     data: frequencyData,
     isLoading,
     isError,
-    isFetching,
-  } = useWordFrequency(page, pageSize);
+    pagination,
+  } = useWordFrequency(1, pageSize);
 
-  const handleNextPage = () => {
-    if (frequencyData && !isFetching && page < frequencyData.totalPages) {
-      setPage((old) => old + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    setPage((old) => Math.max(old - 1, 1));
-  };
-
-  const renderItem = ({ item }: { item: WordFrequency }) => (
+  const renderItem = ({ item }: { item: WordFrequencyItem }) => (
     <ThemedView style={styles.wordItem}>
       <ThemedView style={styles.wordInfoContainer}>
         <Typography weight="medium" size="md">
           {item.word}
         </Typography>
-        <Typography color="#666" style={styles.translation}>
-          {item.translation}
-        </Typography>
       </ThemedView>
 
       <ThemedView style={styles.frequencyContainer}>
         <Typography weight="medium" size="md" style={styles.frequencyNumber}>
-          {item.frequency}
+          {item.count}
         </Typography>
         <Typography color="#666" size="xs">
           раз
-        </Typography>
-        <Typography color="#666" size="xs" style={styles.lastUsed}>
-          {item.lastUsed
-            ? `Последний раз: ${new Date(item.lastUsed).toLocaleDateString()}`
-            : ''}
         </Typography>
       </ThemedView>
     </ThemedView>
@@ -74,12 +55,7 @@ export default function FrequencyWordsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <BackButton onPress={() => router.back()} />
-        <Typography size="lg" style={styles.headerTitle}>
-          Частотный словарь
-        </Typography>
-      </ThemedView>
+      <Header title="Частотный словарь" onBackPress={() => router.back()} />
 
       <Typography size="sm" style={styles.description}>
         Слова, которые вы использовали в своих текстах, отсортированные по
@@ -106,7 +82,7 @@ export default function FrequencyWordsScreen() {
           <FlatList
             data={frequencyData?.items || []}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.word}
             contentContainerStyle={styles.wordsList}
             ListEmptyComponent={EmptyListComponent}
           />
@@ -114,27 +90,26 @@ export default function FrequencyWordsScreen() {
           {frequencyData && frequencyData.total > 0 && (
             <ThemedView style={styles.paginationContainer}>
               <TouchableOpacity
-                onPress={handlePrevPage}
-                disabled={page === 1}
+                onPress={pagination.prevPage}
+                disabled={!pagination.hasPrevPage}
                 style={[
                   styles.paginationButton,
-                  page === 1 && styles.paginationButtonDisabled,
+                  !pagination.hasPrevPage && styles.paginationButtonDisabled,
                 ]}
               >
                 <Ionicons name="chevron-back" size={18} color="#333" />
               </TouchableOpacity>
 
               <Typography style={styles.paginationInfo}>
-                {page} из {frequencyData.totalPages}
+                {pagination.page} из {pagination.totalPages}
               </Typography>
 
               <TouchableOpacity
-                onPress={handleNextPage}
-                disabled={page >= frequencyData.totalPages}
+                onPress={pagination.nextPage}
+                disabled={!pagination.hasNextPage}
                 style={[
                   styles.paginationButton,
-                  page >= frequencyData.totalPages &&
-                    styles.paginationButtonDisabled,
+                  !pagination.hasNextPage && styles.paginationButtonDisabled,
                 ]}
               >
                 <Ionicons name="chevron-forward" size={18} color="#333" />
@@ -154,20 +129,6 @@ const styles = StyleSheet.create({
   },
   flex1: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 36,
-    paddingBottom: 16,
-    backgroundColor: 'transparent',
-  },
-  headerTitle: {
-    fontSize: 18,
-    width: '100%',
-    textAlign: 'center',
   },
   description: {
     paddingHorizontal: 16,

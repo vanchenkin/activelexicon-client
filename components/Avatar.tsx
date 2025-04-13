@@ -4,10 +4,10 @@ import {
   Image,
   ImageStyle,
   StyleProp,
-  View,
   ViewStyle,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { ThemedView } from './ThemedView';
 
 const avatarImages = {
   0: require('../assets/images/avatars/avatar0.png'),
@@ -48,9 +48,9 @@ export default function Avatar({ avatarId, size = 80, style }: AvatarProps) {
   } catch (error) {
     console.error('Error loading avatar:', error);
     return (
-      <View style={[styles.placeholder, containerStyle, style]}>
+      <ThemedView style={[styles.placeholder, containerStyle, style]}>
         <Ionicons name="person-outline" size={size * 0.5} color="#888" />
-      </View>
+      </ThemedView>
     );
   }
 }

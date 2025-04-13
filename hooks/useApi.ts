@@ -7,9 +7,17 @@ import {
   exploreServiceInstance,
   profileServiceInstance,
   type User,
-} from '@/services/api/index';
-import React from 'react';
-import { PaginatedResult, Word } from '@/services/api/dictionaryService';
+  Exercise,
+  ExerciseType,
+  ProfileUpdateResponse,
+} from '../services/api';
+import * as React from 'react';
+import {
+  DictionaryWord,
+  PaginatedResult,
+  WordFrequencyItem,
+} from '../services/api/dictionaryService';
+import { ChatMessage } from '../services/api/chatService';
 
 export function useWords(page: number = 1, pageSize: number = 10) {
   return usePagination(
@@ -38,9 +46,11 @@ export function useSearchWords(query: string) {
     queryFn: () => {
       const searchLower = query.toLowerCase();
       return words.filter(
-        (word: Word) =>
-          word.word.toLowerCase().includes(searchLower) ||
-          word.translation.toLowerCase().includes(searchLower)
+        (word) =>
+          word.word?.toLowerCase().includes(searchLower) ||
+          word.translations?.some((translation) =>
+            translation.text.toLowerCase().includes(searchLower)
+          )
       );
     },
     enabled: true,
@@ -50,14 +60,9 @@ export function useSearchWords(query: string) {
 export function useAddWord() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({
-      word,
-      translation,
-    }: {
-      word: string;
-      translation: string;
-    }) => dictionaryServiceInstance.addWord(word, translation),
+  return useMutation<DictionaryWord, Error, { word: string }>({
+    mutationFn: ({ word }: { word: string }) =>
+      dictionaryServiceInstance.addWord(word),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['words'] });
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
@@ -80,7 +85,7 @@ export function useDeleteWord() {
 export function useUserStats() {
   return useQuery({
     queryKey: ['userStats'],
-    queryFn: () => profileServiceInstance.getStats(),
+    queryFn: () => profileServiceInstance.getProfileStats(),
   });
 }
 
@@ -109,14 +114,12 @@ export function useSearchTopics(query: string) {
 export function useGenerateText() {
   return useMutation({
     mutationFn: ({
-      topicId,
-      customTopic,
-      complexity = 'medium',
+      topic,
+      complexity,
     }: {
-      topicId: string | null;
-      customTopic: string | null;
-      complexity?: 'easy' | 'medium' | 'hard';
-    }) => exploreServiceInstance.generateText(topicId, customTopic, complexity),
+      topic: string | null;
+      complexity: 'low' | 'normal' | 'high';
+    }) => exploreServiceInstance.generateText(topic, complexity),
   });
 }
 
@@ -141,7 +144,7 @@ export function useSendMessage() {
 export function useClearChatHistory() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<ChatMessage[], Error>({
     mutationFn: () => chatServiceInstance.clearHistory(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['chatHistory'] });
@@ -149,15 +152,34 @@ export function useClearChatHistory() {
   });
 }
 
+export function useCheckMessageCorrectness() {
+  return useMutation<
+    { isCorrect: boolean; suggestions?: string[] },
+    Error,
+    string
+  >({
+    mutationFn: (text: string) =>
+      chatServiceInstance.checkMessageCorrectness(text),
+  });
+}
+
 export function useSubmitAnswer() {
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       exerciseId,
       answer,
     }: {
       exerciseId: string;
       answer: string;
-    }) => tasksServiceInstance.submitAnswer(exerciseId, answer),
+    }) => {
+      if (exerciseId.startsWith('insert-word')) {
+        return tasksServiceInstance.checkInsertWordTask(answer);
+      } else if (exerciseId.startsWith('question-answer')) {
+        return tasksServiceInstance.checkQuestionAnswerTask(answer);
+      } else {
+        return tasksServiceInstance.checkWriteTextTask(answer);
+      }
+    },
   });
 }
 
@@ -174,34 +196,22 @@ export function useUpdateUserProfile() {
   });
 }
 
-export function useAddExperience() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (points: number) => {
-      const currentUser = await profileServiceInstance.getProfile();
-      if (!currentUser) throw new Error('No user logged in');
-
-      const updatedUser = {
-        ...currentUser,
-        profile: {
-          ...currentUser.profile,
-          experiencePoints: currentUser.profile.experiencePoints + points,
-        },
-      };
-
-      return updatedUser;
-    },
-    onSuccess: (updatedUser) => {
-      queryClient.setQueryData(['currentUser'], updatedUser);
-      queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
-    },
+export function useChangePassword() {
+  return useMutation<
+    ProfileUpdateResponse,
+    Error,
+    { currentPassword: string; newPassword: string }
+  >({
+    mutationFn: ({ currentPassword, newPassword }) =>
+      profileServiceInstance.changePassword(currentPassword, newPassword),
   });
 }
 
-export function useGetWord() {
-  return useMutation({
-    mutationFn: (word: string) => dictionaryServiceInstance.getWord(word),
+export function useGetWord(word: string) {
+  return useQuery({
+    queryKey: ['word', word],
+    queryFn: () => dictionaryServiceInstance.getWord(word),
+    enabled: !!word,
   });
 }
 
@@ -222,14 +232,74 @@ export function useStreak() {
 export function useNextExercise() {
   return useQuery({
     queryKey: ['nextExercise'],
-    queryFn: () => tasksServiceInstance.getNextExercise(),
+    queryFn: async () => {
+      const types = ['insert-word', 'question-answer', 'write-text'];
+      const randomType = types[Math.floor(Math.random() * types.length)];
+
+      let exercise: Exercise;
+
+      try {
+        if (randomType === 'insert-word') {
+          const task = await tasksServiceInstance.getInsertWordTask();
+          exercise = {
+            id: `insert-word-${Date.now()}`,
+            type: ExerciseType.FillWord,
+            difficulty: 'medium',
+            content: task.taskText,
+            solution: '',
+            hint: task.hint,
+          };
+        } else if (randomType === 'question-answer') {
+          const task = await tasksServiceInstance.getQuestionAnswerTask();
+          exercise = {
+            id: `question-answer-${Date.now()}`,
+            type: ExerciseType.AnswerQuestion,
+            difficulty: 'medium',
+            content: task.taskText,
+            solution: '',
+            hint: task.hint,
+          };
+        } else {
+          const task = await tasksServiceInstance.getWriteTextTask();
+          exercise = {
+            id: `write-text-${Date.now()}`,
+            type: ExerciseType.WriteText,
+            difficulty: 'easy',
+            content: task.taskText,
+            solution: '',
+            hint: '',
+          };
+        }
+
+        return exercise;
+      } catch (error) {
+        console.error('Error generating exercise:', error);
+        throw error;
+      }
+    },
+    refetchOnWindowFocus: false,
   });
 }
 
 export function useWordFrequency(page: number = 1, pageSize: number = 10) {
-  return usePagination(
+  return usePagination<WordFrequencyItem>(
     ['wordFrequency'],
-    dictionaryServiceInstance.getWordFrequency.bind(dictionaryServiceInstance),
+    async (pg: number, pSize: number) => {
+      const result = await dictionaryServiceInstance.getWordFrequency(
+        pg,
+        pSize
+      );
+      if (Array.isArray(result)) {
+        return {
+          items: result,
+          total: result.length,
+          page: pg,
+          pageSize: pSize,
+          totalPages: Math.ceil(result.length / pSize),
+        };
+      }
+      return result;
+    },
     { initialPage: page, initialPageSize: pageSize }
   );
 }
@@ -300,5 +370,16 @@ export function useProfileStats() {
   return useQuery({
     queryKey: ['profileStats'],
     queryFn: () => profileServiceInstance.getProfileStats(),
+  });
+}
+
+export function useStartNewChat() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (topic: string) => chatServiceInstance.startNewChat(topic),
+    onSuccess: (newChatHistory) => {
+      queryClient.setQueryData(['chatHistory'], newChatHistory);
+    },
   });
 }

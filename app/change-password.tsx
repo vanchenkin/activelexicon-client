@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import { StyleSheet, Alert } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedView } from '../components/ThemedView';
-import Typography from '../components/Typography';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import BackButton from '../components/BackButton';
-import { profileServiceInstance } from '../services/api';
+import { ThemedView } from '@/components/ThemedView';
+import Typography from '@/components/Typography';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import { useChangePassword } from '@/hooks/useApi';
+import Header from '@/components/Header';
+import { Alert } from '../context/crossPlatformAlert';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  const { mutate: changePassword, isPending } = useChangePassword();
 
   const handleSubmit = async () => {
     setError('');
@@ -35,38 +37,33 @@ export default function ChangePasswordScreen() {
     }
 
     try {
-      setIsSubmitting(true);
-
-      const response = await profileServiceInstance.changePassword(
-        currentPassword,
-        newPassword
+      changePassword(
+        { currentPassword, newPassword },
+        {
+          onSuccess: () => {
+            Alert.alert('Успех', 'Пароль успешно изменен', [
+              { text: 'OK', onPress: () => router.back() },
+            ]);
+          },
+          onError: (error) => {
+            console.error('Error changing password:', error);
+            setError(
+              'Ошибка при изменении пароля. Возможно, текущий пароль неверен.'
+            );
+          },
+        }
       );
-
-      if (response.success) {
-        Alert.alert('Успех', 'Пароль успешно изменен', [
-          { text: 'OK', onPress: () => router.back() },
-        ]);
-      } else {
-        setError('Не удалось изменить пароль');
-      }
     } catch (error) {
       console.error('Error changing password:', error);
       setError(
         'Ошибка при изменении пароля. Возможно, текущий пароль неверен.'
       );
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   return (
     <ThemedView style={styles.container}>
-      <BackButton onPress={() => router.back()} />
-      <ThemedView style={styles.header}>
-        <Typography size="lg" style={styles.headerTitle}>
-          Изменить пароль
-        </Typography>
-      </ThemedView>
+      <Header title="Изменить пароль" onBackPress={() => router.back()} />
 
       <ThemedView style={styles.content}>
         {error ? (
@@ -105,9 +102,9 @@ export default function ChangePasswordScreen() {
         <Button
           title="Сохранить"
           onPress={handleSubmit}
-          isLoading={isSubmitting}
+          isLoading={isPending}
           disabled={
-            isSubmitting || !currentPassword || !newPassword || !confirmPassword
+            isPending || !currentPassword || !newPassword || !confirmPassword
           }
           style={styles.button}
         />
@@ -117,22 +114,6 @@ export default function ChangePasswordScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 35,
-    paddingBottom: 16,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#EFEFEF',
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
   container: {
     flex: 1,
   },

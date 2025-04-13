@@ -86,18 +86,18 @@ export class ApiService {
     return response.data;
   }
 
-  async post<T>(
+  async post<T, D = Record<string, unknown>>(
     endpoint: string,
-    data?: any,
+    data?: D,
     config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.axiosInstance.post<T>(endpoint, data, config);
     return response.data;
   }
 
-  async put<T>(
+  async put<T, D = Record<string, unknown>>(
     endpoint: string,
-    data?: any,
+    data?: D,
     config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.axiosInstance.put<T>(endpoint, data, config);
@@ -109,9 +109,9 @@ export class ApiService {
     return response.data;
   }
 
-  async patch<T>(
+  async patch<T, D = Record<string, unknown>>(
     endpoint: string,
-    data?: any,
+    data?: D,
     config?: AxiosRequestConfig
   ): Promise<T> {
     const response = await this.axiosInstance.patch<T>(endpoint, data, config);

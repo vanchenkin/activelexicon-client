@@ -43,57 +43,60 @@ const allExercises = [
 ];
 
 export const mockTasksService = {
-  async getNextExercise(): Promise<Exercise> {
+  async getInsertWordTask(): Promise<{ taskText: string; hint: string }> {
     await delay(500);
-    const currentUser = mockAuthService.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
-
-    return allExercises[Math.floor(Math.random() * allExercises.length)];
+    const exercise =
+      fillBlankExercises[Math.floor(Math.random() * fillBlankExercises.length)];
+    return {
+      taskText: exercise.content,
+      hint: exercise.hint,
+    };
   },
 
-  async getExercisesByType(
-    type: ExerciseType,
-    difficulty?: 'easy' | 'medium' | 'hard'
-  ): Promise<Exercise[]> {
-    await delay(500);
-    const currentUser = mockAuthService.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
-
-    let filtered = allExercises.filter((ex) => ex.type === type);
-
-    if (difficulty) {
-      filtered = filtered.filter((ex) => ex.difficulty === difficulty);
-    }
-
-    return filtered;
-  },
-
-  async submitAnswer(exerciseId: string, answer: any): Promise<boolean> {
+  async checkInsertWordTask(answer: string): Promise<boolean> {
     await delay(600);
-    const currentUser = mockAuthService.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
+    const exercise =
+      fillBlankExercises[Math.floor(Math.random() * fillBlankExercises.length)];
+    return answer.toLowerCase() === exercise.solution.toLowerCase();
+  },
 
-    const exercise = allExercises.find((ex) => ex.id === exerciseId);
-    if (!exercise) throw new Error('Exercise not found');
+  async getQuestionAnswerTask(): Promise<{ taskText: string; hint: string }> {
+    await delay(500);
+    const exercise =
+      multipleChoiceExercises[
+        Math.floor(Math.random() * multipleChoiceExercises.length)
+      ];
+    return {
+      taskText: exercise.content,
+      hint: exercise.hint,
+    };
+  },
 
-    if (exercise.type === ExerciseType.WriteText) {
-      const requiredParts = exercise.solution
-        .split(',')
-        .map((s) => s.trim().toLowerCase());
-      return (
-        typeof answer === 'string' &&
-        requiredParts.every((part) => answer.toLowerCase().includes(part))
-      );
-    } else if (
-      exercise.type === ExerciseType.FillWord ||
-      exercise.type === ExerciseType.AnswerQuestion
-    ) {
-      return (
-        typeof answer === 'string' &&
-        answer.toLowerCase() === exercise.solution.toLowerCase()
-      );
-    }
+  async checkQuestionAnswerTask(answer: string): Promise<boolean> {
+    await delay(600);
+    const exercise =
+      multipleChoiceExercises[
+        Math.floor(Math.random() * multipleChoiceExercises.length)
+      ];
+    return answer.toLowerCase() === exercise.solution.toLowerCase();
+  },
 
-    return false;
+  async getWriteTextTask(): Promise<{ taskText: string }> {
+    await delay(500);
+    const exercise =
+      matchingExercises[Math.floor(Math.random() * matchingExercises.length)];
+    return {
+      taskText: exercise.content,
+    };
+  },
+
+  async checkWriteTextTask(text: string): Promise<boolean> {
+    await delay(600);
+    const exercise =
+      matchingExercises[Math.floor(Math.random() * matchingExercises.length)];
+    const requiredParts = exercise.solution
+      .split(',')
+      .map((s) => s.trim().toLowerCase());
+    return requiredParts.every((part) => text.toLowerCase().includes(part));
   },
 };

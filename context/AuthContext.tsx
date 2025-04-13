@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Alert } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import { Config } from '@/configs/config';
 import { authService, profileServiceInstance, User } from '@/services/api';
 import { AuthResponse } from '@/services/api/authService';
+import { Alert } from './crossPlatformAlert';
 
 type AuthContextType = {
   user: User | null;

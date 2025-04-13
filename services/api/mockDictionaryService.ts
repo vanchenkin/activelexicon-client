@@ -1,228 +1,284 @@
-import { Word, WordFrequency, PaginatedResult } from './dictionaryService';
+import {
+  DictionaryWord,
+  WordFrequencyItem,
+  PaginatedResult,
+  Translation,
+} from './dictionaryService';
 import { mockAuthService } from './mockAuthService';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const mockWords: Word[] = [
+interface MockWord {
+  word: string;
+  translations: Translation[];
+  repetitions: number;
+  lastRepetition: Date | null;
+  difficulty: 'easy' | 'medium' | 'hard';
+  status: 'new' | 'learning' | 'learned';
+}
+
+const mockWords: MockWord[] = [
   {
-    id: '1',
     word: 'hello',
-    translation: 'привет',
+    translations: [{ text: 'привет' }],
     repetitions: 5,
     lastRepetition: new Date(Date.now() - 86400000),
     difficulty: 'easy',
     status: 'learned',
   },
   {
-    id: '2',
     word: 'world',
-    translation: 'мир',
+    translations: [{ text: 'мир' }],
     repetitions: 3,
     lastRepetition: new Date(Date.now() - 172800000),
     difficulty: 'medium',
     status: 'learning',
   },
+  {
+    word: 'book',
+    translations: [{ text: 'книга' }],
+    repetitions: 0,
+    lastRepetition: null,
+    difficulty: 'medium',
+    status: 'new',
+  },
+  {
+    word: 'learn',
+    translations: [{ text: 'учить' }],
+    repetitions: 2,
+    lastRepetition: new Date(Date.now() - 259200000),
+    difficulty: 'hard',
+    status: 'learning',
+  },
+  {
+    word: 'language',
+    translations: [{ text: 'язык' }],
+    repetitions: 7,
+    lastRepetition: new Date(Date.now() - 43200000),
+    difficulty: 'easy',
+    status: 'learned',
+  },
+  {
+    word: 'dictionary',
+    translations: [{ text: 'словарь' }],
+    repetitions: 4,
+    lastRepetition: new Date(Date.now() - 129600000),
+    difficulty: 'medium',
+    status: 'learning',
+  },
+  {
+    word: 'study',
+    translations: [{ text: 'изучать' }],
+    repetitions: 1,
+    lastRepetition: new Date(Date.now() - 345600000),
+    difficulty: 'hard',
+    status: 'learning',
+  },
+  {
+    word: 'practice',
+    translations: [{ text: 'практика' }],
+    repetitions: 6,
+    lastRepetition: new Date(Date.now() - 64800000),
+    difficulty: 'medium',
+    status: 'learned',
+  },
+  {
+    word: 'vocabulary',
+    translations: [{ text: 'словарный запас' }],
+    repetitions: 5,
+    lastRepetition: new Date(Date.now() - 108000000),
+    difficulty: 'medium',
+    status: 'learning',
+  },
+  {
+    word: 'fluent',
+    translations: [{ text: 'беглый' }],
+    repetitions: 8,
+    lastRepetition: new Date(Date.now() - 21600000),
+    difficulty: 'easy',
+    status: 'learned',
+  },
 ];
 
-const mockFrequencyWords: WordFrequency[] = [
+const mockFrequencyWords: WordFrequencyItem[] = [
   {
-    id: '1',
     word: 'the',
-    translation: 'определенный артикль',
-    frequency: 156,
-    lastUsed: new Date(Date.now() - 86400000),
+    count: 156,
   },
   {
-    id: '2',
     word: 'to',
-    translation: 'к, в, по направлению',
-    frequency: 124,
-    lastUsed: new Date(Date.now() - 172800000),
+    count: 124,
   },
   {
-    id: '3',
     word: 'and',
-    translation: 'и',
-    frequency: 118,
-    lastUsed: new Date(Date.now() - 259200000),
+    count: 118,
   },
   {
-    id: '4',
     word: 'of',
-    translation: 'из, о',
-    frequency: 106,
-    lastUsed: new Date(Date.now() - 345600000),
+    count: 106,
   },
   {
-    id: '5',
     word: 'in',
-    translation: 'в, внутри',
-    frequency: 92,
-    lastUsed: new Date(Date.now() - 432000000),
+    count: 92,
   },
   {
-    id: '6',
     word: 'a',
-    translation: 'неопределенный артикль',
-    frequency: 90,
-    lastUsed: new Date(Date.now() - 518400000),
+    count: 90,
   },
   {
-    id: '7',
     word: 'is',
-    translation: 'есть, является',
-    frequency: 82,
-    lastUsed: new Date(Date.now() - 604800000),
+    count: 82,
   },
   {
-    id: '8',
     word: 'that',
-    translation: 'что, тот',
-    frequency: 76,
-    lastUsed: new Date(Date.now() - 691200000),
+    count: 76,
   },
   {
-    id: '9',
     word: 'for',
-    translation: 'для, за',
-    frequency: 74,
-    lastUsed: new Date(Date.now() - 777600000),
+    count: 74,
   },
   {
-    id: '10',
     word: 'it',
-    translation: 'это, оно',
-    frequency: 70,
-    lastUsed: new Date(Date.now() - 864000000),
+    count: 70,
   },
   {
-    id: '11',
     word: 'with',
-    translation: 'с, вместе с',
-    frequency: 68,
-    lastUsed: new Date(Date.now() - 950400000),
+    count: 68,
   },
   {
-    id: '12',
     word: 'as',
-    translation: 'как, в качестве',
-    frequency: 65,
-    lastUsed: new Date(Date.now() - 1036800000),
+    count: 65,
   },
   {
-    id: '13',
     word: 'on',
-    translation: 'на, по',
-    frequency: 60,
-    lastUsed: new Date(Date.now() - 1123200000),
+    count: 60,
   },
   {
-    id: '14',
     word: 'be',
-    translation: 'быть',
-    frequency: 58,
-    lastUsed: new Date(Date.now() - 1209600000),
+    count: 58,
   },
   {
-    id: '15',
     word: 'this',
-    translation: 'это, этот',
-    frequency: 55,
-    lastUsed: new Date(Date.now() - 1296000000),
+    count: 55,
   },
 ];
 
 class MockDictionaryService {
-  private words: Word[] = [...mockWords];
-  private frequencyWords: WordFrequency[] = [...mockFrequencyWords];
-
-  async getWords(): Promise<Word[]> {
-    await delay(500);
-    const currentUser = mockAuthService.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
-    return this.words;
-  }
+  private words: MockWord[] = [...mockWords];
+  private frequencyWords: WordFrequencyItem[] = [...mockFrequencyWords];
 
   async getWordsWithPagination(
     page: number = 1,
     pageSize: number = 10
-  ): Promise<PaginatedResult<Word>> {
+  ): Promise<PaginatedResult<DictionaryWord>> {
     await delay(500);
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
 
+    const sortedWords = [...this.words].sort((a, b) => {
+      if (!a.lastRepetition) return 1;
+      if (!b.lastRepetition) return -1;
+      return b.lastRepetition.getTime() - a.lastRepetition.getTime();
+    });
+
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const paginatedItems = this.words.slice(startIndex, endIndex);
+    const paginatedItems = sortedWords.slice(startIndex, endIndex);
+    const pages_count = Math.ceil(this.words.length / pageSize);
+
+    const dictionaryWords = paginatedItems.map((word) => ({
+      word: word.word,
+      translations: word.translations,
+      progress: word.repetitions || 0,
+      isReadyToRepeat: word.status === 'learned' || false,
+    }));
 
     return {
-      items: paginatedItems,
+      items: dictionaryWords,
       total: this.words.length,
       page,
       pageSize,
-      totalPages: Math.ceil(this.words.length / pageSize),
+      totalPages: pages_count,
     };
   }
 
-  async getWord(word: string): Promise<Word | null> {
+  async getWordInfo(word: string): Promise<{
+    word: string;
+    translations: Translation[];
+  } | null> {
     await delay(200);
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
 
     const foundWord = this.words.find((w) => w.word === word);
-    return foundWord || null;
+    if (!foundWord) {
+      return null;
+    }
+    return {
+      word: foundWord.word,
+      translations: foundWord.translations,
+    };
+  }
+
+  async getWord(word: string): Promise<{
+    word: string;
+    translations: Translation[];
+  }> {
+    await delay(200);
+    const currentUser = mockAuthService.getCurrentUser();
+    if (!currentUser) throw new Error('Not authenticated');
+
+    try {
+      const info = await this.getWordInfo(word);
+      return {
+        word: info?.word || word,
+        translations: info?.translations || [],
+      };
+    } catch (error) {
+      console.error('Error fetching word:', error);
+      return {
+        word,
+        translations: [],
+      };
+    }
   }
 
   async getWordFrequency(
     page: number = 1,
     pageSize: number = 10
-  ): Promise<PaginatedResult<WordFrequency>> {
+  ): Promise<WordFrequencyItem[]> {
     await delay(400);
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
 
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const paginatedItems = this.frequencyWords.slice(startIndex, endIndex);
-
-    return {
-      items: paginatedItems,
-      total: this.frequencyWords.length,
-      page,
-      pageSize,
-      totalPages: Math.ceil(this.frequencyWords.length / pageSize),
-    };
+    return this.frequencyWords.slice(startIndex, endIndex);
   }
 
-  async addWord(word: string, translation: string): Promise<Word> {
+  async addWord(word: string): Promise<DictionaryWord> {
     await delay(300);
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
 
-    const newWord: Word = {
-      id: Date.now().toString(),
+    const existingWordInfo = await this.getWordInfo(word);
+    const newWord: MockWord = {
       word,
-      translation,
+      translations: existingWordInfo?.translations || [],
       repetitions: 0,
-      lastRepetition: null,
+      lastRepetition: new Date(),
       difficulty: 'medium',
       status: 'new',
     };
 
     this.words.push(newWord);
-    return newWord;
-  }
 
-  async updateWord(id: string, updates: Partial<Word>): Promise<Word> {
-    await delay(200);
-    const currentUser = mockAuthService.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
-
-    const index = this.words.findIndex((w) => w.id === id);
-    if (index === -1) throw new Error('Word not found');
-
-    this.words[index] = { ...this.words[index], ...updates };
-    return this.words[index];
+    return {
+      word: newWord.word,
+      translations: newWord.translations,
+      progress: newWord.repetitions,
+      isReadyToRepeat: false,
+    };
   }
 
   async deleteWord(word: string): Promise<void> {

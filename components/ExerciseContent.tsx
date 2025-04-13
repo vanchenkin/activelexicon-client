@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 import Typography from './Typography';
-import { Exercise, ExerciseType } from '../services/api/tasksService';
+import { Exercise, ExerciseType } from '../services/api';
 
 type ExerciseContentProps = {
   exercise: Exercise;
@@ -125,7 +125,7 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
           style={styles.confettiAnimation}
           autoPlay={false}
           loop={false}
-          speed={1.5}
+          speed={2}
         />
       </View>
     </View>
@@ -172,8 +172,8 @@ const styles = StyleSheet.create({
     pointerEvents: 'none',
   },
   confettiAnimation: {
-    width: 300,
-    height: 300,
+    width: 400,
+    height: 400,
   },
   correctAnswer: {
     fontWeight: 'bold',

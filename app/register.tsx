@@ -34,7 +34,7 @@ export default function RegisterScreen() {
 
     try {
       await signUp(email, password, languageLevel);
-      router.replace('/(tabs)');
+      router.replace('/');
     } catch (error) {
       console.error('Registration error:', error);
       setError('Ошибка при регистрации. Пожалуйста, попробуйте снова.');

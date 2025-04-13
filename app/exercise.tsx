@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -13,7 +13,7 @@ import { router } from 'expo-router';
 import {
   useNextExercise,
   useSubmitAnswer,
-  useAddExperience,
+  useProfileStats,
 } from '@/hooks/useApi';
 import { ThemedView } from '@/components/ThemedView';
 import Header from '@/components/Header';
@@ -22,7 +22,8 @@ import Typography from '@/components/Typography';
 import ExerciseContent from '../components/ExerciseContent';
 import ProgressBar from '../components/ProgressBar';
 import Button from '@/components/Button';
-import { ExerciseType } from '../services/api/tasksService';
+import { ExerciseType } from '../services/api';
+import { StatsData } from '@/services/api/profileService';
 
 const REQUIRED_EXERCISES = 2;
 
@@ -32,12 +33,22 @@ export default function ExerciseScreen() {
   const [isChecking, setIsChecking] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [completedExercises, setCompletedExercises] = useState(0);
+  const [initialXP, setInitialXP] = useState(0);
+  const { data: profileStats } = useProfileStats();
 
   const { data: exercise, isLoading, isError } = useNextExercise();
-
   const submitAnswerMutation = useSubmitAnswer();
 
-  const addExperienceMutation = useAddExperience();
+  useEffect(() => {
+    if (completedExercises === 0 && profileStats) {
+      setInitialXP(profileStats.general.points);
+    }
+  }, [completedExercises, profileStats]);
+
+  useEffect(() => {
+    setIsCorrect(null);
+    setUserAnswer('');
+  }, [exercise]);
 
   const handleCheckAnswer = () => {
     if (!userAnswer.trim() || isChecking || !exercise) return;
@@ -57,15 +68,26 @@ export default function ExerciseScreen() {
             const newCompletedCount = completedExercises + 1;
             setCompletedExercises(newCompletedCount);
 
+            queryClient.invalidateQueries({ queryKey: ['profileStats'] });
+
             setTimeout(() => {
-              addExperienceMutation.mutate(100);
               queryClient.invalidateQueries({ queryKey: ['nextExercise'] });
 
               if (newCompletedCount >= REQUIRED_EXERCISES) {
-                router.push('/exercise-complete');
-              } else {
-                setIsCorrect(null);
-                setUserAnswer('');
+                queryClient
+                  .fetchQuery<StatsData>({ queryKey: ['profileStats'] })
+                  .then((stats) => {
+                    const currentXP = stats.general.points;
+                    const gainedXP = currentXP - initialXP;
+
+                    router.push({
+                      pathname: '/exercise-complete',
+                      params: {
+                        gainedXP: gainedXP.toString(),
+                        initialXP: initialXP.toString(),
+                      },
+                    });
+                  });
               }
             }, 1500);
           }
@@ -80,7 +102,7 @@ export default function ExerciseScreen() {
   };
 
   const handleBack = () => {
-    router.back();
+    router.replace('/');
   };
 
   if (isLoading) {
@@ -233,14 +255,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
     borderTopColor: '#EEE',
-  },
-  backButtonWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
-    backgroundColor: '#0099FF',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
   },
 });

@@ -1,22 +1,29 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Button from '../components/Button';
 import Typography from '../components/Typography';
 import { ThemedView } from '../components/ThemedView';
 import Logo from '../components/Logo';
 import { useProfileStats } from '@/hooks/useApi';
-import { useAuth } from '../context/AuthContext';
 import Streak from '../components/Streak';
 
 export default function ExerciseCompleteScreen() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { gainedXP = '100', initialXP = '0' } = useLocalSearchParams();
+  const xpGained = parseInt(gainedXP as string, 10);
+  const startXP = parseInt(initialXP as string, 10);
+  const currentXP = startXP + xpGained;
+
   const { data: profileStats } = useProfileStats();
 
+  const handleFinish = () => {
+    router.replace('/');
+  };
+
   const handleContinue = () => {
-    router.replace('/(tabs)');
+    router.replace('/exercise');
   };
 
   return (
@@ -38,11 +45,13 @@ export default function ExerciseCompleteScreen() {
 
         <ThemedView style={styles.rewardContainer}>
           <Typography size="lg" style={styles.rewardTitle}>
-            +100 XP
+            +{xpGained} XP
           </Typography>
           <Typography size="sm" style={styles.rewardSubtitle}>
-            Ваш уровень: {user?.profile.level || 0}/
-            {user?.profile.maxLevel || 0}
+            {startXP} XP → {currentXP} XP
+          </Typography>
+          <Typography size="sm" style={styles.rewardSubtitle}>
+            Ваш уровень: {profileStats?.general?.level || 0}
           </Typography>
           <ThemedView style={styles.progressBar}>
             <ThemedView
@@ -50,7 +59,7 @@ export default function ExerciseCompleteScreen() {
                 styles.progressFill,
                 {
                   width: `${
-                    ((user?.profile.experiencePoints || 0) % 1000) / 10
+                    ((profileStats?.general?.points || 0) % 1000) / 10
                   }%`,
                 },
               ]}
@@ -59,10 +68,25 @@ export default function ExerciseCompleteScreen() {
         </ThemedView>
 
         <ThemedView style={styles.streakContainer}>
-          <Streak streak={profileStats?.streak?.currentStreak || 0} />
+          <Streak
+            streak={profileStats?.streak?.currentStreakDays || 0}
+            showLabel
+          />
         </ThemedView>
 
-        <Button title="Продолжить" onPress={handleContinue} />
+        <ThemedView style={styles.buttonContainer}>
+          <Button
+            title="Завершить"
+            onPress={handleFinish}
+            style={{ ...styles.button, marginLeft: 10 }}
+            variant="secondary"
+          />
+          <Button
+            title="Продолжить"
+            onPress={handleContinue}
+            style={styles.button}
+          />
+        </ThemedView>
       </ThemedView>
     </ThemedView>
   );
@@ -75,7 +99,10 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
     padding: 24,
+    paddingVertical: 64,
   },
   congratsIconContainer: {
     alignItems: 'center',
@@ -117,7 +144,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EEE',
     borderRadius: 5,
     overflow: 'hidden',
-    marginBottom: 16,
+    marginVertical: 16,
   },
   progressFill: {
     height: '100%',
@@ -130,5 +157,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 24,
     elevation: 2,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  button: {
+    flex: 1,
   },
 });

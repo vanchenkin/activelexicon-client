@@ -37,7 +37,7 @@ const AnimatedItem = React.memo(
 
 AnimatedItem.displayName = 'AnimatedItem';
 
-const AnimatedFlatList = <T extends any>({
+const AnimatedFlatList = <T extends object>({
   data,
   renderItem,
   itemAnimationDelay = 0,

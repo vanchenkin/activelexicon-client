@@ -7,13 +7,10 @@ import { ThemedView } from '@/components/ThemedView';
 import Button from '@/components/Button';
 import Typography from '@/components/Typography';
 
-type TextComplexity = 'easy' | 'medium' | 'hard';
-
 export default function GeneratedTextScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{
-    topicId: string;
-    customTopic: string;
+    topic: string;
     complexity: string;
   }>();
 
@@ -24,23 +21,19 @@ export default function GeneratedTextScreen() {
   useEffect(() => {
     if (!generateTextMutation.isSuccess && !generateTextMutation.isPending) {
       generateTextMutation.mutate({
-        topicId: params.topicId || null,
-        customTopic: params.customTopic || null,
-        complexity: (params.complexity || 'medium') as TextComplexity,
+        topic: params.topic || null,
+        complexity: (params.complexity || 'normal') as
+          | 'low'
+          | 'normal'
+          | 'high',
       });
     }
-  }, [
-    params.topicId,
-    params.customTopic,
-    params.complexity,
-    generateTextMutation,
-  ]);
+  }, [params.topic, params.complexity, generateTextMutation]);
 
   const handleRegenerateText = () => {
     generateTextMutation.mutate({
-      topicId: params.topicId || null,
-      customTopic: params.customTopic || null,
-      complexity: (params.complexity || 'medium') as TextComplexity,
+      topic: params.topic || null,
+      complexity: (params.complexity || 'normal') as 'low' | 'normal' | 'high',
     });
   };
 

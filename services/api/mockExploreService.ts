@@ -5,9 +5,9 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const mockExploreService = {
   async generateText(
-    topicId: string | null,
+    topicName: string | null,
     customTopic: string | null,
-    complexity: 'easy' | 'medium' | 'hard' = 'medium'
+    complexity: 'low' | 'normal' | 'high' = 'normal'
   ): Promise<string> {
     await delay(1500);
     const currentUser = mockAuthService.getCurrentUser();
@@ -15,9 +15,9 @@ export const mockExploreService = {
 
     let topic = 'general';
 
-    if (topicId) {
+    if (topicName) {
       const topics = await mockTopicsService.getTopics();
-      const selectedTopic = topics.find((t) => t.id === topicId);
+      const selectedTopic = topics.find((t) => t.name === topicName);
       if (selectedTopic) {
         topic = selectedTopic.name;
       }
@@ -27,17 +27,17 @@ export const mockExploreService = {
 
     let complexityText = '';
     switch (complexity) {
-      case 'easy':
+      case 'low':
         complexityText = 'simple vocabulary and basic grammar';
         break;
-      case 'medium':
+      case 'normal':
         complexityText = 'moderate vocabulary and intermediate grammar';
         break;
-      case 'hard':
+      case 'high':
         complexityText = 'advanced vocabulary and complex grammar';
         break;
     }
 
-    return `This is a generated text about ${topic} with ${complexityText}. It contains several paragraphs of content that would be useful for learning new vocabulary. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.`;
+    return `This is a generated text about ${topic} with ${complexityText}. It contains several paragraphs of content language that would be useful for learning new vocabulary. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic. The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.The text would typically be much longer and contain various words and phrases related to the selected topic.`;
   },
 };

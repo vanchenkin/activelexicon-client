@@ -92,12 +92,56 @@ export const mockChatService = {
     return [...mockChatHistory];
   },
 
-  async clearHistory(): Promise<boolean> {
+  async clearHistory(): Promise<ChatMessage[]> {
     await delay(300);
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
 
     mockChatHistory = mockChatHistory.slice(0, 1);
-    return true;
+    return [...mockChatHistory];
+  },
+
+  async startNewChat(topic: string): Promise<ChatMessage[]> {
+    await delay(500);
+    const currentUser = mockAuthService.getCurrentUser();
+    if (!currentUser) throw new Error('Not authenticated');
+
+    mockChatHistory = [];
+
+    const welcomeMessage: ChatMessage = {
+      id: `msg-${Date.now()}-ai`,
+      text: `Let's chat about "${topic}"! What would you like to know?`,
+      isUser: false,
+      timestamp: new Date(),
+    };
+
+    mockChatHistory.push(welcomeMessage);
+
+    return [...mockChatHistory];
+  },
+
+  async checkMessageCorrectness(text: string): Promise<{
+    isCorrect: boolean;
+    suggestions?: string[];
+  }> {
+    await delay(1500);
+    const currentUser = mockAuthService.getCurrentUser();
+    if (!currentUser) throw new Error('Not authenticated');
+
+    const hasErrors =
+      text.toLowerCase().includes('error') || Math.random() > 0.7; // Random errors for demo
+
+    const suggestions = hasErrors
+      ? [
+          'Check your grammar',
+          'Consider using different tense',
+          'Revise word order',
+        ]
+      : undefined;
+
+    return {
+      isCorrect: !hasErrors,
+      suggestions,
+    };
   },
 };
