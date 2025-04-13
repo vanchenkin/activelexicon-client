@@ -67,7 +67,7 @@ export default function ProfileScreen() {
       />
       <ScrollView contentContainerStyle={styles.contentContainer}>
         {isLoading ? (
-          <Typography>Loading...</Typography>
+          <Typography>Загрузка...</Typography>
         ) : (
           <>
             <ThemedView style={styles.profileHeader}>
@@ -130,7 +130,7 @@ export default function ProfileScreen() {
                 </ThemedView>
 
                 <ThemedView style={styles.streakMiniContainer}>
-                  <Typography style={styles.streakTitle}>Streak</Typography>
+                  {/* <Typography style={styles.streakTitle}>Streak</Typography> */}
                   <Streak
                     streak={stats.streak.currentStreakDays}
                     maxTriangles={30}

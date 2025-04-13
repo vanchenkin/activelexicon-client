@@ -51,7 +51,7 @@ const Streak = ({
       }
     }
     const rows = [];
-    const rowSize = 5;
+    const rowSize = 6;
     const numRows = Math.ceil(maxTriangles / rowSize);
 
     for (let i = 0; i < numRows; i++) {

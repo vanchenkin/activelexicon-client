@@ -33,7 +33,7 @@ export default function StatisticsScreen() {
       <Header title="Статистика" onBackPress={() => router.back()} />
       <ScrollView contentContainerStyle={styles.contentContainer}>
         {isLoading ? (
-          <Typography>Loading...</Typography>
+          <Typography>Загрузка...</Typography>
         ) : stats ? (
           <>
             <StatSection title="Общие">
@@ -82,7 +82,7 @@ export default function StatisticsScreen() {
               />
             </StatSection>
 
-            <StatSection title="Поиск">
+            <StatSection title="Тексты">
               <StatBox
                 title="Прочитано текстов"
                 value={stats.search.totalTextsRead}
@@ -127,11 +127,11 @@ export default function StatisticsScreen() {
             </StatSection>
 
             <ThemedView style={styles.streakSection}>
-              <Typography style={styles.sectionTitle}>Периодичность</Typography>
+              <Typography style={styles.sectionTitle}>Серия</Typography>
               <ThemedView style={styles.streakContainer}>
                 <Streak
                   streak={stats.streak.currentStreakDays}
-                  maxTriangles={stats.streak.maxStreakDays}
+                  maxTriangles={30}
                 />
               </ThemedView>
               <ThemedView style={styles.streakInfo}>
