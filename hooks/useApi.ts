@@ -188,6 +188,8 @@ export function useUpdateUserProfile() {
       queryClient.setQueryData(['currentUser'], updatedUser);
       queryClient.invalidateQueries({ queryKey: ['profileStats'] });
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
+      queryClient.invalidateQueries({ queryKey: ['userStats'] });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
 }

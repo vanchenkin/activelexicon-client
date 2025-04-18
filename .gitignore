@@ -37,10 +37,13 @@ app-example
 
 # Environment variables
 .env
+.env.android
+.env.ios
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
 
 
 API_ROUTES.md
