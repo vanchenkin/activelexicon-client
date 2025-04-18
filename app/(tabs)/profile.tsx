@@ -123,7 +123,7 @@ export default function ProfileScreen() {
                     style={{ width: '31%' }}
                   />
                   <StatBox
-                    title="Слов добавлено"
+                    title="Слов"
                     value={stats.dictionary.totalWordsAdded}
                     style={{ width: '31%' }}
                   />
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   summaryStatsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   streakMiniContainer: {
     alignItems: 'center',

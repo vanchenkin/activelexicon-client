@@ -137,7 +137,12 @@ export default function ChatScreen() {
     setCorrectionResult(null);
   };
 
-  const renderMessageItem = ({ item }: { item: ChatMessageType }) => {
+  const renderMessageItem = ({
+    item,
+  }: {
+    item: ChatMessageType;
+    index: number;
+  }) => {
     return (
       <ChatMessage
         text={item.text}
@@ -196,7 +201,9 @@ export default function ChatScreen() {
           style={styles.messagesList}
           data={messages}
           renderItem={renderMessageItem}
-          keyExtractor={(item) => item.text}
+          keyExtractor={(item, index) =>
+            `${item.isUser ? 'user' : 'bot'}-${index}-${item.text.substring(0, 10)}`
+          }
           contentContainerStyle={styles.messagesContainer}
           onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
         />
