@@ -228,9 +228,9 @@ export function useStreak() {
 }
 
 export function useNextExercise() {
-  return useQuery({
-    queryKey: ['nextExercise'],
-    queryFn: async () => {
+  return useMutation({
+    mutationKey: ['nextExercise'],
+    mutationFn: async () => {
       const types = ['insert-word', 'question-answer', 'write-text'];
       const randomType = types[Math.floor(Math.random() * types.length)];
 
@@ -275,7 +275,6 @@ export function useNextExercise() {
         throw error;
       }
     },
-    refetchOnWindowFocus: false,
   });
 }
 

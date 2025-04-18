@@ -1,113 +1,91 @@
 # ActiveLexicon
 
-A React Native Expo application for language learning and vocabulary building.
+Приложение React Native Expo для изучения языков и расширения словарного запаса.
 
-## Getting Started
+## Начало работы
 
-### Prerequisites
+### Предварительные требования
 
-- Node.js (LTS version recommended)
+- Node.js (рекомендуется LTS версия)
 - npm
 - Expo CLI
 
-### Installation
+### Установка
 
-1. Clone the repository
+1. Клонирование репозитория
    ```bash
-   git clone [repository-url]
+   git clone [адрес-репозитория]
    cd activelexicon
    ```
 
-2. Install dependencies
+2. Установка зависимостей
    ```bash
    npm install
    ```
 
-3. Start the development server
+3. Запуск сервера разработки
    ```bash
    npx expo start
    ```
 
-## Environment Configuration
+## Настройка окружения
 
-Copy `.env.example` to `.env` and configure the environment variables:
+Скопируйте файл `.env.example` в `.env` и настройте переменные окружения:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit the `.env` file with your API configuration:
+Отредактируйте файл `.env` с вашей конфигурацией API.
 
-```
-API_URL=https://your-api-url.com
-```
-
-## Project Structure
+## Структура проекта
 
 ```
 activelexicon/
-├── app/                   # Expo Router application routes
-│   ├── (tabs)/            # Tab-based navigation screens
-│   ├── _layout.tsx        # Root layout for navigation
-│   ├── login.tsx          # Login screen
-│   ├── register.tsx       # Registration screen
-│   ├── words.tsx          # Word management screen
-│   ├── exercise.tsx       # Exercise screen
-│   └── settings.tsx       # Settings screen
+├── app/                   # Маршруты приложения Expo Router
+│   ├── (tabs)/            # Экраны с вкладками
+│   ├── _layout.tsx        # Корневой макет для навигации
 │
-├── assets/                # Static assets like images and fonts
+├── assets/                # Статические ресурсы (изображения, шрифты)
 │
-├── components/            # Reusable UI components
-│   ├── Button.tsx         # Custom button component
-│   ├── Input.tsx          # Custom input component
-│   ├── WordItem.tsx       # Word list item component
-│   ├── ProgressBar.tsx    # Progress indicator component
-│   └── ...                # Other UI components
+├── components/            # Многоразовые UI компоненты
 │
-├── context/               # React Context providers
-│   ├── AuthContext.tsx    # Authentication context
-│   └── QueryContext.tsx   # React Query context
+├── context/               # Провайдеры React Context
+│   ├── AuthContext.tsx    # Контекст аутентификации
+│   └── QueryContext.tsx   # Контекст React Query
 │
-├── constants/             # Application constants
+├── constants/             # Константы приложения
 │
-├── hooks/                 # Custom React hooks
+├── hooks/                 # Пользовательские React хуки
 │
-├── services/              # API and data services
-│   ├── api.ts             # API client setup
-│   ├── authService.ts     # Authentication service
-│   ├── wordsService.ts    # Words management service
-│   ├── exerciseService.ts # Exercise service
-│   ├── mock*.ts           # Mock services for development
-│   └── ...                # Other services
+├── services/              # API и сервисы данных
 │
-├── types/                 # TypeScript type definitions
+├── types/                 # Определения типов TypeScript
 │
-├── utils/                 # Utility functions
-│   ├── config.ts          # Configuration utilities
-│   └── ...                # Other utilities
+├── utils/                 # Служебные функции
 │
-├── .env                   # Environment variables (not in git)
-├── .env.example           # Example environment variables
-├── app.json               # Expo configuration
-├── babel.config.js        # Babel configuration
-├── tsconfig.json          # TypeScript configuration
-└── package.json           # Project dependencies and scripts
+├── .env                   # Переменные окружения (не в git)
+├── .env.example           # Пример переменных окружения
+├── app.json               # Конфигурация Expo
+├── babel.config.js        # Конфигурация Babel
+├── tsconfig.json          # Конфигурация TypeScript
+└── package.json           # Зависимости и скрипты проекта
 ```
 
-## Development
+## Разработка
 
-### Available Scripts
+### Доступные скрипты
 
-- `npm start` or `yarn start`: Start the Expo development server
-- `npm run android` or `yarn android`: Start the app on Android
-- `npm run ios` or `yarn ios`: Start the app on iOS
-- `npm run web` or `yarn web`: Start the app on web
-- `npm run lint` or `yarn lint`: Run ESLint
+- `npm start`: Запуск сервера разработки Expo
+- `npm run android`: Запуск приложения на Android
+- `npm run ios`: Запуск приложения на iOS
+- `npm run web`: Запуск приложения в браузере
+- `npm run lint`: Запуск ESLint
 
-## Built With
+## Технологии
 
-- [React Native](https://reactnative.dev/) - Mobile framework
-- [Expo](https://expo.dev/) - React Native toolchain
-- [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
-- [React Query](https://tanstack.com/query) - Data fetching and state management
-- [Axios](https://axios-http.com/) - HTTP client
+- [React Native](https://reactnative.dev/) - Фреймворк для мобильной разработки
+- [Expo](https://expo.dev/) - Инструментарий для React Native
+- [TypeScript](https://www.typescriptlang.org/) - Типизированный JavaScript
+- [React Query](https://tanstack.com/query) - Управление запросами и состоянием
+- [Axios](https://axios-http.com/) - HTTP клиент

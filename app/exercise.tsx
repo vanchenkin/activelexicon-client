@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -22,7 +22,7 @@ import Typography from '@/components/Typography';
 import ExerciseContent from '../components/ExerciseContent';
 import ProgressBar from '../components/ProgressBar';
 import Button from '@/components/Button';
-import { ExerciseType } from '../services/api';
+import { ExerciseType, Exercise } from '../services/api';
 import { StatsData } from '@/services/api/profileService';
 
 const REQUIRED_EXERCISES = 2;
@@ -36,8 +36,37 @@ export default function ExerciseScreen() {
   const [initialXP, setInitialXP] = useState(0);
   const { data: profileStats } = useProfileStats();
 
-  const { data: exercise, isLoading, isError } = useNextExercise();
+  const [exercise, setExercise] = useState<Exercise | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  const nextExerciseMutation = useNextExercise();
   const submitAnswerMutation = useSubmitAnswer();
+
+  const initialFetchRef = useRef(false);
+
+  const fetchNextExercise = useCallback(() => {
+    setIsLoading(true);
+    setIsError(false);
+
+    nextExerciseMutation.mutate(undefined, {
+      onSuccess: (newExercise) => {
+        setExercise(newExercise);
+        setIsLoading(false);
+      },
+      onError: () => {
+        setIsError(true);
+        setIsLoading(false);
+      },
+    });
+  }, [nextExerciseMutation]);
+
+  useEffect(() => {
+    if (!initialFetchRef.current) {
+      initialFetchRef.current = true;
+      fetchNextExercise();
+    }
+  }, [fetchNextExercise]);
 
   useEffect(() => {
     if (completedExercises === 0 && profileStats) {
@@ -71,8 +100,6 @@ export default function ExerciseScreen() {
             queryClient.invalidateQueries({ queryKey: ['profileStats'] });
 
             setTimeout(() => {
-              queryClient.invalidateQueries({ queryKey: ['nextExercise'] });
-
               if (newCompletedCount >= REQUIRED_EXERCISES) {
                 queryClient
                   .fetchQuery<StatsData>({ queryKey: ['profileStats'] })
@@ -88,6 +115,8 @@ export default function ExerciseScreen() {
                       },
                     });
                   });
+              } else {
+                fetchNextExercise();
               }
             }, 1500);
           }
@@ -125,9 +154,7 @@ export default function ExerciseScreen() {
         </Typography>
         <TouchableOpacity
           style={styles.retryButton}
-          onPress={() =>
-            queryClient.invalidateQueries({ queryKey: ['nextExercise'] })
-          }
+          onPress={fetchNextExercise}
         >
           <Typography style={styles.retryButtonText}>
             Попробовать снова
@@ -166,7 +193,7 @@ export default function ExerciseScreen() {
           {exercise.type === ExerciseType.FillWord
             ? 'Вставьте слово, которое лучше всего подходит:'
             : exercise.type === ExerciseType.AnswerQuestion
-              ? 'Ответьте на вопрос:'
+              ? 'Ответьте на вопрос используя 1-2 предложения:'
               : 'Составьте текст с данным словом:'}
         </Typography>
 
@@ -195,6 +222,10 @@ export default function ExerciseScreen() {
           onChangeText={setUserAnswer}
           fullWidth
           editable={isChecking === false && isCorrect !== true}
+          multiline={true}
+          textAlignVertical="top"
+          numberOfLines={4}
+          style={styles.multilineInput}
         />
 
         <Button
@@ -255,5 +286,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderTopWidth: 1,
     borderTopColor: '#EEE',
+  },
+  multilineInput: {
+    minHeight: 100,
+    maxHeight: 200,
+    paddingTop: 12,
+    paddingBottom: 12,
+    textAlignVertical: 'top',
   },
 });
