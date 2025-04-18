@@ -7,9 +7,7 @@ import WordSelectionModal from './WordSelectionModal';
 import { DictionaryWord } from '../services/api';
 
 export interface ChatMessageProps {
-  id: string;
   text: string;
-  timestamp: Date | string;
   isUser: boolean;
   dictionaryWords: Record<string, DictionaryWord>;
   onCheckCorrectness?: (text: string) => void;
@@ -18,7 +16,6 @@ export interface ChatMessageProps {
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
   text,
-  timestamp,
   isUser,
   dictionaryWords,
   onCheckCorrectness,
@@ -26,11 +23,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [showWordModal, setShowWordModal] = useState(false);
-
-  const formattedTime = new Date(timestamp).toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 
   const handleWordPress = (word: string) => {
     setSelectedWord(word);
@@ -96,7 +88,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       >
         {renderMessageText()}
         <ThemedView style={styles.messageFooter}>
-          <Typography style={styles.messageTime}>{formattedTime}</Typography>
           {isUser && onCheckCorrectness && (
             <TouchableOpacity
               style={styles.checkButton}

@@ -51,3 +51,4 @@ API_ROUTES.md
 /blob-report/
 /playwright/.cache/
 /screenshots/
+coverage/

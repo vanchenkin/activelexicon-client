@@ -20,7 +20,7 @@ interface MockWord {
 const mockWords: MockWord[] = [
   {
     word: 'hello',
-    translations: [{ text: 'привет' }],
+    translations: [{ translation: 'привет' }],
     repetitions: 5,
     lastRepetition: new Date(),
     difficulty: 'easy',
@@ -28,7 +28,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'world',
-    translations: [{ text: 'мир' }],
+    translations: [{ translation: 'мир' }],
     repetitions: 3,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -36,7 +36,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'book',
-    translations: [{ text: 'книга' }],
+    translations: [{ translation: 'книга' }],
     repetitions: 0,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -44,7 +44,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'learn',
-    translations: [{ text: 'учить' }],
+    translations: [{ translation: 'учить' }],
     repetitions: 2,
     lastRepetition: new Date(),
     difficulty: 'hard',
@@ -52,7 +52,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'language',
-    translations: [{ text: 'язык' }],
+    translations: [{ translation: 'язык' }],
     repetitions: 7,
     lastRepetition: new Date(),
     difficulty: 'easy',
@@ -60,7 +60,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'dictionary',
-    translations: [{ text: 'словарь' }],
+    translations: [{ translation: 'словарь' }],
     repetitions: 4,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -68,7 +68,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'study',
-    translations: [{ text: 'изучать' }],
+    translations: [{ translation: 'изучать' }],
     repetitions: 1,
     lastRepetition: new Date(),
     difficulty: 'hard',
@@ -76,7 +76,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'practice',
-    translations: [{ text: 'практика' }],
+    translations: [{ translation: 'практика' }],
     repetitions: 6,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -84,7 +84,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'vocabulary',
-    translations: [{ text: 'словарный запас' }],
+    translations: [{ translation: 'словарный запас' }],
     repetitions: 5,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -92,7 +92,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'fluent',
-    translations: [{ text: 'беглый' }],
+    translations: [{ translation: 'беглый' }],
     repetitions: 8,
     lastRepetition: new Date(Date.now() - 21600000),
     difficulty: 'easy',

@@ -32,7 +32,7 @@ export default function LoginScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <BackButton onPress={() => router.replace('/')} />
+      <BackButton onPress={() => router.replace('/enter')} />
 
       <ThemedView style={styles.formContainer}>
         <ThemedView style={styles.logoContainer}>

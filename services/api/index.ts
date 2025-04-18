@@ -16,7 +16,7 @@ import { mockTasksService } from './mockTasksService';
 import { mockTopicsService } from './mockTopicsService';
 import { mockExploreService } from './mockExploreService';
 
-export const USE_REAL_BACKEND = false;
+export const USE_REAL_BACKEND = true;
 
 export const authService = USE_REAL_BACKEND ? realAuthService : mockAuthService;
 

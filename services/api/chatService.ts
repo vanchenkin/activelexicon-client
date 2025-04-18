@@ -1,17 +1,19 @@
 import { ApiService } from './api';
 
 export interface ChatMessage {
-  id: string;
   text: string;
   isUser: boolean;
-  timestamp: Date;
 }
 
 interface ApiChatMessage {
-  id: string;
   message: string;
   is_user: boolean;
-  timestamp: string;
+}
+interface ApiChatHistory {
+  history: {
+    content: string;
+    role: string;
+  }[];
 }
 
 interface MessageCheckResult {
@@ -28,15 +30,11 @@ class ChatService {
   }
 
   async getChatHistory(): Promise<ChatMessage[]> {
-    const response = await this.api.get<{ history: ApiChatMessage[] }>(
-      '/chat/history'
-    );
+    const response = await this.api.get<ApiChatHistory>('/chat/history');
 
     return response.history.map((message) => ({
-      id: message.id,
-      text: message.message,
-      isUser: message.is_user,
-      timestamp: new Date(message.timestamp),
+      text: message.content,
+      isUser: message.role === 'user',
     }));
   }
 
@@ -45,14 +43,17 @@ class ChatService {
       message: text,
     });
 
-    const botMessage: ChatMessage = {
-      id: Date.now().toString(),
-      text: response.message,
-      isUser: false,
-      timestamp: new Date(),
+    const userMessage: ChatMessage = {
+      text: text,
+      isUser: true,
     };
 
-    return [botMessage];
+    const botMessage: ChatMessage = {
+      text: response.message,
+      isUser: false,
+    };
+
+    return [userMessage, botMessage];
   }
 
   async startNewChat(topic: string): Promise<ChatMessage[]> {
@@ -62,10 +63,8 @@ class ChatService {
     });
 
     const botMessage: ChatMessage = {
-      id: Date.now().toString(),
       text: response.message,
       isUser: false,
-      timestamp: new Date(),
     };
 
     return [botMessage];

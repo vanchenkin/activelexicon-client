@@ -7,14 +7,12 @@ import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 import Button from '../../components/Button';
 import TopicSelector from '@/components/TopicSelector';
-
-type TextComplexity = 'easy' | 'medium' | 'hard';
+import { Complexity } from '../../types/common';
 
 export default function ExploreScreen() {
   const router = useRouter();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  const [textComplexity, setTextComplexity] =
-    useState<TextComplexity>('medium');
+  const [textComplexity, setTextComplexity] = useState<Complexity>('normal');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
   const handleTopicSelect = (topicName: string) => {
@@ -33,7 +31,7 @@ export default function ExploreScreen() {
     });
   };
 
-  const handleComplexityChange = (complexity: TextComplexity) => {
+  const handleComplexityChange = (complexity: Complexity) => {
     setTextComplexity(complexity);
   };
 

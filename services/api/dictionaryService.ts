@@ -1,7 +1,8 @@
 import { ApiService } from './api';
 
 export interface Translation {
-  text: string;
+  translation: string;
+  part_of_speech: string;
 }
 
 export interface DictionaryWord {

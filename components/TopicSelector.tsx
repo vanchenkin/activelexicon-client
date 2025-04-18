@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ViewStyle,
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from './ThemedView';
@@ -108,23 +109,25 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({
           <ActivityIndicator size="large" color="#0099FF" />
         </ThemedView>
       ) : displayedTopics.length > 0 ? (
-        <ThemedView style={styles.topicsGrid}>
-          {displayedTopics.map((topic, index) => (
-            <TopicItem
-              key={topic.name}
-              topic={topic}
-              index={index}
-              isSelected={
-                topic.name === selectedTopic && !isCustomTopicSelected
-              }
-              totalItems={displayedTopics.length}
-              onPress={(topicName) => {
-                setCustomTopic(null);
-                onTopicSelect(topicName);
-              }}
-            />
-          ))}
-        </ThemedView>
+        <ScrollView style={styles.scrollContainer}>
+          <ThemedView style={styles.topicsGrid}>
+            {displayedTopics.map((topic, index) => (
+              <TopicItem
+                key={topic.name}
+                topic={topic}
+                index={index}
+                isSelected={
+                  topic.name === selectedTopic && !isCustomTopicSelected
+                }
+                totalItems={displayedTopics.length}
+                onPress={(topicName) => {
+                  setCustomTopic(null);
+                  onTopicSelect(topicName);
+                }}
+              />
+            ))}
+          </ThemedView>
+        </ScrollView>
       ) : (
         <ThemedView style={styles.noResultsContainer}>
           <Ionicons name="search-outline" size={48} color="#999" />
@@ -151,9 +154,13 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    flex: 1,
   },
   searchInputContainer: {
     marginBottom: 16,
+  },
+  scrollContainer: {
+    flex: 1,
   },
   loadingContainer: {
     paddingVertical: 40,

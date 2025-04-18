@@ -1,8 +1,9 @@
 import { ApiService } from './api';
+import { Complexity } from '@/types/common';
 
 interface GenerateTextPayload {
   topic: string;
-  difficulty: 'low' | 'normal' | 'high';
+  difficulty: Complexity;
 }
 
 class ExploreService {
@@ -13,19 +14,13 @@ class ExploreService {
   }
 
   async generateText(
-    topicId: string | null,
-    customTopic: string | null,
-    difficulty: 'low' | 'normal' | 'high' = 'normal'
+    topic: string,
+    difficulty: Complexity = 'normal'
   ): Promise<string> {
     const payload: Partial<GenerateTextPayload> = {
       difficulty,
+      topic,
     };
-
-    if (topicId) {
-      payload.topic = customTopic || topicId;
-    } else if (customTopic) {
-      payload.topic = customTopic;
-    }
 
     const response = await this.api.post<{ text: string }>(
       '/search/texts',

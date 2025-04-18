@@ -114,7 +114,7 @@ export default function WordSelectionModal({
               ) : translations ? (
                 <Typography style={styles.translationText}>
                   {translations
-                    .map((translation) => translation.text)
+                    .map((translation) => translation.translation)
                     .join(', ')}
                 </Typography>
               ) : null}

@@ -1,9 +1,5 @@
 export const Config = {
-  apiUrl: process.env.API_URL || 'https://api.example.com',
-
-  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
-  googleAndroidClientId: process.env.GOOGLE_ANDROID_CLIENT_ID || '',
-  googleIosClientId: process.env.GOOGLE_IOS_CLIENT_ID || '',
+  apiUrl: process.env.EXPO_PUBLIC_API_URL,
 };
 
 export const validateConfig = (): boolean => {

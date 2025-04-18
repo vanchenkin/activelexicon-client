@@ -6,6 +6,7 @@ import { useGenerateText } from '@/hooks/useApi';
 import { ThemedView } from '@/components/ThemedView';
 import Button from '@/components/Button';
 import Typography from '@/components/Typography';
+import { Complexity } from '@/types/common';
 
 export default function GeneratedTextScreen() {
   const router = useRouter();
@@ -19,13 +20,14 @@ export default function GeneratedTextScreen() {
   const generateTextMutation = useGenerateText();
 
   useEffect(() => {
-    if (!generateTextMutation.isSuccess && !generateTextMutation.isPending) {
+    if (
+      !generateTextMutation.isSuccess &&
+      !generateTextMutation.isPending &&
+      !generateTextMutation.isError
+    ) {
       generateTextMutation.mutate({
         topic: params.topic || null,
-        complexity: (params.complexity || 'normal') as
-          | 'low'
-          | 'normal'
-          | 'high',
+        complexity: (params.complexity || 'normal') as Complexity,
       });
     }
   }, [params.topic, params.complexity, generateTextMutation]);
@@ -33,7 +35,7 @@ export default function GeneratedTextScreen() {
   const handleRegenerateText = () => {
     generateTextMutation.mutate({
       topic: params.topic || null,
-      complexity: (params.complexity || 'normal') as 'low' | 'normal' | 'high',
+      complexity: (params.complexity || 'normal') as Complexity,
     });
   };
 

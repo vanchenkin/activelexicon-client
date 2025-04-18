@@ -3,18 +3,14 @@ import { mockAuthService } from './mockAuthService';
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export interface ChatMessage {
-  id: string;
   text: string;
   isUser: boolean;
-  timestamp: Date;
 }
 
 let mockChatHistory: ChatMessage[] = [
   {
-    id: '1',
     text: 'Hello! I am AI-assistant for learning English. How can I help you?',
     isUser: false,
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
   },
 ];
 
@@ -50,10 +46,8 @@ export const mockChatService = {
     if (!currentUser) throw new Error('Not authenticated');
 
     const userMessage: ChatMessage = {
-      id: `msg-${Date.now()}-user`,
       text,
       isUser: true,
-      timestamp: new Date(),
     };
 
     mockChatHistory.push(userMessage);
@@ -81,10 +75,8 @@ export const mockChatService = {
     }
 
     const aiMessage: ChatMessage = {
-      id: `msg-${Date.now()}-ai`,
       text: fullResponse,
       isUser: false,
-      timestamp: new Date(),
     };
 
     mockChatHistory.push(aiMessage);
@@ -109,10 +101,8 @@ export const mockChatService = {
     mockChatHistory = [];
 
     const welcomeMessage: ChatMessage = {
-      id: `msg-${Date.now()}-ai`,
       text: `Let's chat about "${topic}"! What would you like to know?`,
       isUser: false,
-      timestamp: new Date(),
     };
 
     mockChatHistory.push(welcomeMessage);

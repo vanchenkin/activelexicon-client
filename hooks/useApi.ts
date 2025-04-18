@@ -18,6 +18,7 @@ import {
   WordFrequencyItem,
 } from '../services/api/dictionaryService';
 import { ChatMessage } from '../services/api/chatService';
+import { Complexity } from '@/types/common';
 
 export function useWords(page: number = 1, pageSize: number = 10) {
   return usePagination(
@@ -27,14 +28,6 @@ export function useWords(page: number = 1, pageSize: number = 10) {
     ),
     { initialPage: page, initialPageSize: pageSize }
   );
-}
-
-export function useWord(word: string) {
-  return useQuery({
-    queryKey: ['words', word],
-    queryFn: () => dictionaryServiceInstance.getWord(word),
-    enabled: !!word,
-  });
 }
 
 export function useSearchWords(query: string) {
@@ -49,7 +42,7 @@ export function useSearchWords(query: string) {
         (word) =>
           word.word?.toLowerCase().includes(searchLower) ||
           word.translations?.some((translation) =>
-            translation.text.toLowerCase().includes(searchLower)
+            translation.translation.toLowerCase().includes(searchLower)
           )
       );
     },
@@ -118,7 +111,7 @@ export function useGenerateText() {
       complexity,
     }: {
       topic: string | null;
-      complexity: 'low' | 'normal' | 'high';
+      complexity: Complexity;
     }) => exploreServiceInstance.generateText(topic, complexity),
   });
 }
@@ -135,8 +128,10 @@ export function useSendMessage() {
 
   return useMutation({
     mutationFn: (text: string) => chatServiceInstance.sendMessage(text),
-    onSuccess: (updatedHistory) => {
-      queryClient.setQueryData(['chatHistory'], updatedHistory);
+    onSuccess: (newMessages) => {
+      queryClient.setQueryData(['chatHistory'], (old: ChatMessage[] = []) => {
+        return [...old, ...newMessages];
+      });
     },
   });
 }
@@ -189,8 +184,9 @@ export function useUpdateUserProfile() {
   return useMutation({
     mutationFn: (updates: Partial<User['profile']>) =>
       profileServiceInstance.updateProfile(updates),
-    onSuccess: (updatedUser) => {
+    onSuccess: (updatedUser, variables) => {
       queryClient.setQueryData(['currentUser'], updatedUser);
+      queryClient.invalidateQueries({ queryKey: ['profileStats'] });
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
   });

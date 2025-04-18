@@ -3,26 +3,25 @@ import { StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Typography from './Typography';
 import { ThemedView } from './ThemedView';
-
-type TextComplexity = 'easy' | 'medium' | 'hard';
+import { Complexity } from '../types/common';
 
 interface TextComplexityModalProps {
   visible: boolean;
   onClose: () => void;
-  initialComplexity?: TextComplexity;
-  onComplexityChange: (complexity: TextComplexity) => void;
+  initialComplexity?: Complexity;
+  onComplexityChange: (complexity: Complexity) => void;
 }
 
 export default function TextComplexityModal({
   visible,
   onClose,
-  initialComplexity = 'medium',
+  initialComplexity = 'normal',
   onComplexityChange,
 }: TextComplexityModalProps) {
   const [selectedComplexity, setSelectedComplexity] =
-    useState<TextComplexity>(initialComplexity);
+    useState<Complexity>(initialComplexity);
 
-  const handleComplexitySelect = (complexity: TextComplexity) => {
+  const handleComplexitySelect = (complexity: Complexity) => {
     setSelectedComplexity(complexity);
     onComplexityChange(complexity);
     onClose();
@@ -71,10 +70,10 @@ export default function TextComplexityModal({
               <TouchableOpacity
                 style={[
                   styles.complexityButton,
-                  selectedComplexity === 'easy' &&
+                  selectedComplexity === 'low' &&
                     styles.selectedComplexityButton,
                 ]}
-                onPress={() => handleComplexitySelect('easy')}
+                onPress={() => handleComplexitySelect('low')}
               >
                 <Typography style={styles.complexityButtonText}>
                   Легче
@@ -84,10 +83,10 @@ export default function TextComplexityModal({
               <TouchableOpacity
                 style={[
                   styles.complexityButton,
-                  selectedComplexity === 'medium' &&
+                  selectedComplexity === 'normal' &&
                     styles.selectedComplexityButton,
                 ]}
-                onPress={() => handleComplexitySelect('medium')}
+                onPress={() => handleComplexitySelect('normal')}
               >
                 <Typography style={styles.complexityButtonText}>
                   Средняя
@@ -97,10 +96,10 @@ export default function TextComplexityModal({
               <TouchableOpacity
                 style={[
                   styles.complexityButton,
-                  selectedComplexity === 'hard' &&
+                  selectedComplexity === 'high' &&
                     styles.selectedComplexityButton,
                 ]}
-                onPress={() => handleComplexitySelect('hard')}
+                onPress={() => handleComplexitySelect('high')}
               >
                 <Typography style={styles.complexityButtonText}>
                   Сложнее

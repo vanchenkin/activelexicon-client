@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import {
   StyleSheet,
   FlatList,
@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
-  ScrollView,
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +22,7 @@ import {
   useAddWord,
   useCheckMessageCorrectness,
 } from '@/hooks/useApi';
+import { useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/Button';
 import ChatMessage from '../../components/ChatMessage';
 import TopicSelector from '@/components/TopicSelector';
@@ -41,6 +41,10 @@ export default function ChatScreen() {
 
   const [chatStarted, setChatStarted] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [originalMessages, setOriginalMessages] = useState<ChatMessageType[]>(
+    []
+  );
+  const [forceTopicSelection, setForceTopicSelection] = useState(false);
 
   const { data: messages = [], isLoading: isMessagesLoading } =
     useChatHistory();
@@ -49,6 +53,7 @@ export default function ChatScreen() {
   const startNewChatMutation = useStartNewChat();
   const addWordMutation = useAddWord();
   const checkMessageCorrectnessMutation = useCheckMessageCorrectness();
+  const queryClient = useQueryClient();
 
   const wordMap = useMemo(() => {
     return wordsData?.items.reduce(
@@ -72,6 +77,7 @@ export default function ChatScreen() {
     startNewChatMutation.mutate(selectedTopic, {
       onSuccess: () => {
         setChatStarted(true);
+        setForceTopicSelection(false);
       },
       onError: (error) => {
         console.error('Failed to start new chat:', error);
@@ -97,6 +103,7 @@ export default function ChatScreen() {
   const handleStartNewChat = () => {
     setChatStarted(false);
     setSelectedTopic(null);
+    setForceTopicSelection(true);
   };
 
   const handleCheckCorrectness = (messageText: string) => {
@@ -133,9 +140,7 @@ export default function ChatScreen() {
   const renderMessageItem = ({ item }: { item: ChatMessageType }) => {
     return (
       <ChatMessage
-        id={item.id}
         text={item.text}
-        timestamp={item.timestamp}
         isUser={item.isUser}
         dictionaryWords={wordMap || {}}
         onCheckCorrectness={handleCheckCorrectness}
@@ -144,36 +149,38 @@ export default function ChatScreen() {
     );
   };
 
-  const headerButtons = (
-    <View style={styles.headerButtonsContainer}>
-      <TouchableOpacity
-        style={styles.headerButton}
-        onPress={handleStartNewChat}
-      >
-        <Ionicons name="add" size={24} color="#000" />
-      </TouchableOpacity>
-    </View>
-  );
-
   const renderTopicSelector = () => (
     <ThemedView style={styles.topicContainer}>
       <Typography style={styles.topicTitle}>Выберите тему для чата</Typography>
-      <ScrollView style={styles.topicScrollView}>
-        <ThemedView style={styles.topicSection}>
-          <TopicSelector
-            selectedTopic={selectedTopic}
-            onTopicSelect={handleTopicSelect}
-          />
+      <ThemedView style={styles.topicSection}>
+        <TopicSelector
+          selectedTopic={selectedTopic}
+          onTopicSelect={handleTopicSelect}
+        />
 
+        <Button
+          title="Начать чат"
+          onPress={startNewChat}
+          isLoading={startNewChatMutation.isPending}
+          disabled={startNewChatMutation.isPending || !selectedTopic}
+          style={styles.startChatButton}
+        />
+
+        {(messages.length > 0 || originalMessages.length > 0) && (
           <Button
-            title="Начать чат"
-            onPress={startNewChat}
-            isLoading={startNewChatMutation.isPending}
-            disabled={startNewChatMutation.isPending || !selectedTopic}
-            style={styles.startChatButton}
+            title="Вернуться к существующему чату"
+            onPress={() => {
+              if (messages.length === 0 && originalMessages.length > 0) {
+                queryClient.setQueryData(['chatHistory'], originalMessages);
+              }
+              setChatStarted(true);
+              setForceTopicSelection(false);
+            }}
+            style={styles.backToChatButton}
+            variant="secondary"
           />
-        </ThemedView>
-      </ScrollView>
+        )}
+      </ThemedView>
     </ThemedView>
   );
 
@@ -189,7 +196,7 @@ export default function ChatScreen() {
           style={styles.messagesList}
           data={messages}
           renderItem={renderMessageItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.text}
           contentContainerStyle={styles.messagesContainer}
           onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
         />
@@ -224,9 +231,31 @@ export default function ChatScreen() {
     </>
   );
 
+  useEffect(() => {
+    if (messages.length > 0 && !chatStarted && !forceTopicSelection) {
+      setChatStarted(true);
+    }
+
+    if (messages.length > 0 && originalMessages.length === 0) {
+      setOriginalMessages(messages);
+    }
+  }, [messages, chatStarted, originalMessages.length, forceTopicSelection]);
+
   return (
     <ThemedView style={styles.container}>
-      <Header title="Чат" rightElement={headerButtons} />
+      <Header
+        title="Чат"
+        rightElement={
+          <View style={styles.headerButtonsContainer}>
+            <TouchableOpacity
+              style={styles.headerButton}
+              onPress={handleStartNewChat}
+            >
+              <Ionicons name="add" size={32} color="#000" />
+            </TouchableOpacity>
+          </View>
+        }
+      />
 
       {!chatStarted ? renderTopicSelector() : renderChat()}
 
@@ -296,6 +325,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 16,
+    flex: 1,
   },
   startChatButton: {
     marginTop: 8,
@@ -305,6 +335,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerButton: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 32,
+  },
+  backToChatButton: {
+    marginTop: 8,
   },
 });

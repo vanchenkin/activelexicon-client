@@ -178,6 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 5,
+    backgroundColor: 'transparent',
   },
   levelLabel: {
     fontSize: 16,

@@ -45,7 +45,7 @@ export default function RegisterScreen() {
     <ThemedView style={styles.container}>
       <ThemedView style={styles.formContainer}>
         <ThemedView style={styles.backButtonContainer}>
-          <BackButton onPress={() => router.replace('/')} />
+          <BackButton onPress={() => router.replace('/enter')} />
         </ThemedView>
 
         <ThemedView style={styles.logoContainer}>

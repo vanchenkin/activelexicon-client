@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Text,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAddWord, useGetWord } from '@/hooks/useApi';
@@ -16,11 +17,20 @@ import { Alert } from '../context/crossPlatformAlert';
 export default function AddWordScreen() {
   const router = useRouter();
   const [word, setWord] = useState('');
+  const [debouncedWord, setDebouncedWord] = useState('');
   const [wordError, setWordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const addWordMutation = useAddWord();
-  const { data: wordData, isFetching } = useGetWord(word.trim());
+  const { data: wordData, isFetching } = useGetWord(debouncedWord);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedWord(word.trim());
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [word]);
 
   const handleAddWord = async () => {
     setWordError('');
@@ -75,6 +85,30 @@ export default function AddWordScreen() {
               error={wordError}
             />
 
+            {word.trim() && (
+              <ThemedView style={styles.translationContainer}>
+                {isFetching ? (
+                  <Text style={styles.translationText}>Загрузка...</Text>
+                ) : wordData &&
+                  wordData.translations &&
+                  wordData.translations.length > 0 ? (
+                  <ThemedView style={styles.translationResult}>
+                    <Text style={styles.translationText}>
+                      {wordData.translations
+                        .map((translation) => translation.translation)
+                        .join(', ')}
+                    </Text>
+                  </ThemedView>
+                ) : debouncedWord ? (
+                  <ThemedView style={styles.translationNotFound}>
+                    <Text style={styles.translationNotFoundText}>
+                      Слово не найдено
+                    </Text>
+                  </ThemedView>
+                ) : null}
+              </ThemedView>
+            )}
+
             <ThemedView style={styles.buttonContainer}>
               <Button
                 title="Добавить"
@@ -125,5 +159,26 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 30,
+  },
+  translationContainer: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#EFEFEF',
+    borderRadius: 8,
+  },
+  translationResult: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  translationText: {
+    fontSize: 16,
+  },
+  translationNotFound: {},
+  translationNotFoundText: {
+    fontSize: 16,
+    color: '#FF0000',
   },
 });

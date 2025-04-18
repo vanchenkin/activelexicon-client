@@ -1,7 +1,5 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import * as Google from 'expo-auth-session/providers/google';
-import { Config } from '@/configs/config';
 import { authService, profileServiceInstance, User } from '@/services/api';
 import { AuthResponse } from '@/services/api/authService';
 import { Alert } from './crossPlatformAlert';
@@ -16,7 +14,6 @@ type AuthContextType = {
     languageLevel: string
   ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
   logOut: () => Promise<void>;
 };
 
@@ -26,7 +23,6 @@ const AuthContext = createContext<AuthContextType>({
   isError: false,
   signUp: async () => {},
   signIn: async () => {},
-  signInWithGoogle: async () => {},
   logOut: async () => {},
 });
 
@@ -34,13 +30,6 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
-
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: Config.googleAndroidClientId,
-    iosClientId: Config.googleIosClientId,
-    clientId: Config.googleClientId,
-    scopes: ['profile', 'email'],
-  });
 
   const {
     data: user,
@@ -106,33 +95,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  useEffect(() => {
-    if (response?.type === 'success' && response.authentication?.accessToken) {
-      const handleGoogleSignIn = async () => {
-        try {
-          if (!response.authentication) {
-            throw new Error('No authentication data');
-          }
-
-          await loginWithGoogleMutation.mutateAsync(
-            response.authentication.accessToken
-          );
-        } catch {
-          Alert.alert(
-            'Google Sign-In Error',
-            'Could not sign in with Google. Please try again.'
-          );
-        }
-      };
-      handleGoogleSignIn();
-    } else if (response?.type === 'error') {
-      Alert.alert(
-        'Google Sign-In Error',
-        response.error?.message || 'An unknown error occurred'
-      );
-    }
-  }, [response, loginWithGoogleMutation]);
-
   const registerMutation = useMutation<
     AuthResponse,
     Error,
@@ -181,14 +143,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await loginMutation.mutateAsync({ email, password });
   };
 
-  const signInWithGoogle = async () => {
-    if (!request) {
-      Alert.alert('Error', 'Google sign-in is not available');
-      return;
-    }
-    await promptAsync();
-  };
-
   const signUp = async (
     email: string,
     password: string,
@@ -221,7 +175,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isError,
     signUp,
     signIn,
-    signInWithGoogle,
     logOut,
   };
 

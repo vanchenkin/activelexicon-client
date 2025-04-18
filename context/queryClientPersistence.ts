@@ -25,7 +25,7 @@ export const initializeQueryClientPersistence = () => {
     queryClient,
     persister: asyncStoragePersister,
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    buster: process.env.APP_VERSION || '1.0.0',
+    buster: process.env.EXPO_PUBLIC_APP_VERSION || '1.0.0',
     dehydrateOptions: {
       shouldDehydrateQuery: (query) => {
         if (query.queryKey[0] === 'user') {

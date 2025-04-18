@@ -39,7 +39,7 @@ export const TopicItem: React.FC<TopicItemProps> = ({
       onPress={() => onPress(topic.name)}
     >
       <Ionicons
-        name={topic.icon as keyof typeof Ionicons.glyphMap}
+        name={topic.icon.split('_')[1] as keyof typeof Ionicons.glyphMap}
         size={16}
         color="#0066CC"
         style={styles.topicIcon}
