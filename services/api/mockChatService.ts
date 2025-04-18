@@ -119,7 +119,7 @@ export const mockChatService = {
     if (!currentUser) throw new Error('Not authenticated');
 
     const hasErrors =
-      text.toLowerCase().includes('error') || Math.random() > 0.7; // Random errors for demo
+      text.toLowerCase().includes('error') || Math.random() > 0.7;
 
     const suggestions = hasErrors
       ? [

@@ -92,6 +92,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             <TouchableOpacity
               style={styles.checkButton}
               onPress={() => onCheckCorrectness(text)}
+              testID="check-button"
             >
               <Typography color="#0099FF" size="sm">
                 Проверить

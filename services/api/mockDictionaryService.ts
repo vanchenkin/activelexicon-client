@@ -20,7 +20,7 @@ interface MockWord {
 const mockWords: MockWord[] = [
   {
     word: 'hello',
-    translations: [{ translation: 'привет' }],
+    translations: [{ translation: 'привет', part_of_speech: 'noun' }],
     repetitions: 5,
     lastRepetition: new Date(),
     difficulty: 'easy',
@@ -28,7 +28,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'world',
-    translations: [{ translation: 'мир' }],
+    translations: [{ translation: 'мир', part_of_speech: 'noun' }],
     repetitions: 3,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -36,7 +36,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'book',
-    translations: [{ translation: 'книга' }],
+    translations: [{ translation: 'книга', part_of_speech: 'noun' }],
     repetitions: 0,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -44,7 +44,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'learn',
-    translations: [{ translation: 'учить' }],
+    translations: [{ translation: 'учить', part_of_speech: 'verb' }],
     repetitions: 2,
     lastRepetition: new Date(),
     difficulty: 'hard',
@@ -52,7 +52,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'language',
-    translations: [{ translation: 'язык' }],
+    translations: [{ translation: 'язык', part_of_speech: 'noun' }],
     repetitions: 7,
     lastRepetition: new Date(),
     difficulty: 'easy',
@@ -60,7 +60,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'dictionary',
-    translations: [{ translation: 'словарь' }],
+    translations: [{ translation: 'словарь', part_of_speech: 'noun' }],
     repetitions: 4,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -68,7 +68,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'study',
-    translations: [{ translation: 'изучать' }],
+    translations: [{ translation: 'изучать', part_of_speech: 'verb' }],
     repetitions: 1,
     lastRepetition: new Date(),
     difficulty: 'hard',
@@ -76,7 +76,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'practice',
-    translations: [{ translation: 'практика' }],
+    translations: [{ translation: 'практика', part_of_speech: 'noun' }],
     repetitions: 6,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -84,7 +84,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'vocabulary',
-    translations: [{ translation: 'словарный запас' }],
+    translations: [{ translation: 'словарный запас', part_of_speech: 'noun' }],
     repetitions: 5,
     lastRepetition: new Date(),
     difficulty: 'medium',
@@ -92,7 +92,7 @@ const mockWords: MockWord[] = [
   },
   {
     word: 'fluent',
-    translations: [{ translation: 'беглый' }],
+    translations: [{ translation: 'беглый', part_of_speech: 'adjective' }],
     repetitions: 8,
     lastRepetition: new Date(Date.now() - 21600000),
     difficulty: 'easy',
