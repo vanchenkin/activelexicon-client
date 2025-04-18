@@ -7,16 +7,22 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "environment": "development"
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://10.0.2.2:50000"
+      }
     },
     "preview": {
       "distribution": "internal",
-      "environment": "development"
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://10.0.2.2:50000"
+      }
     },
     "production": {
       "autoIncrement": true,
       "distribution": "internal",
-      "environment": "production"
+      "env": {
+        "EXPO_PUBLIC_API_URL": "http://10.0.2.2:50000"
+      }
     }
   },
   "submit": {
