@@ -107,7 +107,7 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
             </ThemedView>
             <Typography style={styles.translationText}>
               {item.translations
-                .map((translation) => translation.translation)
+                ?.map((translation) => translation.translation)
                 .join(', ')}
             </Typography>
             <ThemedView style={styles.progressBarContainer}>

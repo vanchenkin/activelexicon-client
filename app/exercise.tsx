@@ -51,6 +51,8 @@ export default function ExerciseScreen() {
 
     nextExerciseMutation.mutate(undefined, {
       onSuccess: (newExercise) => {
+        setIsCorrect(null);
+        setUserAnswer('');
         setExercise(newExercise);
         setIsLoading(false);
       },
@@ -73,11 +75,6 @@ export default function ExerciseScreen() {
       setInitialXP(profileStats.general.points);
     }
   }, [completedExercises, profileStats]);
-
-  useEffect(() => {
-    setIsCorrect(null);
-    setUserAnswer('');
-  }, [exercise]);
 
   const handleCheckAnswer = () => {
     if (!userAnswer.trim() || isChecking || !exercise) return;

@@ -16,27 +16,7 @@ export default function SelectableWord({
   isSelected = false,
   onPress,
   style,
-  progress,
-  showProgressIndicator = false,
 }: SelectableWordProps) {
-  const getProgressStyle = (progress?: number): TextStyle => {
-    if (!progress) return {};
-    if (progress >= 6) return styles.wordLearnedWell;
-    if (progress >= 3) return styles.wordLearning;
-    return styles.wordNew;
-  };
-
-  if (progress !== undefined && showProgressIndicator) {
-    return (
-      <Text
-        style={[getProgressStyle(progress), style]}
-        onPress={() => onPress(word.toLowerCase())}
-      >
-        {word}
-      </Text>
-    );
-  }
-
   return (
     <TouchableOpacity
       onPress={() => onPress(word.toLowerCase())}

@@ -182,7 +182,7 @@ export default function ChatScreen() {
               setForceTopicSelection(false);
             }}
             style={styles.backToChatButton}
-            variant="secondary"
+            variant="outline"
           />
         )}
       </ThemedView>
@@ -253,14 +253,14 @@ export default function ChatScreen() {
       <Header
         title="Чат"
         rightElement={
-          <View style={styles.headerButtonsContainer}>
+          <ThemedView style={styles.headerButtonsContainer}>
             <TouchableOpacity
               style={styles.headerButton}
               onPress={handleStartNewChat}
             >
               <Ionicons name="add" size={32} color="#000" />
             </TouchableOpacity>
-          </View>
+          </ThemedView>
         }
       />
 
@@ -340,6 +340,7 @@ const styles = StyleSheet.create({
   headerButtonsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   headerButton: {
     paddingHorizontal: 32,

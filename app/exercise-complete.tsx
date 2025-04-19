@@ -40,7 +40,7 @@ export default function ExerciseCompleteScreen() {
         </Typography>
 
         <Typography size="md" style={styles.subtitle}>
-          Вы успешно выполнили упражнение и получили опыт
+          Вы успешно выполнили упражнения и получили опыт
         </Typography>
 
         <ThemedView style={styles.rewardContainer}>
@@ -78,14 +78,9 @@ export default function ExerciseCompleteScreen() {
           <Button
             title="Завершить"
             onPress={handleFinish}
-            style={{ ...styles.button, marginLeft: 10 }}
             variant="secondary"
           />
-          <Button
-            title="Продолжить"
-            onPress={handleContinue}
-            style={styles.button}
-          />
+          <Button title="Продолжить" onPress={handleContinue} />
         </ThemedView>
       </ThemedView>
     </ThemedView>

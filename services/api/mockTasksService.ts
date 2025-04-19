@@ -1,5 +1,4 @@
-import { ExerciseType, Exercise } from './tasksService';
-import { mockAuthService } from './mockAuthService';
+import { ExerciseType } from './tasksService';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -36,15 +35,9 @@ const multipleChoiceExercises = [
   },
 ];
 
-const allExercises = [
-  ...matchingExercises,
-  ...fillBlankExercises,
-  ...multipleChoiceExercises,
-];
-
 export const mockTasksService = {
   async getInsertWordTask(): Promise<{ taskText: string; hint: string }> {
-    await delay(500);
+    await delay(200);
     const exercise =
       fillBlankExercises[Math.floor(Math.random() * fillBlankExercises.length)];
     return {
@@ -54,14 +47,14 @@ export const mockTasksService = {
   },
 
   async checkInsertWordTask(answer: string): Promise<boolean> {
-    await delay(600);
+    await delay(200);
     const exercise =
       fillBlankExercises[Math.floor(Math.random() * fillBlankExercises.length)];
     return answer.toLowerCase() === exercise.solution.toLowerCase();
   },
 
   async getQuestionAnswerTask(): Promise<{ taskText: string; hint: string }> {
-    await delay(500);
+    await delay(200);
     const exercise =
       multipleChoiceExercises[
         Math.floor(Math.random() * multipleChoiceExercises.length)
@@ -73,7 +66,7 @@ export const mockTasksService = {
   },
 
   async checkQuestionAnswerTask(answer: string): Promise<boolean> {
-    await delay(600);
+    await delay(200);
     const exercise =
       multipleChoiceExercises[
         Math.floor(Math.random() * multipleChoiceExercises.length)
@@ -82,7 +75,7 @@ export const mockTasksService = {
   },
 
   async getWriteTextTask(): Promise<{ taskText: string }> {
-    await delay(500);
+    await delay(200);
     const exercise =
       matchingExercises[Math.floor(Math.random() * matchingExercises.length)];
     return {
@@ -91,7 +84,7 @@ export const mockTasksService = {
   },
 
   async checkWriteTextTask(text: string): Promise<boolean> {
-    await delay(600);
+    await delay(200);
     const exercise =
       matchingExercises[Math.floor(Math.random() * matchingExercises.length)];
     const requiredParts = exercise.solution

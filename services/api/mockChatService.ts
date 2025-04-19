@@ -7,12 +7,7 @@ export interface ChatMessage {
   isUser: boolean;
 }
 
-let mockChatHistory: ChatMessage[] = [
-  {
-    text: 'Hello! I am AI-assistant for learning English. How can I help you?',
-    isUser: false,
-  },
-];
+let mockChatHistory: ChatMessage[] = [];
 
 const mockAIResponses: Record<string, string[]> = {
   default: [
@@ -81,7 +76,7 @@ export const mockChatService = {
 
     mockChatHistory.push(aiMessage);
 
-    return [...mockChatHistory];
+    return [userMessage, aiMessage];
   },
 
   async clearHistory(): Promise<ChatMessage[]> {
