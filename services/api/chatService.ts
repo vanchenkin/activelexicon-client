@@ -3,6 +3,8 @@ import { ApiService } from './api';
 export interface ChatMessage {
   text: string;
   isUser: boolean;
+  isPerfect?: boolean;
+  correction?: string;
 }
 
 interface ApiChatMessage {
@@ -14,11 +16,6 @@ interface ApiChatHistory {
     content: string;
     role: string;
   }[];
-}
-
-interface MessageCheckResult {
-  isCorrect: boolean;
-  suggestions?: string[];
 }
 
 class ChatService {
@@ -39,13 +36,19 @@ class ChatService {
   }
 
   async sendMessage(text: string): Promise<ChatMessage[]> {
-    const response = await this.api.post<{ message: string }>('/chat/message', {
+    const response = await this.api.post<{
+      message: string;
+      is_perfect?: boolean;
+      correction?: string;
+    }>('/chat/message', {
       message: text,
     });
 
     const userMessage: ChatMessage = {
       text: text,
       isUser: true,
+      isPerfect: response.is_perfect,
+      correction: response.correction,
     };
 
     const botMessage: ChatMessage = {
@@ -73,17 +76,6 @@ class ChatService {
   async clearHistory(): Promise<ChatMessage[]> {
     await this.startNewChat(this.currentTopic);
     return [];
-  }
-
-  async checkMessageCorrectness(text: string): Promise<MessageCheckResult> {
-    const response = await this.api.post<MessageCheckResult>('/chat/check', {
-      message: text,
-    });
-
-    return {
-      isCorrect: response.isCorrect,
-      suggestions: response.suggestions,
-    };
   }
 }
 

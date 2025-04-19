@@ -17,10 +17,13 @@ export default function SelectableWord({
   onPress,
   style,
 }: SelectableWordProps) {
+  const isSpace = word.trim() === '';
+
   return (
     <TouchableOpacity
-      onPress={() => onPress(word.toLowerCase())}
+      onPress={() => !isSpace && onPress(word.toLowerCase())}
       style={[styles.wordTouchable, isSelected && styles.selectedWord, style]}
+      disabled={isSpace}
     >
       <Typography>{word}</Typography>
     </TouchableOpacity>

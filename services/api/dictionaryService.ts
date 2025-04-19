@@ -18,7 +18,6 @@ export interface WordFrequencyItem {
 
 export interface PaginatedResult<T> {
   items: T[];
-  total: number;
   page: number;
   pageSize: number;
   totalPages: number;
@@ -51,15 +50,18 @@ class DictionaryService {
   async getWordInfo(word: string): Promise<{
     word: string;
     translations: Translation[];
+    inUserDictionary: boolean;
   } | null> {
     try {
       const response = await this.api.get<{
         word: string;
         translations: Translation[];
+        in_user_dictionary: boolean;
       }>(`/dictionary/word-info/${encodeURIComponent(word)}`);
       return {
         word: response.word,
         translations: response.translations,
+        inUserDictionary: response.in_user_dictionary,
       };
     } catch (error) {
       console.error('Error fetching word info:', error);
@@ -70,19 +72,25 @@ class DictionaryService {
   async getWordFrequency(
     page: number = 1,
     pageSize: number = 10
-  ): Promise<WordFrequencyItem[]> {
+  ): Promise<{
+    words: WordFrequencyItem[];
+    total_pages: number;
+  }> {
     const params = {
       page: page.toString(),
       page_size: pageSize.toString(),
     };
-    const response = await this.api.get<{ words: ApiWordFrequencyItem[] }>(
-      '/dictionary/words-frequency',
-      params
-    );
-    return response.words.map((item) => ({
-      word: item.word,
-      count: item.used_count,
-    }));
+    const response = await this.api.get<{
+      words: ApiWordFrequencyItem[];
+      total_pages: number;
+    }>('/dictionary/words-frequency', params);
+    return {
+      words: response.words.map((item) => ({
+        word: item.word,
+        count: item.used_count,
+      })),
+      total_pages: response.total_pages,
+    };
   }
 
   async addWord(word: string): Promise<DictionaryWord> {
@@ -99,18 +107,24 @@ class DictionaryService {
     await this.api.delete(`/dictionary/words/${encodeURIComponent(word)}`);
   }
 
-  async getWord(word: string): Promise<ApiWordInfo> {
+  async getWord(word: string): Promise<{
+    word: string;
+    translations: Translation[];
+    inUserDictionary: boolean;
+  }> {
     try {
       const info = await this.getWordInfo(word);
       return {
         word: info?.word || word,
         translations: info?.translations || [],
+        inUserDictionary: info?.inUserDictionary || false,
       };
     } catch (error) {
       console.error('Error fetching word:', error);
       return {
         word,
         translations: [],
+        inUserDictionary: false,
       };
     }
   }
@@ -126,8 +140,7 @@ class DictionaryService {
       };
       const response = await this.api.get<{
         words: ApiDictionaryWord[];
-        pages_count: number;
-        total?: number;
+        total_pages: number;
       }>('/dictionary/words', params);
 
       const words = response.words.map((w) => ({
@@ -139,18 +152,14 @@ class DictionaryService {
 
       return {
         items: words,
-        total: response.total || words.length,
         page,
         pageSize,
-        totalPages:
-          response.pages_count ||
-          Math.ceil((response.total || words.length) / pageSize),
+        totalPages: response.total_pages,
       };
     } catch (error) {
       console.error('Error fetching paginated words:', error);
       return {
         items: [],
-        total: 0,
         page,
         pageSize,
         totalPages: 0,

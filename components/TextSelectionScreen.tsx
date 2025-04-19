@@ -89,7 +89,7 @@ export default function TextSelectionScreen({
         return <Typography key={index}>{part.text}</Typography>;
       }
 
-      const isSelected = selectedWords.includes(part.text);
+      const isSelected = selectedWords.includes(part.text.toLowerCase());
 
       return (
         <SelectableWord
@@ -114,9 +114,6 @@ export default function TextSelectionScreen({
         selectedWord={currentWord}
         onClose={closeModal}
         onAddToDictionary={handleAddWordToVocabulary}
-        isAlreadyAdded={
-          currentWord ? selectedWords.includes(currentWord) : false
-        }
       />
 
       <ThemedView style={styles.generatedTextInfoCard}>

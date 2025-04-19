@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useUserStats } from '@/hooks/useApi';
+import { useProfileStats } from '@/hooks/useApi';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 import Streak from '@/components/Streak';
@@ -26,7 +26,7 @@ const StatSection = ({
 
 export default function StatisticsScreen() {
   const router = useRouter();
-  const { data: stats, isLoading } = useUserStats();
+  const { data: stats, isLoading } = useProfileStats();
 
   return (
     <ThemedView style={styles.container}>
@@ -54,7 +54,7 @@ export default function StatisticsScreen() {
               />
               <StatBox
                 title="Очки до след. уровня"
-                value={`${stats.general.points}/${stats.general.maxLevelPoints}`}
+                value={`${stats.general.maxLevelPoints}`}
                 style={styles.statBox}
               />
             </StatSection>

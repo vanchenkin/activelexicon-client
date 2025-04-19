@@ -87,7 +87,7 @@ export default function FrequencyWordsScreen() {
             ListEmptyComponent={EmptyListComponent}
           />
 
-          {frequencyData && frequencyData.total > 0 && (
+          {frequencyData && (
             <ThemedView style={styles.paginationContainer}>
               <TouchableOpacity
                 onPress={pagination.prevPage}

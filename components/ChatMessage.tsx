@@ -107,7 +107,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         selectedWord={selectedWord}
         onClose={() => setShowWordModal(false)}
         onAddToDictionary={handleAddToDictionary}
-        isAlreadyAdded={isWordInDictionary(selectedWord)}
       />
     </>
   );

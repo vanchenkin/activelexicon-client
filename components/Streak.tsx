@@ -14,7 +14,7 @@ interface StreakProps {
 
 const Streak = ({
   streak,
-  maxTriangles = 15,
+  maxTriangles = 30,
   showLabel = false,
 }: StreakProps) => {
   const getStreakText = (count: number) => {

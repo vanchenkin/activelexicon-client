@@ -3,7 +3,6 @@ import { StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
-import { useUserStats } from '@/hooks/useApi';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 import Streak from '@/components/Streak';
@@ -11,6 +10,7 @@ import Button from '@/components/Button';
 import Header from '../../components/Header';
 import Avatar from '@/components/Avatar';
 import StatBox from '@/components/StatBox';
+import { useProfileStats } from '../../hooks/useApi';
 
 const LanguageLevelDisplay = ({ level }: { level: string }) => (
   <ThemedView style={[styles.levelBadge, { backgroundColor: '#0099FF' }]}>
@@ -22,7 +22,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { logOut } = useAuth();
 
-  const { data: stats, isLoading: isLoadingStats } = useUserStats();
+  const { data: stats, isLoading: isLoadingStats } = useProfileStats();
   const { user: currentUser, isLoading: isLoadingUser } = useAuth();
 
   const isLoading = isLoadingStats || isLoadingUser;
@@ -130,11 +130,7 @@ export default function ProfileScreen() {
                 </ThemedView>
 
                 <ThemedView style={styles.streakMiniContainer}>
-                  {/* <Typography style={styles.streakTitle}>Streak</Typography> */}
-                  <Streak
-                    streak={stats.streak.currentStreakDays}
-                    maxTriangles={30}
-                  />
+                  <Streak streak={stats.streak.currentStreakDays} />
                   <Typography style={styles.streakCount}>
                     {stats.streak.currentStreakDays} день
                   </Typography>

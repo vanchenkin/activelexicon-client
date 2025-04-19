@@ -18,7 +18,6 @@ interface CorrectionModalProps {
   visible: boolean;
   isLoading: boolean;
   correctionResult: CorrectionResult | null;
-  checkingMessage: string | null;
   onClose: () => void;
 }
 
@@ -26,7 +25,6 @@ const CorrectionModal: React.FC<CorrectionModalProps> = ({
   visible,
   isLoading,
   correctionResult,
-  checkingMessage,
   onClose,
 }) => {
   return (

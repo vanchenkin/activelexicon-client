@@ -5,6 +5,8 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export interface ChatMessage {
   text: string;
   isUser: boolean;
+  isPerfect?: boolean;
+  correction?: string;
 }
 
 let mockChatHistory: ChatMessage[] = [];
@@ -40,9 +42,19 @@ export const mockChatService = {
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
 
+    const hasErrors =
+      text.toLowerCase().includes('error') || Math.random() > 0.7;
+
+    const isPerfect = !hasErrors;
+    const correction = hasErrors
+      ? 'Consider using different tense and check your grammar'
+      : undefined;
+
     const userMessage: ChatMessage = {
       text,
       isUser: true,
+      isPerfect,
+      correction,
     };
 
     mockChatHistory.push(userMessage);
@@ -103,30 +115,5 @@ export const mockChatService = {
     mockChatHistory.push(welcomeMessage);
 
     return [...mockChatHistory];
-  },
-
-  async checkMessageCorrectness(text: string): Promise<{
-    isCorrect: boolean;
-    suggestions?: string[];
-  }> {
-    await delay(1500);
-    const currentUser = mockAuthService.getCurrentUser();
-    if (!currentUser) throw new Error('Not authenticated');
-
-    const hasErrors =
-      text.toLowerCase().includes('error') || Math.random() > 0.7;
-
-    const suggestions = hasErrors
-      ? [
-          'Check your grammar',
-          'Consider using different tense',
-          'Revise word order',
-        ]
-      : undefined;
-
-    return {
-      isCorrect: !hasErrors,
-      suggestions,
-    };
   },
 };

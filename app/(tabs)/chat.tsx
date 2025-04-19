@@ -20,7 +20,6 @@ import {
   useWords,
   useStartNewChat,
   useAddWord,
-  useCheckMessageCorrectness,
 } from '@/hooks/useApi';
 import { useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/Button';
@@ -30,12 +29,11 @@ import CorrectionModal from '@/components/CorrectionModal';
 
 export default function ChatScreen() {
   const [inputText, setInputText] = useState('');
-  const [checkingMessage, setCheckingMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [correctionResult, setCorrectionResult] = useState<{
     isCorrect: boolean;
     suggestions?: string[];
   } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
 
@@ -52,7 +50,6 @@ export default function ChatScreen() {
   const { data: wordsData, refetch: refetchWords } = useWords();
   const startNewChatMutation = useStartNewChat();
   const addWordMutation = useAddWord();
-  const checkMessageCorrectnessMutation = useCheckMessageCorrectness();
   const queryClient = useQueryClient();
 
   const wordMap = useMemo(() => {
@@ -107,22 +104,15 @@ export default function ChatScreen() {
   };
 
   const handleCheckCorrectness = (messageText: string) => {
-    setCheckingMessage(messageText);
-    setIsLoading(true);
-
-    checkMessageCorrectnessMutation.mutate(messageText, {
-      onSuccess: (result) => {
-        setCorrectionResult({
-          isCorrect: result.isCorrect,
-          suggestions: result.suggestions,
-        });
-        setIsLoading(false);
-      },
-      onError: (error) => {
-        console.error('Error checking message correctness:', error);
-        setIsLoading(false);
-      },
-    });
+    const message = messages.find(
+      (msg) => msg.isUser && msg.text === messageText
+    );
+    if (message) {
+      setCorrectionResult({
+        isCorrect: message.isPerfect || false,
+        suggestions: message.correction ? [message.correction] : undefined,
+      });
+    }
   };
 
   const handleWordSelected = (word: string) => {
@@ -133,7 +123,6 @@ export default function ChatScreen() {
   };
 
   const closeModal = () => {
-    setCheckingMessage(null);
     setCorrectionResult(null);
   };
 
@@ -267,12 +256,9 @@ export default function ChatScreen() {
       {!chatStarted ? renderTopicSelector() : renderChat()}
 
       <CorrectionModal
-        visible={
-          isLoading || (correctionResult !== null && checkingMessage !== null)
-        }
+        visible={isLoading || correctionResult !== null}
         isLoading={isLoading}
         correctionResult={correctionResult}
-        checkingMessage={checkingMessage}
         onClose={closeModal}
       />
     </ThemedView>

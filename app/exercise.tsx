@@ -25,7 +25,7 @@ import Button from '@/components/Button';
 import { ExerciseType, Exercise } from '../services/api';
 import { StatsData } from '@/services/api/profileService';
 
-const REQUIRED_EXERCISES = 2;
+const REQUIRED_EXERCISES = 5;
 
 export default function ExerciseScreen() {
   const queryClient = useQueryClient();

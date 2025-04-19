@@ -19,7 +19,6 @@ interface WordSelectionModalProps {
   selectedWord: string | null;
   onClose: () => void;
   onAddToDictionary: (word: string) => void;
-  isAlreadyAdded: boolean;
 }
 
 export default function WordSelectionModal({
@@ -27,7 +26,6 @@ export default function WordSelectionModal({
   selectedWord,
   onClose,
   onAddToDictionary,
-  isAlreadyAdded,
 }: WordSelectionModalProps) {
   const [isAdding, setIsAdding] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -57,7 +55,7 @@ export default function WordSelectionModal({
         }),
         Animated.timing(scaleAnim, {
           toValue: 1,
-          duration: 200,
+          duration: 100,
           useNativeDriver: true,
           easing: Easing.inOut(Easing.ease),
         }),
@@ -73,7 +71,7 @@ export default function WordSelectionModal({
       setTimeout(() => {
         setIsAdding(false);
         onClose();
-      }, 1800);
+      }, 1500);
     } else {
       onClose();
     }
@@ -128,7 +126,7 @@ export default function WordSelectionModal({
                     Слово добавлено!
                   </Typography>
                 </Animated.View>
-              ) : !isAlreadyAdded ? (
+              ) : !wordData?.inUserDictionary ? (
                 <View style={styles.modalButtons}>
                   <Button
                     title="Добавить в словарь"

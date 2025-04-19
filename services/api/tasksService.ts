@@ -38,6 +38,7 @@ class TasksService {
       '/tasks/insert-word/check',
       { answer }
     );
+
     return response.correct;
   }
 
@@ -57,6 +58,7 @@ class TasksService {
       '/tasks/question-answer/check',
       { answer }
     );
+
     return response.correct;
   }
 
@@ -75,6 +77,7 @@ class TasksService {
       '/tasks/write-text/check',
       { text }
     );
+
     return response.correct;
   }
 }

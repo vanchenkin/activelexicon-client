@@ -58,6 +58,7 @@ export function useAddWord() {
       dictionaryServiceInstance.addWord(word),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['words'] });
+      queryClient.invalidateQueries({ queryKey: ['word'] });
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
   });
@@ -72,13 +73,6 @@ export function useDeleteWord() {
       queryClient.invalidateQueries({ queryKey: ['words'] });
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
     },
-  });
-}
-
-export function useUserStats() {
-  return useQuery({
-    queryKey: ['userStats'],
-    queryFn: () => profileServiceInstance.getProfileStats(),
   });
 }
 
@@ -147,17 +141,6 @@ export function useClearChatHistory() {
   });
 }
 
-export function useCheckMessageCorrectness() {
-  return useMutation<
-    { isCorrect: boolean; suggestions?: string[] },
-    Error,
-    string
-  >({
-    mutationFn: (text: string) =>
-      chatServiceInstance.checkMessageCorrectness(text),
-  });
-}
-
 export function useSubmitAnswer() {
   return useMutation({
     mutationFn: async ({
@@ -188,7 +171,6 @@ export function useUpdateUserProfile() {
       queryClient.setQueryData(['currentUser'], updatedUser);
       queryClient.invalidateQueries({ queryKey: ['profileStats'] });
       queryClient.invalidateQueries({ queryKey: ['wordsStats'] });
-      queryClient.invalidateQueries({ queryKey: ['userStats'] });
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
@@ -210,20 +192,6 @@ export function useGetWord(word: string) {
     queryKey: ['word', word],
     queryFn: () => dictionaryServiceInstance.getWord(word),
     enabled: !!word,
-  });
-}
-
-export function useStreak() {
-  const { data: profileStats } = useProfileStats();
-
-  return useQuery({
-    queryKey: ['streak'],
-    queryFn: () =>
-      profileStats?.streak || {
-        currentStreak: 0,
-        maxStreak: 0,
-      },
-    enabled: !!profileStats,
   });
 }
 
@@ -286,16 +254,12 @@ export function useWordFrequency(page: number = 1, pageSize: number = 10) {
         pg,
         pSize
       );
-      if (Array.isArray(result)) {
-        return {
-          items: result,
-          total: result.length,
-          page: pg,
-          pageSize: pSize,
-          totalPages: Math.ceil(result.length / pSize),
-        };
-      }
-      return result;
+      return {
+        items: result.words,
+        page: pg,
+        pageSize: pSize,
+        totalPages: result.total_pages,
+      };
     },
     { initialPage: page, initialPageSize: pageSize }
   );
@@ -358,7 +322,6 @@ export function usePagination<T>(
         : false,
       hasPrevPage: page > 1,
       totalPages: queryResult.data?.totalPages || 0,
-      totalItems: queryResult.data?.total || 0,
     },
   };
 }

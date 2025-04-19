@@ -195,7 +195,6 @@ class MockDictionaryService {
 
     return {
       items: dictionaryWords,
-      total: this.words.length,
       page,
       pageSize,
       totalPages: pages_count,
@@ -205,6 +204,7 @@ class MockDictionaryService {
   async getWordInfo(word: string): Promise<{
     word: string;
     translations: Translation[];
+    inUserDictionary: boolean;
   } | null> {
     await delay(200);
     const currentUser = mockAuthService.getCurrentUser();
@@ -217,12 +217,14 @@ class MockDictionaryService {
     return {
       word: foundWord.word,
       translations: foundWord.translations,
+      inUserDictionary: false,
     };
   }
 
   async getWord(word: string): Promise<{
     word: string;
     translations: Translation[];
+    inUserDictionary: boolean;
   }> {
     await delay(200);
     const currentUser = mockAuthService.getCurrentUser();
@@ -233,12 +235,14 @@ class MockDictionaryService {
       return {
         word: info?.word || word,
         translations: info?.translations || [],
+        inUserDictionary: info?.inUserDictionary || false,
       };
     } catch (error) {
       console.error('Error fetching word:', error);
       return {
         word,
         translations: [],
+        inUserDictionary: false,
       };
     }
   }
@@ -246,14 +250,20 @@ class MockDictionaryService {
   async getWordFrequency(
     page: number = 1,
     pageSize: number = 10
-  ): Promise<WordFrequencyItem[]> {
+  ): Promise<{
+    words: WordFrequencyItem[];
+    total_pages: number;
+  }> {
     await delay(400);
     const currentUser = mockAuthService.getCurrentUser();
     if (!currentUser) throw new Error('Not authenticated');
 
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    return this.frequencyWords.slice(startIndex, endIndex);
+    return {
+      words: this.frequencyWords.slice(startIndex, endIndex),
+      total_pages: Math.ceil(this.frequencyWords.length / pageSize),
+    };
   }
 
   async addWord(word: string): Promise<DictionaryWord> {
