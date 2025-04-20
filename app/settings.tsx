@@ -236,20 +236,6 @@ export default function SettingsScreen() {
               </Typography>
             </ThemedView>
           </ThemedView>
-
-          <TouchableOpacity style={styles.linkItem}>
-            <Typography style={styles.linkText}>
-              Условия использования
-            </Typography>
-            <Ionicons name="chevron-forward" size={16} color="#999" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.linkItem}>
-            <Typography style={styles.linkText}>
-              Политика конфиденциальности
-            </Typography>
-            <Ionicons name="chevron-forward" size={16} color="#999" />
-          </TouchableOpacity>
         </ThemedView>
       </ScrollView>
 
