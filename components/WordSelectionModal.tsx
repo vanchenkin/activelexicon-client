@@ -28,7 +28,6 @@ export default function WordSelectionModal({
   onAddToDictionary,
 }: WordSelectionModalProps) {
   const [isAdding, setIsAdding] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const { data: wordData, isLoading } = useGetWord(selectedWord || '');
@@ -36,10 +35,9 @@ export default function WordSelectionModal({
 
   useEffect(() => {
     if (!isAdding) {
-      fadeAnim.setValue(0);
       scaleAnim.setValue(1);
     }
-  }, [isAdding, fadeAnim, scaleAnim]);
+  }, [isAdding, scaleAnim]);
 
   const handleAddToDictionary = () => {
     if (selectedWord) {
@@ -61,17 +59,10 @@ export default function WordSelectionModal({
         }),
       ]).start();
 
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
-      }).start();
-
       setTimeout(() => {
         setIsAdding(false);
         onClose();
-      }, 1500);
+      }, 600);
     } else {
       onClose();
     }
@@ -118,9 +109,7 @@ export default function WordSelectionModal({
               ) : null}
 
               {isAdding ? (
-                <Animated.View
-                  style={[styles.successContainer, { opacity: fadeAnim }]}
-                >
+                <Animated.View style={styles.successContainer}>
                   <Ionicons name="checkmark-circle" size={36} color="#4CAF50" />
                   <Typography color="#4CAF50" style={styles.successText}>
                     Слово добавлено!

@@ -4,8 +4,9 @@ import Typography from './Typography';
 
 interface SelectableWordProps {
   word: string;
+  originalWord?: string;
   isSelected?: boolean;
-  onPress: (word: string) => void;
+  onPress: (word: string, originalWord?: string) => void;
   style?: object;
   progress?: number;
   showProgressIndicator?: boolean;
@@ -13,6 +14,7 @@ interface SelectableWordProps {
 
 export default function SelectableWord({
   word,
+  originalWord,
   isSelected = false,
   onPress,
   style,
@@ -21,7 +23,7 @@ export default function SelectableWord({
 
   return (
     <TouchableOpacity
-      onPress={() => !isSpace && onPress(word.toLowerCase())}
+      onPress={() => !isSpace && onPress(word.toLowerCase(), originalWord)}
       style={[styles.wordTouchable, isSelected && styles.selectedWord, style]}
       disabled={isSpace}
     >
