@@ -78,24 +78,6 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
   const renderContent = () => {
     switch (exercise.type) {
       case ExerciseType.FillWord:
-        const parts = exercise.content.split('_____');
-        if (parts.length > 1) {
-          return (
-            <>
-              {parts[0]}
-              {isCorrect ? (
-                <Typography style={styles.correctAnswer}>
-                  {userAnswer || exercise.solution}
-                </Typography>
-              ) : (
-                <View style={styles.blankLine} />
-              )}
-              {parts[1] || ''}
-            </>
-          );
-        }
-        return exercise.content;
-
       case ExerciseType.AnswerQuestion:
       case ExerciseType.WriteText:
         return exercise.content;
@@ -149,11 +131,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: '#333',
   },
-  blankLine: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-    paddingHorizontal: 8,
-  },
+
   hintText: {
     marginTop: 12,
     fontSize: 14,

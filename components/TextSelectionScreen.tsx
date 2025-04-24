@@ -34,12 +34,23 @@ export default function TextSelectionScreen({
   useEffect(() => {
     if (generatedText) {
       const words = [];
-      const wordRegex = /([a-zA-Z0-9']+)|([^a-zA-Z0-9'\s]+)|(\s+)/g;
+      const wordRegex =
+        /([a-zA-Z0-9а-яА-ЯёЁ']+)|([^a-zA-Z0-9а-яА-ЯёЁ'\s]+)|(\s+)/g;
       let match;
 
       while ((match = wordRegex.exec(generatedText)) !== null) {
         const fullMatch = match[0];
         const isWord = Boolean(match[1]) || Boolean(match[2]);
+
+        // Skip consecutive newlines, only keep one
+        if (!isWord && fullMatch.includes('\n')) {
+          const trimmedSpace = fullMatch.replace(/\n{2,}/g, '\n');
+          if (trimmedSpace) {
+            words.push({ text: trimmedSpace, isWord: false });
+          }
+          continue;
+        }
+
         words.push({ text: fullMatch, isWord });
       }
 

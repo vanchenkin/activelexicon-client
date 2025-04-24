@@ -4,8 +4,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity,
   ActivityIndicator,
+  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -149,14 +149,21 @@ export default function ExerciseScreen() {
         <Typography style={styles.errorText}>
           Ошибка загрузки упражнений
         </Typography>
-        <TouchableOpacity
-          style={styles.retryButton}
-          onPress={fetchNextExercise}
-        >
-          <Typography style={styles.retryButtonText}>
-            Попробовать снова
-          </Typography>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Попробовать снова"
+            onPress={fetchNextExercise}
+            variant="primary"
+            size="small"
+          />
+
+          <Button
+            title="Вернуться назад"
+            onPress={handleBack}
+            variant="outline"
+            size="small"
+          />
+        </View>
       </ThemedView>
     );
   }
@@ -191,7 +198,7 @@ export default function ExerciseScreen() {
             ? 'Вставьте слово, которое лучше всего подходит:'
             : exercise.type === ExerciseType.AnswerQuestion
               ? 'Ответьте на вопрос используя 1-2 предложения:'
-              : 'Составьте текст с данным словом:'}
+              : 'Составьте небольшой текст:'}
         </Typography>
 
         <ExerciseContent
@@ -258,7 +265,6 @@ const styles = StyleSheet.create({
     color: '#FF3B30',
   },
   retryButton: {
-    marginTop: 20,
     paddingVertical: 10,
     paddingHorizontal: 20,
     backgroundColor: '#0099FF',
@@ -290,5 +296,12 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 12,
     textAlignVertical: 'top',
+  },
+  buttonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    gap: 20,
   },
 });
