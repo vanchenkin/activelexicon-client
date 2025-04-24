@@ -73,7 +73,10 @@ export default function AddWordScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoid}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          overScrollMode="never"
+        >
           <ThemedView style={styles.formContainer}>
             <Input
               label="Слово"

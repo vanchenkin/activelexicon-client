@@ -51,11 +51,13 @@ export default function TextSelectionScreen({
         const isSpace = Boolean(match[2]); // Space character
         const isPunctuation = Boolean(match[3]); // Punctuation
 
-        // Skip consecutive newlines, only keep one
-        if (isSpace && fullMatch.includes('\n')) {
-          const trimmedSpace = fullMatch.replace(/\n{2,}/g, '\n');
-          if (trimmedSpace) {
-            result.push({ text: trimmedSpace, isWord: false });
+        // Handle space with consistent newlines
+        if (isSpace) {
+          // Normalize all types of line breaks to a single space
+          // Replace all sequences of whitespace (including newlines) with a single space
+          const normalizedSpace = fullMatch.replace(/\s+/g, ' ');
+          if (normalizedSpace) {
+            result.push({ text: normalizedSpace, isWord: false });
           }
           continue;
         }
@@ -180,7 +182,7 @@ export default function TextSelectionScreen({
         </Typography>
       </ThemedView>
 
-      <ScrollView style={styles.generatedTextScrollView}>
+      <ScrollView style={styles.generatedTextScrollView} overScrollMode="never">
         <ThemedView style={styles.generatedText}>
           {renderTextParts()}
         </ThemedView>
@@ -234,12 +236,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     borderRadius: 10,
-    padding: 16,
     marginBottom: 16,
   },
   generatedText: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    padding: 16,
   },
   selectedWordsContainer: {
     marginBottom: 16,

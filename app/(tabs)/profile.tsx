@@ -65,7 +65,10 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         }
       />
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        overScrollMode="never"
+      >
         {isLoading ? (
           <Typography>Загрузка...</Typography>
         ) : (

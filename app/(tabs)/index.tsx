@@ -61,7 +61,7 @@ export default function HomeScreen() {
 
       <Typography style={styles.sectionTitle}>Типы заданий:</Typography>
 
-      <ScrollView style={styles.exerciseList}>
+      <ScrollView style={styles.exerciseList} overScrollMode="never">
         <ThemedView style={styles.exerciseCard}>
           <ThemedView style={styles.iconContainer}>
             <Ionicons name="document-text-outline" size={32} color="#666" />

@@ -69,79 +69,89 @@ export default function WordSelectionModal({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
-        <Pressable
-          style={styles.modalContent}
-          onPress={(e) => e.stopPropagation()}
-        >
-          <Animated.View
-            style={[
-              styles.animatedContainer,
-              { transform: [{ scale: scaleAnim }] },
-            ]}
+    <ThemedView>
+      <Modal
+        visible={visible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={onClose}
+      >
+        <Pressable style={styles.modalOverlay} onPress={onClose}>
+          <Pressable
+            style={styles.modalContent}
+            onPress={(e) => e.stopPropagation()}
           >
-            <ThemedView style={styles.wordModal}>
-              <Typography style={styles.wordModalTitle}>
-                Выбрано слово
-              </Typography>
-              <Typography style={styles.selectedWordText}>
-                {selectedWord}
-              </Typography>
-
-              {isLoading ? (
-                <ActivityIndicator
-                  size="small"
-                  color="#0099FF"
-                  style={styles.loader}
-                />
-              ) : translations ? (
-                <Typography style={styles.translationText}>
-                  {translations
-                    .map((translation) => translation.translation)
-                    .join(', ')}
+            <Animated.View
+              style={[
+                styles.animatedContainer,
+                { transform: [{ scale: scaleAnim }] },
+              ]}
+            >
+              <ThemedView style={styles.wordModal}>
+                <Typography style={styles.wordModalTitle}>
+                  Выбрано слово
                 </Typography>
-              ) : null}
+                <Typography style={styles.selectedWordText}>
+                  {selectedWord}
+                </Typography>
 
-              {isAdding ? (
-                <Animated.View style={styles.successContainer}>
-                  <Ionicons name="checkmark-circle" size={36} color="#4CAF50" />
-                  <Typography color="#4CAF50" style={styles.successText}>
-                    Слово добавлено!
-                  </Typography>
-                </Animated.View>
-              ) : !wordData?.inUserDictionary ? (
-                <View style={styles.modalButtons}>
-                  <Button
-                    title="Добавить в словарь"
-                    onPress={handleAddToDictionary}
-                    style={styles.addButton}
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="small"
+                    color="#0099FF"
+                    style={styles.loader}
                   />
-                  <Button
-                    title="Отмена"
-                    onPress={onClose}
-                    variant="outline"
-                    style={styles.cancelButton}
-                  />
-                </View>
-              ) : (
-                <ThemedView style={styles.addedIndicator}>
-                  <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
-                  <Typography color="#4CAF50" style={styles.addedText}>
-                    Добавлено
+                ) : translations ? (
+                  <Typography style={styles.translationText}>
+                    {translations
+                      .map((translation) => translation.translation)
+                      .join(', ')}
                   </Typography>
-                </ThemedView>
-              )}
-            </ThemedView>
-          </Animated.View>
+                ) : null}
+
+                {isAdding ? (
+                  <Animated.View style={styles.successContainer}>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={36}
+                      color="#4CAF50"
+                    />
+                    <Typography color="#4CAF50" style={styles.successText}>
+                      Слово добавлено!
+                    </Typography>
+                  </Animated.View>
+                ) : !wordData?.inUserDictionary ? (
+                  <View style={styles.modalButtons}>
+                    <Button
+                      title="Добавить в словарь"
+                      onPress={handleAddToDictionary}
+                      style={styles.addButton}
+                    />
+                    <Button
+                      title="Отмена"
+                      onPress={onClose}
+                      variant="outline"
+                      style={styles.cancelButton}
+                    />
+                  </View>
+                ) : (
+                  <ThemedView style={styles.addedIndicator}>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={24}
+                      color="#4CAF50"
+                    />
+                    <Typography color="#4CAF50" style={styles.addedText}>
+                      Добавлено
+                    </Typography>
+                  </ThemedView>
+                )}
+              </ThemedView>
+            </Animated.View>
+          </Pressable>
         </Pressable>
-      </Pressable>
-    </Modal>
+      </Modal>
+    </ThemedView>
   );
 }
 

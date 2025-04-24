@@ -31,7 +31,10 @@ export default function StatisticsScreen() {
   return (
     <ThemedView style={styles.container}>
       <Header title="Статистика" onBackPress={() => router.back()} />
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+      <ScrollView
+        contentContainerStyle={styles.contentContainer}
+        overScrollMode="never"
+      >
         {isLoading ? (
           <Typography>Загрузка...</Typography>
         ) : stats ? (

@@ -121,7 +121,7 @@ export default function WordsScreen() {
           </ThemedView>
         </FadeIn>
       ) : (
-        <GestureHandlerRootView style={styles.listContainer}>
+        <ThemedView style={styles.listContainer}>
           <AnimatedFlatList
             data={displayWords}
             renderItem={({ item }) => (
@@ -168,7 +168,7 @@ export default function WordsScreen() {
               </TouchableOpacity>
             </ThemedView>
           )}
-        </GestureHandlerRootView>
+        </ThemedView>
       )}
 
       <TouchableOpacity style={styles.addButton} onPress={handleAddWord}>
@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
   },
   paginationContainer: {
     flexDirection: 'row',

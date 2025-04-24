@@ -117,7 +117,7 @@ export default function SettingsScreen() {
     <ThemedView style={styles.container}>
       <Header title="Настройки" onBackPress={handleBackPress} />
 
-      <ScrollView style={styles.scrollView}>
+      <ScrollView style={styles.scrollView} overScrollMode="never">
         <ThemedView style={styles.section}>
           <Typography weight="medium" style={styles.sectionTitle}>
             Предпочтения

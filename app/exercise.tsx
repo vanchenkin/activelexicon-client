@@ -192,7 +192,7 @@ export default function ExerciseScreen() {
 
       <ProgressBar current={completedExercises} total={REQUIRED_EXERCISES} />
 
-      <ScrollView style={styles.exerciseContainer}>
+      <ScrollView style={styles.exerciseContainer} overScrollMode="never">
         <Typography weight="medium" style={styles.instructionText}>
           {exercise.type === ExerciseType.FillWord
             ? 'Вставьте слово, которое лучше всего подходит:'

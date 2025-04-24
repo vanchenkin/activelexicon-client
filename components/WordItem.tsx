@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  ActivityIndicator,
-} from 'react-native';
+import { StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView } from './ThemedView';
 import Typography from './Typography';
@@ -12,13 +7,8 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
-  runOnJS,
 } from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { DictionaryWord } from '../services/api/dictionaryService';
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const THRESHOLD = -SCREEN_WIDTH * 0.3;
 
 interface WordItemProps {
   item: DictionaryWord;
@@ -35,24 +25,11 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
     setIsDeleting(true);
     try {
       await onDelete(item.word);
-    } catch (error) {
+    } catch (_error) {
       translateX.value = withSpring(0);
       setIsDeleting(false);
     }
   };
-
-  const panGesture = Gesture.Pan()
-    .onUpdate((event) => {
-      translateX.value = Math.min(0, event.translationX);
-    })
-    .onEnd(() => {
-      if (translateX.value < THRESHOLD) {
-        translateX.value = withTiming(-SCREEN_WIDTH);
-        runOnJS(handleDelete)();
-      } else {
-        translateX.value = withSpring(0);
-      }
-    });
 
   const rStyle = useAnimatedStyle(() => {
     return {
@@ -83,64 +60,62 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
 
   return (
     <Animated.View style={[styles.container]}>
-      <GestureDetector gesture={panGesture}>
-        <Animated.View style={[styles.wordItem, rStyle]}>
-          <ThemedView style={styles.wordInfo}>
-            <ThemedView style={styles.headerRow}>
-              <Typography style={styles.wordText}>{item.word}</Typography>
-              <ThemedView
-                style={[
-                  styles.progressBadge,
-                  { backgroundColor: getProgressColor() },
-                ]}
-              >
-                <Ionicons
-                  name={getProgressIcon()}
-                  size={12}
-                  color="white"
-                  style={styles.progressIcon}
-                />
-                <Typography style={styles.progressText}>
-                  {getProgressLabel()}
-                </Typography>
-              </ThemedView>
-            </ThemedView>
-            <Typography style={styles.translationText}>
-              {item.translations
-                ?.map((translation) => translation.translation)
-                .join(', ')}
-            </Typography>
-            <ThemedView style={styles.progressBarContainer}>
-              <ThemedView
-                style={[
-                  styles.progressBar,
-                  {
-                    width: `${Math.min(100, ((item.progress || 0) / 7) * 100)}%`,
-                    backgroundColor: getProgressColor(),
-                  },
-                ]}
+      <Animated.View style={[styles.wordItem, rStyle]}>
+        <ThemedView style={styles.wordInfo}>
+          <ThemedView style={styles.headerRow}>
+            <Typography style={styles.wordText}>{item.word}</Typography>
+            <ThemedView
+              style={[
+                styles.progressBadge,
+                { backgroundColor: getProgressColor() },
+              ]}
+            >
+              <Ionicons
+                name={getProgressIcon()}
+                size={12}
+                color="white"
+                style={styles.progressIcon}
               />
+              <Typography style={styles.progressText}>
+                {getProgressLabel()}
+              </Typography>
             </ThemedView>
-            {item.isReadyToRepeat && (
-              <ThemedView style={styles.repeatBadge}>
-                <Ionicons name="refresh" size={12} />
-                <Typography style={styles.repeatText}>
-                  Готово к повторению
-                </Typography>
-              </ThemedView>
-            )}
           </ThemedView>
-          <TouchableOpacity onPress={handleDelete} disabled={isDeleting}>
-            <Animated.View style={styles.deleteButton}>
-              {isDeleting ? (
-                <ActivityIndicator size="small" color="#FF3B30" />
-              ) : (
-                <Ionicons name="trash-outline" size={24} color="#FF3B30" />
-              )}
-            </Animated.View>
-          </TouchableOpacity>
-        </Animated.View>
-      </GestureDetector>
+          <Typography style={styles.translationText}>
+            {item.translations
+              ?.map((translation) => translation.translation)
+              .join(', ')}
+          </Typography>
+          <ThemedView style={styles.progressBarContainer}>
+            <ThemedView
+              style={[
+                styles.progressBar,
+                {
+                  width: `${Math.min(100, ((item.progress || 0) / 7) * 100)}%`,
+                  backgroundColor: getProgressColor(),
+                },
+              ]}
+            />
+          </ThemedView>
+          {item.isReadyToRepeat && (
+            <ThemedView style={styles.repeatBadge}>
+              <Ionicons name="refresh" size={12} />
+              <Typography style={styles.repeatText}>
+                Готово к повторению
+              </Typography>
+            </ThemedView>
+          )}
+        </ThemedView>
+        <TouchableOpacity onPress={handleDelete} disabled={isDeleting}>
+          <Animated.View style={styles.deleteButton}>
+            {isDeleting ? (
+              <ActivityIndicator size="small" color="#FF3B30" />
+            ) : (
+              <Ionicons name="trash-outline" size={24} color="#FF3B30" />
+            )}
+          </Animated.View>
+        </TouchableOpacity>
+      </Animated.View>
     </Animated.View>
   );
 };

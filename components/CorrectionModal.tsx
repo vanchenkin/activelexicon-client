@@ -28,63 +28,70 @@ const CorrectionModal: React.FC<CorrectionModalProps> = ({
   onClose,
 }) => {
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <ThemedView style={styles.modalContainer}>
-        <ThemedView style={styles.loadingPopup}>
-          {isLoading ? (
-            <>
-              <ActivityIndicator size="large" color="#0099FF" />
-              <Typography style={styles.loadingText}>
-                Проверка сообщения...
-              </Typography>
-            </>
-          ) : (
-            correctionResult && (
+    <ThemedView>
+      <Modal
+        visible={visible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={onClose}
+      >
+        <ThemedView style={styles.modalContainer}>
+          <ThemedView style={styles.loadingPopup}>
+            {isLoading ? (
               <>
-                <Ionicons
-                  name={
-                    correctionResult.isCorrect
-                      ? 'checkmark-circle'
-                      : 'close-circle'
-                  }
-                  size={48}
-                  color={correctionResult.isCorrect ? '#4CAF50' : '#F44336'}
-                  style={styles.resultIcon}
-                />
-                <Typography style={styles.resultTitle}>
-                  {correctionResult.isCorrect ? 'Правильно!' : 'Есть ошибки'}
+                <ActivityIndicator size="large" color="#0099FF" />
+                <Typography style={styles.loadingText}>
+                  Проверка сообщения...
                 </Typography>
-
-                {!correctionResult.isCorrect &&
-                  correctionResult.suggestions && (
-                    <>
-                      <Typography style={styles.suggestionsTitle}>
-                        Рекомендации:
-                      </Typography>
-                      {correctionResult.suggestions.map((suggestion, index) => (
-                        <Typography key={index} style={styles.suggestion}>
-                          • {suggestion}
-                        </Typography>
-                      ))}
-                    </>
-                  )}
-
-                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                  <Typography style={styles.closeButtonText}>
-                    Закрыть
-                  </Typography>
-                </TouchableOpacity>
               </>
-            )
-          )}
+            ) : (
+              correctionResult && (
+                <>
+                  <Ionicons
+                    name={
+                      correctionResult.isCorrect
+                        ? 'checkmark-circle'
+                        : 'close-circle'
+                    }
+                    size={48}
+                    color={correctionResult.isCorrect ? '#4CAF50' : '#F44336'}
+                    style={styles.resultIcon}
+                  />
+                  <Typography style={styles.resultTitle}>
+                    {correctionResult.isCorrect ? 'Правильно!' : 'Есть ошибки'}
+                  </Typography>
+
+                  {!correctionResult.isCorrect &&
+                    correctionResult.suggestions && (
+                      <>
+                        <Typography style={styles.suggestionsTitle}>
+                          Рекомендации:
+                        </Typography>
+                        {correctionResult.suggestions.map(
+                          (suggestion, index) => (
+                            <Typography key={index} style={styles.suggestion}>
+                              • {suggestion}
+                            </Typography>
+                          )
+                        )}
+                      </>
+                    )}
+
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={onClose}
+                  >
+                    <Typography style={styles.closeButtonText}>
+                      Закрыть
+                    </Typography>
+                  </TouchableOpacity>
+                </>
+              )
+            )}
+          </ThemedView>
         </ThemedView>
-      </ThemedView>
-    </Modal>
+      </Modal>
+    </ThemedView>
   );
 };
 

@@ -30,48 +30,52 @@ const WebAlert = ({
   onClose,
 }: AlertOptions & { isVisible: boolean; onClose: () => void }) => {
   return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={isVisible}
-      onRequestClose={onClose}
-    >
-      <ThemedView style={styles.centeredView}>
-        <ThemedView style={styles.modalView}>
-          <Typography weight="bold" style={styles.title}>
-            {title}
-          </Typography>
-          {message && <Typography style={styles.message}>{message}</Typography>}
+    <ThemedView>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isVisible}
+        onRequestClose={onClose}
+      >
+        <ThemedView style={styles.centeredView}>
+          <ThemedView style={styles.modalView}>
+            <Typography weight="bold" style={styles.title}>
+              {title}
+            </Typography>
+            {message && (
+              <Typography style={styles.message}>{message}</Typography>
+            )}
 
-          <ThemedView style={styles.buttonContainer}>
-            {buttons.map((button, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.button,
-                  button.style === 'destructive' && styles.destructiveButton,
-                  index > 0 && styles.buttonMargin,
-                ]}
-                onPress={() => {
-                  onClose();
-                  button.onPress?.();
-                }}
-              >
-                <Typography
-                  style={
-                    button.style === 'destructive'
-                      ? styles.destructiveText
-                      : styles.buttonText
-                  }
+            <ThemedView style={styles.buttonContainer}>
+              {buttons.map((button, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.button,
+                    button.style === 'destructive' && styles.destructiveButton,
+                    index > 0 && styles.buttonMargin,
+                  ]}
+                  onPress={() => {
+                    onClose();
+                    button.onPress?.();
+                  }}
                 >
-                  {button.text}
-                </Typography>
-              </TouchableOpacity>
-            ))}
+                  <Typography
+                    style={
+                      button.style === 'destructive'
+                        ? styles.destructiveText
+                        : styles.buttonText
+                    }
+                  >
+                    {button.text}
+                  </Typography>
+                </TouchableOpacity>
+              ))}
+            </ThemedView>
           </ThemedView>
         </ThemedView>
-      </ThemedView>
-    </Modal>
+      </Modal>
+    </ThemedView>
   );
 };
 

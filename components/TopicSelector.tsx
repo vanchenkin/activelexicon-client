@@ -109,7 +109,7 @@ const TopicSelector: React.FC<TopicSelectorProps> = ({
           <ActivityIndicator size="large" color="#0099FF" />
         </ThemedView>
       ) : displayedTopics.length > 0 ? (
-        <ScrollView style={styles.scrollContainer}>
+        <ScrollView style={styles.scrollContainer} overScrollMode="never">
           <ThemedView style={styles.topicsGrid}>
             {displayedTopics.map((topic, index) => (
               <TopicItem
