@@ -44,7 +44,9 @@ export const TopicItem: React.FC<TopicItemProps> = ({
         color="#0066CC"
         style={styles.topicIcon}
       />
-      <Typography style={styles.topicText}>{topic.name}</Typography>
+      <Typography style={styles.topicText}>
+        {topic.name.charAt(0).toUpperCase() + topic.name.slice(1)}
+      </Typography>
     </TouchableOpacity>
   );
 };
