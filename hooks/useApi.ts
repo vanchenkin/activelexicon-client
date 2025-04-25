@@ -330,6 +330,7 @@ export function useProfileStats() {
   return useQuery({
     queryKey: ['profileStats'],
     queryFn: () => profileServiceInstance.getProfileStats(),
+    staleTime: 2000,
   });
 }
 
