@@ -5,6 +5,7 @@ import { ThemedView } from './ThemedView';
 import SelectableWord from './SelectableWord';
 import WordSelectionModal from './WordSelectionModal';
 import { DictionaryWord } from '../services/api';
+import { processText } from '../utils/textProcessing';
 
 export interface ChatMessageProps {
   text: string;
@@ -24,8 +25,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [showWordModal, setShowWordModal] = useState(false);
 
-  const handleWordPress = (word: string) => {
-    setSelectedWord(word);
+  const handleWordPress = (word: string, originalWord?: string) => {
+    setSelectedWord(originalWord || word);
     setShowWordModal(true);
   };
 
@@ -37,27 +38,43 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
   const renderMessageText = () => {
     if (Object.keys(dictionaryWords).length === 0) {
+      const processedText = processText(text);
       return (
         <Typography style={styles.messageText}>
-          {text.split(/\b/).map((word, index) => (
-            <SelectableWord key={index} word={word} onPress={handleWordPress} />
-          ))}
+          {processedText.map((part, index) => {
+            if (!part.isWord) {
+              return <Typography key={index}>{part.text}</Typography>;
+            }
+            return (
+              <SelectableWord
+                key={index}
+                word={part.text}
+                originalWord={part.originalWord}
+                onPress={handleWordPress}
+              />
+            );
+          })}
         </Typography>
       );
     }
 
-    const words = text.split(/\b/);
+    const processedText = processText(text);
     return (
       <Typography style={styles.messageText}>
-        {words.map((word, index) => {
-          const lowerWord = word.toLowerCase();
+        {processedText.map((part, index) => {
+          if (!part.isWord) {
+            return <Typography key={index}>{part.text}</Typography>;
+          }
+
+          const lowerWord = part.originalWord || part.text.toLowerCase();
           const dictWord = dictionaryWords[lowerWord];
 
           if (dictWord) {
             return (
               <SelectableWord
                 key={index}
-                word={word}
+                word={part.text}
+                originalWord={part.originalWord}
                 onPress={handleWordPress}
                 progress={dictWord.progress}
                 showProgressIndicator={true}
@@ -66,16 +83,16 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           }
 
           return (
-            <SelectableWord key={index} word={word} onPress={handleWordPress} />
+            <SelectableWord
+              key={index}
+              word={part.text}
+              originalWord={part.originalWord}
+              onPress={handleWordPress}
+            />
           );
         })}
       </Typography>
     );
-  };
-
-  const isWordInDictionary = (word: string | null): boolean => {
-    if (!word) return false;
-    return Object.keys(dictionaryWords).includes(word.toLowerCase());
   };
 
   return (

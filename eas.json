@@ -7,14 +7,14 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://activelexicon.ru:8080"
+        "EXPO_PUBLIC_API_URL": "https://activelexicon.ru"
       }
     },
     "production": {
       "autoIncrement": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://activelexicon.ru:8080"
+        "EXPO_PUBLIC_API_URL": "https://activelexicon.ru"
       }
     }
   },
