@@ -233,7 +233,7 @@ export default function ExerciseScreen() {
           {exercise.type === ExerciseType.FillWord
             ? 'Вставьте слово, которое лучше всего подходит:'
             : exercise.type === ExerciseType.AnswerQuestion
-              ? 'Ответьте на вопрос используя 1-2 предложения:'
+              ? 'Ответьте на вопрос, используя 1-2 предложения:'
               : 'Составьте небольшой текст:'}
         </Typography>
 
