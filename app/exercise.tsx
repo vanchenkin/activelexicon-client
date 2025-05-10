@@ -25,6 +25,13 @@ import Button from '@/components/Button';
 import { ExerciseType, Exercise } from '../services/api';
 import { StatsData } from '@/services/api/profileService';
 
+// Type definition for API error responses
+interface ApiError extends Error {
+  response?: {
+    status: number;
+  };
+}
+
 const REQUIRED_EXERCISES = 5;
 
 export default function ExerciseScreen() {
@@ -35,6 +42,7 @@ export default function ExerciseScreen() {
   const [completedExercises, setCompletedExercises] = useState(0);
   const [initialXP, setInitialXP] = useState(0);
   const { data: profileStats } = useProfileStats();
+  const [noExercisesAvailable, setNoExercisesAvailable] = useState(false);
 
   const [exercise, setExercise] = useState<Exercise | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,9 +53,18 @@ export default function ExerciseScreen() {
 
   const initialFetchRef = useRef(false);
 
+  useEffect(() => {
+    if (profileStats) {
+      setCompletedExercises(
+        profileStats.streak.tasksDoneToday % REQUIRED_EXERCISES
+      );
+    }
+  }, [profileStats]);
+
   const fetchNextExercise = useCallback(() => {
     setIsLoading(true);
     setIsError(false);
+    setNoExercisesAvailable(false);
 
     nextExerciseMutation.mutate(undefined, {
       onSuccess: (newExercise) => {
@@ -56,8 +73,12 @@ export default function ExerciseScreen() {
         setExercise(newExercise);
         setIsLoading(false);
       },
-      onError: () => {
-        setIsError(true);
+      onError: (error) => {
+        if ((error as ApiError).response?.status === 404) {
+          setNoExercisesAvailable(true);
+        } else {
+          setIsError(true);
+        }
         setIsLoading(false);
       },
     });
@@ -131,6 +152,10 @@ export default function ExerciseScreen() {
     router.replace('/');
   };
 
+  const handleAddWords = () => {
+    router.push('/explore');
+  };
+
   if (isLoading) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -168,22 +193,33 @@ export default function ExerciseScreen() {
     );
   }
 
-  if (!exercise) {
+  if (noExercisesAvailable) {
     return (
       <ThemedView style={styles.loadingContainer}>
         <Ionicons name="book-outline" size={48} color="#999" />
         <Typography style={styles.loadingText}>
-          На сегодня упражнения закончились
+          Закончились слова для изучения
         </Typography>
-        <Button
-          title="Вернуться назад"
-          onPress={handleBack}
-          variant="primary"
-          size="small"
-          style={{ marginTop: 20 }}
-        />
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Добавить новые слова"
+            onPress={handleAddWords}
+            variant="primary"
+            size="small"
+          />
+          <Button
+            title="Вернуться назад"
+            onPress={handleBack}
+            variant="outline"
+            size="small"
+          />
+        </View>
       </ThemedView>
     );
+  }
+
+  if (!exercise) {
+    return <ThemedView style={styles.loadingContainer}></ThemedView>;
   }
 
   return (
