@@ -25,7 +25,6 @@ import Button from '@/components/Button';
 import { ExerciseType, Exercise } from '../services/api';
 import { StatsData } from '@/services/api/profileService';
 
-// Type definition for API error responses
 interface ApiError extends Error {
   response?: {
     status: number;
@@ -33,16 +32,21 @@ interface ApiError extends Error {
 }
 
 const REQUIRED_EXERCISES = 5;
+const MAX_WRONG_ATTEMPTS = 5;
 
 export default function ExerciseScreen() {
   const queryClient = useQueryClient();
   const [userAnswer, setUserAnswer] = useState('');
   const [isChecking, setIsChecking] = useState(false);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [correctnessResponse, setCorrectnessResponse] = useState<{
+    correct: boolean;
+    recommendations: string;
+  } | null>(null);
   const [completedExercises, setCompletedExercises] = useState(0);
   const [initialXP, setInitialXP] = useState(0);
   const { data: profileStats } = useProfileStats();
   const [noExercisesAvailable, setNoExercisesAvailable] = useState(false);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
 
   const [exercise, setExercise] = useState<Exercise | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,10 +69,11 @@ export default function ExerciseScreen() {
     setIsLoading(true);
     setIsError(false);
     setNoExercisesAvailable(false);
+    setWrongAttempts(0);
 
     nextExerciseMutation.mutate(undefined, {
       onSuccess: (newExercise) => {
-        setIsCorrect(null);
+        setCorrectnessResponse(null);
         setUserAnswer('');
         setExercise(newExercise);
         setIsLoading(false);
@@ -108,10 +113,10 @@ export default function ExerciseScreen() {
         answer: userAnswer.trim(),
       },
       {
-        onSuccess: (isAnswerCorrect) => {
-          setIsCorrect(isAnswerCorrect);
+        onSuccess: (correctnessResponse) => {
+          setCorrectnessResponse(correctnessResponse);
 
-          if (isAnswerCorrect) {
+          if (correctnessResponse.correct) {
             const newCompletedCount = completedExercises + 1;
             setCompletedExercises(newCompletedCount);
 
@@ -137,6 +142,8 @@ export default function ExerciseScreen() {
                 fetchNextExercise();
               }
             }, 1500);
+          } else {
+            setWrongAttempts((prevAttempts) => prevAttempts + 1);
           }
 
           setIsChecking(false);
@@ -146,6 +153,10 @@ export default function ExerciseScreen() {
         },
       }
     );
+  };
+
+  const handleSkipExercise = () => {
+    fetchNextExercise();
   };
 
   const handleBack = () => {
@@ -161,7 +172,7 @@ export default function ExerciseScreen() {
       <ThemedView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0099FF" />
         <Typography style={styles.loadingText}>
-          Загрузка упражнений...
+          Загрузка упражнения...
         </Typography>
       </ThemedView>
     );
@@ -239,8 +250,7 @@ export default function ExerciseScreen() {
 
         <ExerciseContent
           exercise={exercise}
-          isCorrect={isCorrect}
-          userAnswer={userAnswer}
+          correctnessResponse={correctnessResponse}
         />
       </ScrollView>
 
@@ -251,9 +261,9 @@ export default function ExerciseScreen() {
       >
         <Input
           variant={
-            isCorrect === true
+            correctnessResponse && correctnessResponse.correct
               ? 'success'
-              : isCorrect === false
+              : correctnessResponse && !correctnessResponse.correct
                 ? 'error'
                 : 'default'
           }
@@ -261,20 +271,31 @@ export default function ExerciseScreen() {
           value={userAnswer}
           onChangeText={setUserAnswer}
           fullWidth
-          editable={isChecking === false && isCorrect !== true}
+          editable={isChecking === false && !correctnessResponse?.correct}
           multiline={true}
           textAlignVertical="top"
           numberOfLines={4}
           style={styles.multilineInput}
         />
 
-        <Button
-          title="Проверить"
-          onPress={handleCheckAnswer}
-          disabled={!userAnswer.trim() || isChecking || isCorrect === true}
-          isLoading={isChecking}
-          fullWidth
-        />
+        <View style={styles.buttonRow}>
+          <Button
+            title="Проверить"
+            onPress={handleCheckAnswer}
+            disabled={
+              !userAnswer.trim() || isChecking || correctnessResponse?.correct
+            }
+            isLoading={isChecking}
+          />
+
+          {wrongAttempts >= MAX_WRONG_ATTEMPTS && (
+            <Button
+              title="Пропустить упражнение"
+              onPress={handleSkipExercise}
+              variant="outline"
+            />
+          )}
+        </View>
       </KeyboardAvoidingView>
     </ThemedView>
   );
@@ -339,5 +360,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     gap: 20,
+  },
+  buttonRow: {
+    gap: 10,
   },
 });

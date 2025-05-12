@@ -10,18 +10,19 @@ import Animated, {
 } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 import Typography from './Typography';
-import { Exercise, ExerciseType } from '../services/api';
+import { Exercise } from '../services/api';
 
 type ExerciseContentProps = {
   exercise: Exercise;
-  isCorrect: boolean | null;
-  userAnswer?: string;
+  correctnessResponse: {
+    correct: boolean;
+    recommendations: string;
+  } | null;
 };
 
 const ExerciseContent: React.FC<ExerciseContentProps> = ({
   exercise,
-  isCorrect,
-  userAnswer,
+  correctnessResponse,
 }) => {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
@@ -29,7 +30,7 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
   const confettiRef = useRef<LottieView>(null);
 
   useEffect(() => {
-    if (isCorrect) {
+    if (correctnessResponse?.correct) {
       borderColor.value = '#4CD964';
       scale.value = withSequence(
         withTiming(1.05, {
@@ -60,12 +61,12 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
         confettiRef.current.reset();
         confettiRef.current.play();
       }
-    } else if (isCorrect === false) {
+    } else if (correctnessResponse && !correctnessResponse.correct) {
       borderColor.value = '#FF3B30';
     } else {
       borderColor.value = '#EEE';
     }
-  }, [isCorrect, scale, opacity, borderColor]);
+  }, [correctnessResponse, scale, opacity, borderColor]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -75,27 +76,22 @@ const ExerciseContent: React.FC<ExerciseContentProps> = ({
     };
   });
 
-  const renderContent = () => {
-    switch (exercise.type) {
-      case ExerciseType.FillWord:
-      case ExerciseType.AnswerQuestion:
-      case ExerciseType.WriteText:
-        return exercise.content;
-    }
-
-    return exercise.content;
-  };
-
-  const showHintText = isCorrect === false;
+  const showHintText = correctnessResponse && !correctnessResponse.correct;
 
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.textContainer, animatedStyle]}>
-        <Typography style={styles.exerciseText}>{renderContent()}</Typography>
+        <Typography style={styles.exerciseText}>{exercise.content}</Typography>
 
         {showHintText && exercise.hint && (
           <Typography style={styles.hintText}>
             Подсказка: {exercise.hint}
+          </Typography>
+        )}
+
+        {correctnessResponse && correctnessResponse.recommendations && (
+          <Typography style={styles.hintText}>
+            Рекомендации: {correctnessResponse.recommendations}
           </Typography>
         )}
       </Animated.View>

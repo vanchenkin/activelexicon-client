@@ -9,7 +9,6 @@ import Input from '@/components/Input';
 import WordItem from '@/components/WordItem';
 import AnimatedFlatList from '@/components/AnimatedFlatList';
 import FadeIn from '@/components/FadeIn';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Header from '@/components/Header';
 
 export default function WordsScreen() {

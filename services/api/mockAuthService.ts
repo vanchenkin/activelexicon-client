@@ -181,7 +181,7 @@ class MockAuthService {
     await TokenStorage.clearAuthData();
   }
 
-  async refreshToken(refreshToken: string): Promise<boolean> {
+  async refreshToken(): Promise<boolean> {
     await TokenStorage.saveAccessToken(this.mockAccessToken);
     return true;
   }
@@ -212,7 +212,7 @@ class MockAuthService {
     tokenData: TokenData
   ): Promise<ExtendedUser | null> {
     if (new Date() > tokenData.expires) {
-      const refreshed = await this.refreshToken(tokenData.refreshToken);
+      const refreshed = await this.refreshToken();
       if (!refreshed) {
         await TokenStorage.clearAuthData();
         return null;

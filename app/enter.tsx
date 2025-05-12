@@ -27,14 +27,6 @@ export default function EnterScreen() {
           title="Войти по логину и паролю"
           onPress={() => router.push('/login')}
         />
-
-        {/* <Button
-          title="Войти через Google"
-          onPress={signInWithGoogle}
-          variant="primary"
-          size="medium"
-          fullWidth
-        /> */}
       </ThemedView>
     </ThemedView>
   );

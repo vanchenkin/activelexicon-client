@@ -6,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
-  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Typography from '@/components/Typography';
@@ -31,9 +30,8 @@ export default function ChatScreen() {
   const [inputText, setInputText] = useState('');
   const [correctionResult, setCorrectionResult] = useState<{
     isCorrect: boolean;
-    suggestions?: string[];
+    suggestions: string;
   } | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
 
@@ -61,10 +59,6 @@ export default function ChatScreen() {
       {} as Record<string, DictionaryWord>
     );
   }, [wordsData]);
-
-  const handleTopicSelect = (topicName: string) => {
-    setSelectedTopic(topicName);
-  };
 
   const startNewChat = () => {
     if (!selectedTopic) {
@@ -110,7 +104,7 @@ export default function ChatScreen() {
     if (message) {
       setCorrectionResult({
         isCorrect: message.isPerfect || false,
-        suggestions: message.correction ? [message.correction] : undefined,
+        suggestions: message.correction || '',
       });
     }
   };
@@ -149,7 +143,7 @@ export default function ChatScreen() {
       <ThemedView style={styles.topicSection}>
         <TopicSelector
           selectedTopic={selectedTopic}
-          onTopicSelect={handleTopicSelect}
+          onTopicSelect={setSelectedTopic}
         />
 
         <Button
@@ -195,6 +189,7 @@ export default function ChatScreen() {
           }
           contentContainerStyle={styles.messagesContainer}
           onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
+          overScrollMode="never"
         />
       )}
 
@@ -242,22 +237,19 @@ export default function ChatScreen() {
       <Header
         title="Чат"
         rightElement={
-          <ThemedView style={styles.headerButtonsContainer}>
-            <TouchableOpacity
-              style={styles.headerButton}
-              onPress={handleStartNewChat}
-            >
-              <Ionicons name="add" size={32} color="#000" />
-            </TouchableOpacity>
-          </ThemedView>
+          <TouchableOpacity
+            style={styles.headerButton}
+            onPress={handleStartNewChat}
+          >
+            <Ionicons name="add" size={32} color="#000" />
+          </TouchableOpacity>
         }
       />
 
       {!chatStarted ? renderTopicSelector() : renderChat()}
 
       <CorrectionModal
-        visible={isLoading || correctionResult !== null}
-        isLoading={isLoading}
+        visible={correctionResult !== null}
         correctionResult={correctionResult}
         onClose={closeModal}
       />
@@ -310,9 +302,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     textAlign: 'center',
-  },
-  topicScrollView: {
-    flex: 1,
   },
   topicSection: {
     backgroundColor: 'white',

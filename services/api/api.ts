@@ -70,10 +70,6 @@ export class ApiService {
     );
   }
 
-  private async handleUnauthorized(): Promise<void> {
-    await TokenStorage.clearAuthData();
-  }
-
   async get<T>(
     endpoint: string,
     params?: Record<string, string>,

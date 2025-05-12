@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Text, TextStyle } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import Typography from './Typography';
 
 interface SelectableWordProps {

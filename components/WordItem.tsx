@@ -26,6 +26,7 @@ const WordItem = ({ item, onDelete }: WordItemProps) => {
     try {
       await onDelete(item.word);
     } catch (_error) {
+      console.error(_error);
       translateX.value = withSpring(0);
       setIsDeleting(false);
     }

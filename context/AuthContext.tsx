@@ -42,12 +42,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const userData = await profileServiceInstance.getProfile();
         return userData;
-      } catch (err) {
-        throw err;
+      } catch (_error) {
+        console.error(_error);
+        return null;
       }
     },
-    staleTime: 1000 * 60 * 60,
-    retry: 1,
   });
 
   useEffect(() => {
@@ -114,13 +113,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: () => {
       refetch();
     },
-    onError: (error) => {
-      console.error('Registration error:', error);
-      Alert.alert(
-        'Registration Failed',
-        'Could not create account. Please try again.'
-      );
-    },
   });
 
   const logoutMutation = useMutation({
@@ -128,13 +120,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return authService.logout();
     },
     onSuccess: () => {
-      queryClient.setQueryData(['user'], null);
-
       queryClient.invalidateQueries();
     },
     onError: (error) => {
       console.error('Logout error:', error);
-      queryClient.setQueryData(['user'], null);
       queryClient.invalidateQueries();
     },
   });

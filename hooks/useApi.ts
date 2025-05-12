@@ -212,7 +212,6 @@ export function useNextExercise() {
             type: ExerciseType.FillWord,
             difficulty: 'medium',
             content: task.taskText,
-            solution: '',
             hint: task.hint,
           };
         } else if (randomType === 'question-answer') {
@@ -222,7 +221,6 @@ export function useNextExercise() {
             type: ExerciseType.AnswerQuestion,
             difficulty: 'medium',
             content: task.taskText,
-            solution: '',
             hint: task.hint,
           };
         } else {
@@ -232,7 +230,6 @@ export function useNextExercise() {
             type: ExerciseType.WriteText,
             difficulty: 'easy',
             content: task.taskText,
-            solution: '',
             hint: '',
           };
         }

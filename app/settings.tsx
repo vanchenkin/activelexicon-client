@@ -163,22 +163,6 @@ export default function SettingsScreen() {
               </ThemedView>
             </>
           )}
-
-          {/* <ThemedView style={styles.settingItem}>
-            <ThemedView style={styles.settingInfoRow}>
-              <Ionicons
-                name="moon-outline"
-                size={20}
-                color="#555"
-                style={styles.settingIcon}
-              />
-              <Typography style={styles.settingText}>Темная тема</Typography>
-            </ThemedView>
-            <ThemedSwitch
-              value={darkModeEnabled}
-              onValueChange={setDarkModeEnabled}
-            />
-          </ThemedView> */}
         </ThemedView>
 
         <ThemedView style={styles.section}>

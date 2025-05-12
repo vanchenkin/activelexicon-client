@@ -1,5 +1,4 @@
 import { mockAuthService } from './mockAuthService';
-import { mockTopicsService } from './mockTopicsService';
 import { Complexity } from '@/types/common';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

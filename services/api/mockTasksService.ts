@@ -46,11 +46,17 @@ export const mockTasksService = {
     };
   },
 
-  async checkInsertWordTask(answer: string): Promise<boolean> {
+  async checkInsertWordTask(answer: string): Promise<{
+    correct: boolean;
+    recommendations: string;
+  }> {
     await delay(200);
     const exercise =
       fillBlankExercises[Math.floor(Math.random() * fillBlankExercises.length)];
-    return answer.toLowerCase() === exercise.solution.toLowerCase();
+    return {
+      correct: answer.toLowerCase() === exercise.solution.toLowerCase(),
+      recommendations: '',
+    };
   },
 
   async getQuestionAnswerTask(): Promise<{ taskText: string; hint: string }> {
@@ -65,13 +71,19 @@ export const mockTasksService = {
     };
   },
 
-  async checkQuestionAnswerTask(answer: string): Promise<boolean> {
+  async checkQuestionAnswerTask(answer: string): Promise<{
+    correct: boolean;
+    recommendations: string;
+  }> {
     await delay(200);
     const exercise =
       multipleChoiceExercises[
         Math.floor(Math.random() * multipleChoiceExercises.length)
       ];
-    return answer.toLowerCase() === exercise.solution.toLowerCase();
+    return {
+      correct: answer.toLowerCase() === exercise.solution.toLowerCase(),
+      recommendations: '',
+    };
   },
 
   async getWriteTextTask(): Promise<{ taskText: string }> {
@@ -83,13 +95,19 @@ export const mockTasksService = {
     };
   },
 
-  async checkWriteTextTask(text: string): Promise<boolean> {
+  async checkWriteTextTask(text: string): Promise<{
+    correct: boolean;
+    recommendations: string;
+  }> {
     await delay(200);
     const exercise =
       matchingExercises[Math.floor(Math.random() * matchingExercises.length)];
     const requiredParts = exercise.solution
       .split(',')
       .map((s) => s.trim().toLowerCase());
-    return requiredParts.every((part) => text.toLowerCase().includes(part));
+    return {
+      correct: requiredParts.every((part) => text.toLowerCase().includes(part)),
+      recommendations: '',
+    };
   },
 };

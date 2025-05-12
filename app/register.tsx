@@ -9,6 +9,7 @@ import LanguageLevelSelect from '../components/LanguageLevelSelect';
 import BackButton from '../components/BackButton';
 import Input from '../components/Input';
 import { useAuth } from '../context/AuthContext';
+import { Alert } from '../context/crossPlatformAlert';
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState('');
@@ -32,12 +33,31 @@ export default function RegisterScreen() {
       return;
     }
 
+    if (password.length < 8) {
+      setError('Пароль должен содержать минимум 8 символов');
+      return;
+    }
+
     try {
       await signUp(email, password, languageLevel);
       router.replace('/');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
-      setError('Ошибка при регистрации. Пожалуйста, попробуйте снова.');
+
+      const apiError = error as { response?: { status?: number } };
+      if (apiError?.response?.status === 409) {
+        setError('Этот email уже занят. Пожалуйста, используйте другой email.');
+      } else if (apiError?.response?.status === 400) {
+        setError(
+          'Ошибка валидации. Проверьте email и пароль. Пароль должен содержать минимум 8 символов, включая букву и цифру.'
+        );
+      } else {
+        setError('Ошибка при регистрации.');
+        Alert.alert(
+          'Регистрация не удалась',
+          'Не удалось создать аккаунт. Пожалуйста, попробуйте снова.'
+        );
+      }
     }
   };
 

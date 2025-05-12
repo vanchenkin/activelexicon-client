@@ -30,11 +30,6 @@ interface ApiDictionaryWord {
   is_ready_to_repeat?: boolean;
 }
 
-interface ApiWordInfo {
-  word: string;
-  translations: Translation[];
-}
-
 interface ApiWordFrequencyItem {
   word: string;
   used_count: number;

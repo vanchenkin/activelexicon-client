@@ -15,10 +15,6 @@ export default function ExploreScreen() {
   const [textComplexity, setTextComplexity] = useState<Complexity>('normal');
   const [isSettingsModalVisible, setIsSettingsModalVisible] = useState(false);
 
-  const handleTopicSelect = (topicName: string) => {
-    setSelectedTopic(topicName === selectedTopic ? null : topicName);
-  };
-
   const handleGenerate = () => {
     if (!selectedTopic) return;
 
@@ -67,7 +63,7 @@ export default function ExploreScreen() {
 
       <TopicSelector
         selectedTopic={selectedTopic}
-        onTopicSelect={handleTopicSelect}
+        onTopicSelect={setSelectedTopic}
         containerStyle={styles.topicSelectorContainer}
       />
 

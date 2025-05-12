@@ -88,21 +88,16 @@ export default function ProfileScreen() {
                     <LanguageLevelDisplay
                       level={currentUser?.profile?.languageLevel || 'A1'}
                     />
-                    {/* {currentUser?.profile?.calculatedLanguageLevel &&
-                      currentUser.profile.calculatedLanguageLevel !==
-                        currentUser.profile.languageLevel && (
-                        <ThemedView style={styles.recommendedLevel}>
-                          <Typography style={{ fontSize: 12 }}>
-                            Рекомендовано:{' '}
-                            {currentUser.profile.calculatedLanguageLevel.toUpperCase()}
-                          </Typography>
-                        </ThemedView>
-                      )} */}
-                    <ThemedView style={styles.recommendedLevel}>
-                      <Typography style={{ fontSize: 12 }}>
-                        Рекомендовано: ?
-                      </Typography>
-                    </ThemedView>
+                    {
+                      <ThemedView style={styles.recommendedLevel}>
+                        <Typography style={{ fontSize: 12 }}>
+                          Рекомендовано:{' '}
+                          {currentUser?.profile?.calculatedLanguageLevel
+                            ? currentUser?.profile?.calculatedLanguageLevel.toUpperCase()
+                            : '?'}
+                        </Typography>
+                      </ThemedView>
+                    }
                   </ThemedView>
                 </ThemedView>
               </ThemedView>

@@ -11,7 +11,6 @@ export interface Exercise {
   type: ExerciseType;
   difficulty: 'easy' | 'medium' | 'hard';
   content: string;
-  solution: string;
   hint: string;
 }
 
@@ -27,19 +26,23 @@ class TasksService {
       '/tasks/insert-word',
       {}
     );
+
     return {
       taskText: response.task_text,
       hint: response.hint,
     };
   }
 
-  async checkInsertWordTask(answer: string): Promise<boolean> {
-    const response = await this.api.post<{ correct: boolean }>(
-      '/tasks/insert-word/check',
-      { answer }
-    );
+  async checkInsertWordTask(answer: string): Promise<{
+    correct: boolean;
+    recommendations: string;
+  }> {
+    const response = await this.api.post<{
+      correct: boolean;
+      recommendations: string;
+    }>('/tasks/insert-word/check', { answer });
 
-    return response.correct;
+    return response;
   }
 
   async getQuestionAnswerTask(): Promise<{ taskText: string; hint: string }> {
@@ -47,19 +50,23 @@ class TasksService {
       '/tasks/question-answer',
       {}
     );
+
     return {
       taskText: response.task_text,
       hint: response.hint,
     };
   }
 
-  async checkQuestionAnswerTask(answer: string): Promise<boolean> {
-    const response = await this.api.post<{ correct: boolean }>(
-      '/tasks/question-answer/check',
-      { answer }
-    );
+  async checkQuestionAnswerTask(answer: string): Promise<{
+    correct: boolean;
+    recommendations: string;
+  }> {
+    const response = await this.api.post<{
+      correct: boolean;
+      recommendations: string;
+    }>('/tasks/question-answer/check', { answer });
 
-    return response.correct;
+    return response;
   }
 
   async getWriteTextTask(): Promise<{ taskText: string }> {
@@ -67,18 +74,22 @@ class TasksService {
       '/tasks/write-text',
       {}
     );
+
     return {
       taskText: response.task_text,
     };
   }
 
-  async checkWriteTextTask(text: string): Promise<boolean> {
-    const response = await this.api.post<{ correct: boolean }>(
-      '/tasks/write-text/check',
-      { text }
-    );
+  async checkWriteTextTask(text: string): Promise<{
+    correct: boolean;
+    recommendations: string;
+  }> {
+    const response = await this.api.post<{
+      correct: boolean;
+      recommendations: string;
+    }>('/tasks/write-text/check', { text });
 
-    return response.correct;
+    return response;
   }
 }
 

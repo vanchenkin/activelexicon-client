@@ -26,8 +26,8 @@ export default function ChangePasswordScreen() {
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError('Новый пароль должен содержать минимум 6 символов');
+    if (newPassword.length < 8) {
+      setError('Новый пароль должен содержать минимум 8 символов');
       return;
     }
 

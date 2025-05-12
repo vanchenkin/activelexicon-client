@@ -35,12 +35,10 @@ function RootLayoutNav() {
       segments[0] !== 'register'
     ) {
       router.replace('/enter');
-    } else if (
-      user &&
-      (segments[0] === 'enter' ||
-        segments[0] === 'login' ||
-        segments[0] === 'register')
-    ) {
+    }
+
+    if (user && segments[0] === 'enter') {
+      router.replace('/');
     }
   }, [user, isLoading, segments, router]);
 

@@ -7,10 +7,6 @@ export interface ChatMessage {
   correction?: string;
 }
 
-interface ApiChatMessage {
-  message: string;
-  is_user: boolean;
-}
 interface ApiChatHistory {
   history: {
     content: string;

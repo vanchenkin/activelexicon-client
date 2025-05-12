@@ -1,29 +1,22 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Modal,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
+import { StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Typography from '@/components/Typography';
 import { ThemedView } from '@/components/ThemedView';
 
 interface CorrectionResult {
   isCorrect: boolean;
-  suggestions?: string[];
+  suggestions: string;
 }
 
 interface CorrectionModalProps {
   visible: boolean;
-  isLoading: boolean;
   correctionResult: CorrectionResult | null;
   onClose: () => void;
 }
 
 const CorrectionModal: React.FC<CorrectionModalProps> = ({
   visible,
-  isLoading,
   correctionResult,
   onClose,
 }) => {
@@ -37,56 +30,40 @@ const CorrectionModal: React.FC<CorrectionModalProps> = ({
       >
         <ThemedView style={styles.modalContainer}>
           <ThemedView style={styles.loadingPopup}>
-            {isLoading ? (
+            {correctionResult && (
               <>
-                <ActivityIndicator size="large" color="#0099FF" />
-                <Typography style={styles.loadingText}>
-                  Проверка сообщения...
+                <Ionicons
+                  name={
+                    correctionResult.isCorrect
+                      ? 'checkmark-circle'
+                      : 'close-circle'
+                  }
+                  size={48}
+                  color={correctionResult.isCorrect ? '#4CAF50' : '#F44336'}
+                  style={styles.resultIcon}
+                />
+                <Typography style={styles.resultTitle}>
+                  {correctionResult.isCorrect ? 'Правильно!' : 'Есть ошибки'}
                 </Typography>
-              </>
-            ) : (
-              correctionResult && (
-                <>
-                  <Ionicons
-                    name={
-                      correctionResult.isCorrect
-                        ? 'checkmark-circle'
-                        : 'close-circle'
-                    }
-                    size={48}
-                    color={correctionResult.isCorrect ? '#4CAF50' : '#F44336'}
-                    style={styles.resultIcon}
-                  />
-                  <Typography style={styles.resultTitle}>
-                    {correctionResult.isCorrect ? 'Правильно!' : 'Есть ошибки'}
+
+                {!correctionResult.isCorrect &&
+                  correctionResult.suggestions && (
+                    <>
+                      <Typography style={styles.suggestionsTitle}>
+                        Рекомендации:
+                      </Typography>
+                      <Typography style={styles.suggestion}>
+                        {correctionResult.suggestions}
+                      </Typography>
+                    </>
+                  )}
+
+                <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                  <Typography style={styles.closeButtonText}>
+                    Закрыть
                   </Typography>
-
-                  {!correctionResult.isCorrect &&
-                    correctionResult.suggestions && (
-                      <>
-                        <Typography style={styles.suggestionsTitle}>
-                          Рекомендации:
-                        </Typography>
-                        {correctionResult.suggestions.map(
-                          (suggestion, index) => (
-                            <Typography key={index} style={styles.suggestion}>
-                              • {suggestion}
-                            </Typography>
-                          )
-                        )}
-                      </>
-                    )}
-
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={onClose}
-                  >
-                    <Typography style={styles.closeButtonText}>
-                      Закрыть
-                    </Typography>
-                  </TouchableOpacity>
-                </>
-              )
+                </TouchableOpacity>
+              </>
             )}
           </ThemedView>
         </ThemedView>
